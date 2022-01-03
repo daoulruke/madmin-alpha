@@ -20,7 +20,7 @@ ul {
     margin-right: 10px;
 }
 
-#path {
+#current_path {
     display: flex;
 }
 
