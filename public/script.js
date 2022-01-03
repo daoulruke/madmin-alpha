@@ -23,6 +23,11 @@ let getOpenapi = async () => {
     // #raw
     const raw = JSON.stringify(openapi, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
+
+    // #current_path
+    const current_path = document.getElementById("current_path");
+    if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
+    if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
 };
 
 // Fetch and display records
@@ -34,7 +39,7 @@ let getRecords = async (url) => {
     const ul = document.createElement("ul");
     for (record of records) {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecord('${url + `/${record.id}`}')">${record.name}</a>`;
+        li.innerHTML = `<a href="#" onclick="getRecord('${url + `/${record.id}`}')">${record.id} ${record.name}</a>`;
         ul.appendChild(li);
     }
     document.getElementById('content').innerHTML = ul.outerHTML;
@@ -42,6 +47,14 @@ let getRecords = async (url) => {
     // #raw
     const raw = JSON.stringify(records, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
+
+    // #current_path
+    const current_path = document.getElementById("current_path");
+    if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
+    if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
+    const li = document.createElement("li");
+    li.innerHTML = `<a href="#" onclick="getRecords('${url}')">/${url.split("/")[2]}</a>`;
+    current_path.appendChild(li);
 };
 
 // Fetch and display records
@@ -60,6 +73,13 @@ let getRecord = async (url) => {
     // #raw
     const raw = JSON.stringify(record, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
+
+    // #current_path
+    const current_path = document.getElementById("current_path");
+    if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
+    const li = document.createElement("li");
+    li.innerHTML = `<a href="#" onclick="getRecord('${url}')">/${url.split("/")[3]}</a>`;
+    current_path.appendChild(li);
 };
 
 window.onload = function () {
