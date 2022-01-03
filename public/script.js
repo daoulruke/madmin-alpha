@@ -171,7 +171,7 @@ var json = JSON.stringify(Object.fromEntries(formData));
  var accessToken = localStorage.getItem('accessToken');
 
   var request = new XMLHttpRequest();
-request.open("PUT", url + '/records/firm/54895');
+request.open("PUT", url + '/records' + window.location.pathname);
 request.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
 request.send(json);
 
