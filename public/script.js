@@ -28,6 +28,13 @@ let getOpenapi = async () => {
     const current_path = document.getElementById("current_path");
     if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
     if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
+
+    // url bar
+    window.history.replaceState(
+        {},
+        document.title,
+        `${location.protocol}//${location.host}`
+    );
 };
 
 // Fetch and display records
@@ -55,6 +62,13 @@ let getRecords = async (url) => {
     const li = document.createElement("li");
     li.innerHTML = `<a href="#" onclick="getRecords('${url}')">/${url.split("/")[2]}</a>`;
     current_path.appendChild(li);
+
+    // url bar
+    window.history.replaceState(
+        {},
+        document.title,
+        `${location.protocol}//${location.host}${url}`
+    );
 };
 
 // Fetch and display records
@@ -80,6 +94,13 @@ let getRecord = async (url) => {
     const li = document.createElement("li");
     li.innerHTML = `<a href="#" onclick="getRecord('${url}')">/${url.split("/")[3]}</a>`;
     current_path.appendChild(li);
+
+    // url bar
+    window.history.replaceState(
+        {},
+        document.title,
+        `${location.protocol}//${location.host}${url}`
+    );
 };
 
 window.onload = function () {
