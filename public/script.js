@@ -17,40 +17,31 @@ window.onload = function () {
 
         document.location.hash = '';
 
-        var req = new XMLHttpRequest();
+        // Fetch wrapper with default options
+        var _fetch = (url, options = {}) => {
+            return fetch(url, {
+                headers: {
+                    "X-Authorization": `Bearer ${accessToken}`
+                },
+                ...options
+            }).then(response => response.json());
+        };
 
-        req.onreadystatechange = function () {
-            if (req.readyState==4) {
-
-                const data = JSON.parse(req.responseText);
-
-                // content
-                const paths = data.paths;
-                console.log(paths);
-
-                let ul = document.createElement("ul");
-
-                Object.entries(paths).forEach(([key, value]) => {
-                    let li = document.createElement("li");
+        _fetch(`${apiUrl}/openapi`)
+            .then(response => {
+                // #content
+                const ul = document.createElement("ul");
+                for ([key, value] of Object.entries(response.paths)) {
+                    const li = document.createElement("li");
                     li.innerHTML = `<a href="${key}">${key}</a>`;
                     ul.appendChild(li);
-                });
-
+                }
                 document.getElementById('content').appendChild(ul);
 
-                //raw
+                // #raw
                 const raw = JSON.stringify(data, undefined, 4);
                 document.getElementById('raw').innerHTML = raw;
-
-            }
-        }
-
-        url = apiUrl + '/openapi';
-
-        req.open("GET", url, true);
-        req.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
-        req.send();
-
+            });
     }
 
 };
