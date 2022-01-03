@@ -5,6 +5,7 @@ html, body {
     margin: 0;
     padding: 0;
     border: 0;
+    font-family: monospace;
 }
 
 .hidden {
@@ -27,18 +28,14 @@ ul {
     display: flex;
 }
 
-#path li {
-    margin-right: 10px;
-}
-
-#path, #content a {
-    text-decoration: none;
-}
-
 #content {
     padding: 10px;
     background-color: white;
     color: black;
+}
+
+#content a {
+    text-decoration: none;
 }
 
 #raw {
