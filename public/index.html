@@ -1,67 +1,25 @@
 <html>
 
     <head>
-
         <meta charset="utf-8" />
-
-        <script>
-
-            var authUrl = 'https://sitevitals-beta.au.auth0.com/authorize'; // url of 'auth.php' from php-api-auth
-            var clientId = '7FKABiIsVFrGmquJm5k1kf9MKbt1xw2F'; // client id as defined in php-api-auth
-            var audience = 'https://api.sitevitals-beta.com'; // api audience as defined in php-api-auth
-            var apiUrl = 'https://api.halcyon-beta.com'; // api audience as defined in php-api-auth
-
-            window.onload = function () {
-
-                var match = RegExp('[#&]access_token=([^&]*)').exec(window.location.hash);
-                var accessToken = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-
-                if (!accessToken) {
-
-                    document.location = authUrl+'?audience='+audience+'&response_type=token&client_id='+clientId+'&redirect_uri='+document.location.href;
-
-                } else {
-
-                    document.location.hash = '';
-
-                    var req = new XMLHttpRequest();
-
-                    req.onreadystatechange = function () {
-                        if (req.readyState==4) {
-                            // console.log(req.responseText);
-                            // document.getElementById('output').innerHTML = JSON.stringify(JSON.parse(req.responseText), undefined, 4);
-
-                            const openapi = JSON.parse(req.responseText);
-                            const paths = openapi.paths;
-                            console.log(paths);
-                            let ul = document.createElement("ul");
-                            Object.entries(paths).forEach(([key, value]) => {
-                                let li = document.createElement("li");
-                                li.innerHTML = `<a href="${key}">${key}</a>`;
-                                ul.appendChild(li);
-                            });
-
-                            document.getElementById('output').appendChild(ul);
-                        }
-                    }
-
-                    url = apiUrl + '/openapi';
-
-                    req.open("GET", url, true);
-                    req.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
-                    req.send();
-
-                }
-
-            };
-
-        </script>
-
+        <script src="script.js"></script>
+        <link rel="stylesheet" href="style.css">
     </head>
 
     <body>
 
-        <pre id="output"></pre>
+        <ul id="nav">
+            <li><a href="#">Explorer</a></li>
+            <li><a href="#">Raw</a></li>
+        </ul>
+
+        <ul id="path">
+            <li><a href="#">/</a></li>
+        </ul>
+
+        <pre id="explorer"></pre>
+
+        <pre id="raw"></pre>
 
     </body>
 
