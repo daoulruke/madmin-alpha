@@ -9,15 +9,18 @@ let _fetch = null;
 
 // Fetch and display openapi
 let getOpenapi = async () => {
+
     const openapi = await _fetch(`${apiUrl}/openapi`);
 
     // #content
     const ul = document.createElement("ul");
+
     for ([key, value] of Object.entries(openapi.paths)) {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecords('${key}')">${key}</a>`;
+        li.innerHTML = `<a href="${key}" onclick="getRecords('${key}')">${key}</a>`;
         ul.appendChild(li);
     }
+
     document.getElementById('content').innerHTML = ul.outerHTML;
 
     // #raw
@@ -35,20 +38,24 @@ let getOpenapi = async () => {
         document.title,
         `${location.protocol}//${location.host}`
     );
+
 };
 
 // Fetch and display records
 let getRecords = async (url) => {
+
     const records = await _fetch(`${apiUrl}${url}`)
         .then(response => response.records);
 
     // #content
     const ul = document.createElement("ul");
+
     for (record of records) {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecord('${url + `/${record.id}`}')">${record.id} ${record.name}</a>`;
+        li.innerHTML = `<a href="${url}" onclick="getRecord('${url + `/${record.id}`}')">${record.id} ${record.name}</a>`;
         ul.appendChild(li);
     }
+
     document.getElementById('content').innerHTML = ul.outerHTML;
 
     // #raw
@@ -60,7 +67,7 @@ let getRecords = async (url) => {
     if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
     if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
     const li = document.createElement("li");
-    li.innerHTML = `<a href="#" onclick="getRecords('${url}')">/${url.split("/")[2]}</a>`;
+    li.innerHTML = `<a href="${url}" onclick="getRecords('${url}')">/${url.split("/")[2]}</a>`;
     current_path.appendChild(li);
 
     // url bar
@@ -69,19 +76,23 @@ let getRecords = async (url) => {
         document.title,
         `${location.protocol}//${location.host}${url}`
     );
+
 };
 
 // Fetch and display records
 let getRecord = async (url) => {
+
     const record = await _fetch(`${apiUrl}${url}`);
 
     // #content
     const ul = document.createElement("ul");
+
     for ([key, value] of Object.entries(record)) {
         const li = document.createElement("li");
         li.innerHTML = `${key}: ${value}`;
         ul.appendChild(li);
     }
+
     document.getElementById('content').innerHTML = ul.outerHTML;
 
     // #raw
@@ -92,7 +103,7 @@ let getRecord = async (url) => {
     const current_path = document.getElementById("current_path");
     if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
     const li = document.createElement("li");
-    li.innerHTML = `<a href="#" onclick="getRecord('${url}')">/${url.split("/")[3]}</a>`;
+    li.innerHTML = `<a href="${url}" onclick="getRecord('${url}')">/${url.split("/")[3]}</a>`;
     current_path.appendChild(li);
 
     // url bar
@@ -101,6 +112,7 @@ let getRecord = async (url) => {
         document.title,
         `${location.protocol}//${location.host}${url}`
     );
+
 };
 
 window.onload = function () {
@@ -127,6 +139,7 @@ window.onload = function () {
         };
 
         getOpenapi();
+
     }
 
 };
