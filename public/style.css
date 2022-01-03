@@ -16,16 +16,10 @@ ul {
     list-style-type: none;
 }
 
-#nav {
-    display: flex;
-}
-
-#nav li {
-    margin-right: 10px;
-}
-
 #current_path {
     display: flex;
+    background-color: whitesmoke;
+    height: 50px;
 }
 
 #content {
