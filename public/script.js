@@ -2,7 +2,7 @@
 var authUrl = 'https://sitevitals-beta.au.auth0.com/authorize'; // url of 'auth.php' from php-api-auth
 var clientId = '7FKABiIsVFrGmquJm5k1kf9MKbt1xw2F'; // client id as defined in php-api-auth
 var audience = 'https://api.sitevitals-beta.com'; // api audience as defined in php-api-auth
-var apiUrl = 'https://api.halcyon-beta.com'; // api audience as defined in php-api-auth
+var apiUrl = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 
 // Fetch wrapper
 let _fetch = null;
