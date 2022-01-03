@@ -24,7 +24,7 @@ window.onload = function () {
 
                 const data = JSON.parse(req.responseText);
 
-                // explorer
+                // content
                 const paths = data.paths;
                 console.log(paths);
 
@@ -36,7 +36,7 @@ window.onload = function () {
                     ul.appendChild(li);
                 });
 
-                document.getElementById('explorer').appendChild(ul);
+                document.getElementById('content').appendChild(ul);
 
                 //raw
                 const raw = JSON.stringify(data, undefined, 4);
