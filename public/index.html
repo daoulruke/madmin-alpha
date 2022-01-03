@@ -28,8 +28,20 @@
 
                     req.onreadystatechange = function () {
                         if (req.readyState==4) {
-                            console.log(req.responseText);
-                            document.getElementById('output').innerHTML = JSON.stringify(JSON.parse(req.responseText), undefined, 4);
+                            // console.log(req.responseText);
+                            // document.getElementById('output').innerHTML = JSON.stringify(JSON.parse(req.responseText), undefined, 4);
+
+                            const openapi = JSON.parse(req.responseText);
+                            const paths = openapi.paths;
+                            console.log(paths);
+                            let ul = document.createElement("ul");
+                            Object.entries(paths).forEach(([key, value]) => {
+                                let li = document.createElement("li");
+                                li.innerHTML = `<a href="${key}">${key}</a>`;
+                                ul.appendChild(li);
+                            });
+
+                            document.getElementById('output').appendChild(ul);
                         }
                     }
 
