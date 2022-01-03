@@ -17,7 +17,7 @@ let getOpenapi = async () => {
 
     for ([key, value] of Object.entries(openapi.paths)) {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="${key}" onclick="getRecords('${key}')">${key}</a>`;
+        li.innerHTML = `<a href="#" onclick="getRecords('${key}')">${key}</a>`;
         ul.appendChild(li);
     }
 
@@ -52,7 +52,7 @@ let getRecords = async (url) => {
 
     for (record of records) {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="${url}" onclick="getRecord('${url + `/${record.id}`}')">${record.id} ${record.name}</a>`;
+        li.innerHTML = `<a href="#" onclick="getRecord('${url + `/${record.id}`}')">${record.id} ${record.name}</a>`;
         ul.appendChild(li);
     }
 
@@ -67,7 +67,7 @@ let getRecords = async (url) => {
     if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
     if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
     const li = document.createElement("li");
-    li.innerHTML = `<a href="${url}" onclick="getRecords('${url}')">/${url.split("/")[2]}</a>`;
+    li.innerHTML = `<a href="#" onclick="getRecords('${url}')">/${url.split("/")[2]}</a>`;
     current_path.appendChild(li);
 
     // url bar
@@ -103,7 +103,7 @@ let getRecord = async (url) => {
     const current_path = document.getElementById("current_path");
     if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
     const li = document.createElement("li");
-    li.innerHTML = `<a href="${url}" onclick="getRecord('${url}')">/${url.split("/")[3]}</a>`;
+    li.innerHTML = `<a href="#" onclick="getRecord('${url}')">/${url.split("/")[3]}</a>`;
     current_path.appendChild(li);
 
     // url bar
