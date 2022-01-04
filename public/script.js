@@ -183,12 +183,10 @@ let createRecord = async (url) => {
 
 
         // #raw
-        var raw = JSON.stringify(openapi['components']['schemas']['create-'+tableName]['properties'], undefined, 4);
+        var raw = openapi['components']['schemas']['create-'+tableName]['properties'];
         document.getElementById('raw').innerHTML = raw;
 
-        for (const [key, value] of Object.entries(raw)) {
-          console.log(`${key}`);
-        }
+        
 
     document.getElementById('content').innerHTML = '<form>';
 
