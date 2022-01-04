@@ -196,11 +196,14 @@ console.log(fields);
     // #content
     const ul = document.createElement("ul");
 
-    for ([key] of Object.entries(fields)) {
+    fields.forEach(listFields);
+
+    function listFields(field) {
+
         const li = document.createElement("li");
         if(key != 'id') {
 
-                li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
+                li.innerHTML = `${field} <input type="text" name="${field}" value="" />`;
 
 
         }
