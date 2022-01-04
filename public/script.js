@@ -176,18 +176,18 @@ let getRecord = async (url) => {
 let createRecord = async (url) => {
 
 
-alert(window.location.pathname);
+//alert(window.location.pathname);
         // #raw
         const raw = JSON.stringify(openapi['paths'][window.location.pathname], undefined, 4);
         document.getElementById('raw').innerHTML = raw;
 
 
-
+var urlx = '/components/requestBodies/create-firm';
     document.getElementById('content').innerHTML = '<form>';
 
-    const record = await _fetch(`${apiUrl}${url}`)
+    const record = await _fetch(`${apiUrl}${urlx}`)
         .then(response => response.json());
-
+console.log(record);
     // #content
     const ul = document.createElement("ul");
 
