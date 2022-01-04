@@ -7,20 +7,21 @@ var apiUrl = 'https://api.halcyon-beta.com'; // api audience as defined in php-a
 // Fetch wrapper
 let _fetch = null;
 
-// Fetch and display openapi
+// Fetch openapi
+let openapi = null;
 let getOpenapi = async () => {
-
-    const openapi = await _fetch(`${apiUrl}/openapi`);
-
+    openapi = await _fetch(`${apiUrl}/openapi`);
+    listPaths();
+};
+// Display openapi
+let listPaths = () => {
     // #content
     const ul = document.createElement("ul");
-
     for ([key, value] of Object.entries(openapi.paths)) {
         const li = document.createElement("li");
         li.innerHTML = `<a href="#" onclick="getRecords('${key}')">${key}</a>`;
         ul.appendChild(li);
     }
-
     document.getElementById('content').innerHTML = ul.outerHTML;
 
     // #raw
@@ -38,7 +39,6 @@ let getOpenapi = async () => {
         document.title,
         `${location.protocol}//${location.host}`
     );
-
 };
 
 // Fetch and display records
@@ -81,23 +81,36 @@ let getRecords = async (url) => {
 
 // Fetch and display records
 let getRecord = async (url) => {
-
     const record = await _fetch(`${apiUrl}${url}`);
 
-    // #content
+    // START - #content
     const ul = document.createElement("ul");
-
     for ([key, value] of Object.entries(record)) {
         const li = document.createElement("li");
         li.innerHTML = `${key}: ${value}`;
         ul.appendChild(li);
     }
-
     var li = document.createElement("li");
     li.innerHTML = `<input type="button" value="EDIT" onclick="editRecord('${url}')" />`;
     ul.appendChild(li);
-
+    // Related links
+    const referenced = openapi.components.schemas[`read-${url.split("/")[2]}`].properties.id["x-referenced"];
+    const relatedTables = referenced.reduce((acc, val) => {
+        const x_y = val.split(".")[0];
+        const x = x_y.split("_")[0];
+        if (!acc.includes(x)) acc.push(x);
+        return acc;
+    }, []);
+    var li = document.createElement("li");
+    li.innerHTML = "<br /><b>RELATED LINKS</b>";
+    ul.appendChild(li);
+    for (relatedTable of relatedTables) {
+        var li = document.createElement("li");
+        li.innerHTML = `<a href="#">${`${url}/${relatedTable}`}</a>`;
+        ul.appendChild(li);
+    }
     document.getElementById('content').innerHTML = ul.outerHTML;
+    // END - #content
 
     // #raw
     const raw = JSON.stringify(record, undefined, 4);
