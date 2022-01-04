@@ -190,13 +190,13 @@ let createRecord = async (url) => {
 
     document.getElementById('content').innerHTML = '<form>';
 
-    const fields = raw;
+    var fields = Object.keys(raw);
 
 console.log(fields);
     // #content
     const ul = document.createElement("ul");
 
-    for (const [key, value] of Object.entries(raw)) {
+    fields.forEach(field => { 
         const li = document.createElement("li");
         if(key != 'id') {
             li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
