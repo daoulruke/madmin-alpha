@@ -196,19 +196,18 @@ console.log(fields);
     // #content
     const ul = document.createElement("ul");
 
-    fields.forEach(listFields);
-
-    function listFields(field) {
-
+    for (const [key, value] of Object.entries(fields)) {
         const li = document.createElement("li");
         if(key != 'id') {
 
-                li.innerHTML = `${field} <input type="text" name="${field}" value="" />`;
+                li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
 
 
         }
         ul.appendChild(li);
     }
+
+
 
     var li = document.createElement("li");
     li.innerHTML = `<input type="button" value="SUBMIT" onclick="submitForm('create_form')" />`;
