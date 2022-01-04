@@ -252,6 +252,11 @@ let submitForm = async (form_id) => {
                     input.parentElement.appendChild(span);
                 }
             }
+
+            if (responseError.code == 9999) {
+                const validationErrors = responseError.message || {};
+                console.log(validationErrors);
+            }
         }
     } catch (err) {
         throw err;
