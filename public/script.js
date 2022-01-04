@@ -176,9 +176,14 @@ let getRecord = async (url) => {
 let createRecord = async (url) => {
 
 
-//alert(window.location.pathname);
+
+    // For join records
+
+        let tableName = url.replace("/records/", "");
+
+
         // #raw
-        const raw = JSON.stringify(openapi['paths'][window.location.pathname], undefined, 4);
+        const raw = JSON.stringify(openapi['schemas']['create-'+tableName], undefined, 4);
         document.getElementById('raw').innerHTML = raw;
 
 
