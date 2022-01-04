@@ -183,7 +183,7 @@ let createRecord = async (url) => {
 
 
         // #raw
-        const raw = JSON.stringify(openapi['schemas']['create-'+tableName], undefined, 4);
+        const raw = JSON.stringify(openapi['components']['schemas']['create-'+tableName], undefined, 4);
         document.getElementById('raw').innerHTML = raw;
 
 
