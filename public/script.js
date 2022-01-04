@@ -76,7 +76,7 @@ let listPaths = () => {
 // Fetch and display records
 let getRecords = async (url) => {
     const urlSegments = url.split("/");
-    
+
     let fetchUrl = url;
     // For join records
     if (urlSegments.length > 4) {
@@ -182,7 +182,12 @@ let editRecord = async (url) => {
         if(key == 'id') {
             li.innerHTML = `${key}: ${value}`;
         } else {
-            li.innerHTML = `<input type="text" name="${key}" value="${value}" />`;
+            if(value === null) {
+                li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
+            } else {
+                li.innerHTML = `${key} <input type="text" name="${key}" value="${value}" />`;
+            }
+
         }
         ul.appendChild(li);
     }
@@ -213,16 +218,16 @@ let submitForm = async (form_id) => {
         // formData.forEach((value, key) => (data[key] = value));
         // Log the data.
         // console.log(data);
-    
+
         var json = JSON.stringify(Object.fromEntries(formData));
-    
+
         //  var accessToken = localStorage.getItem('accessToken');
-    
+
         //   var request = new XMLHttpRequest();
         // request.open("PUT", url + window.location.pathname);
         // request.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
         // request.send(json);
-    
+
         const response = await _fetch(url + window.location.pathname, {
             method: "PUT",
             body: json
