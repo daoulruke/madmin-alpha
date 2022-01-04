@@ -187,16 +187,16 @@ let createRecord = async (url) => {
         document.getElementById('raw').innerHTML = raw;
 
 
-var urlx = '/components/requestBodies/create-firm';
+
     document.getElementById('content').innerHTML = '<form>';
 
-    const record = await _fetch(`${apiUrl}${urlx}`)
-        .then(response => response.json());
-console.log(record);
+    const fields = raw['properties'];
+
+console.log(fields);
     // #content
     const ul = document.createElement("ul");
 
-    for ([key, value] of Object.entries(record)) {
+    for ([key] of Object.entries(fields)) {
         const li = document.createElement("li");
         if(key != 'id') {
 
