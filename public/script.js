@@ -178,10 +178,10 @@ let createRecord = async (url) => {
 
 
         // #raw
-        const raw = JSON.stringify(openapi, undefined, 4);
+        const raw = JSON.stringify(openapi['paths'], undefined, 4);
         document.getElementById('raw').innerHTML = raw;
 
-    
+
 
     document.getElementById('content').innerHTML = '<form>';
 
