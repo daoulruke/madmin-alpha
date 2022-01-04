@@ -304,16 +304,15 @@ let submitForm = async (form_id) => {
             console.log(responseJson);
 
             if(form_id == 'create_form') {
-                getRecord(window.location.pathname + responseJson);
-
+                var returnPath = window.location.pathname + '/' + responseJson;
             }
 
             if(form_id == 'edit_form') {
-                getRecord(window.location.pathname);
+                var returnPath = window.location.pathname;
             }
 
             // Go back to read view
-
+            getRecord(returnPath);
 
         } else {
 
