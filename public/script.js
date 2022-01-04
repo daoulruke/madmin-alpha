@@ -300,11 +300,11 @@ let submitForm = async (form_id) => {
 
         if (response.ok) {
 
-            //const responseCheck = await response.json();
-            //console.log(responseCheck);
+            const responseJson = await response.json();
+            console.log(responseJson);
 
             if(form_id == 'create_form') {
-                getRecord(window.location.pathname);
+                getRecord(window.location.pathname + responseJson);
 
             }
 
@@ -381,7 +381,7 @@ window.onload = function () {
                 // }
                 // return json;
 
-                return response.json();
+                return response;
 
             } catch (err) {
                 throw err;
