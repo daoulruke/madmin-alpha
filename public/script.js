@@ -41,7 +41,8 @@ let updatePath = (url) => {
 // Fetch openapi
 let openapi = null;
 let getOpenapi = async () => {
-    openapi = await _fetch(`${apiUrl}/openapi`);
+    openapi = await _fetch(`${apiUrl}/openapi`)
+        .then(response => response.json());
     listPaths();
 };
 // Display openapi
@@ -81,7 +82,8 @@ let getRecords = async (url) => {
     if (urlSegments.length > 4) {
         fetchUrl = url.replace("/records", "");
     }
-    const records = await _fetch(`${apiUrl}${fetchUrl}`)
+    const records = await _fetch(`${apiUrl}${fetchUrl}?filter=name,cs,test`)
+        .then(response => response.json())
         .then(response => response.records);
 
     // #content
@@ -115,7 +117,8 @@ let getRecords = async (url) => {
 
 // Fetch and display records
 let getRecord = async (url) => {
-    const record = await _fetch(`${apiUrl}${url}`);
+    const record = await _fetch(`${apiUrl}${url}`)
+        .then(response => response.json());
 
     // START - #content
     const ul = document.createElement("ul");
@@ -168,7 +171,8 @@ let editRecord = async (url) => {
 
     document.getElementById('content').innerHTML = '<form>';
 
-    const record = await _fetch(`${apiUrl}${url}`);
+    const record = await _fetch(`${apiUrl}${url}`)
+        .then(response => response.json());
 
     // #content
     const ul = document.createElement("ul");
@@ -219,13 +223,30 @@ let submitForm = async (form_id) => {
         // request.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
         // request.send(json);
     
-        await _fetch(url + window.location.pathname, {
+        const response = await _fetch(url + window.location.pathname, {
             method: "PUT",
             body: json
         });
 
-        // Go back to read view
-        getRecord(window.location.pathname);
+        if (response.ok) {
+            // Go back to read view
+            getRecord(window.location.pathname);
+        } else {
+            // Display errors
+            const responseError = await response.json();
+            // code 1013 === validation error
+            if (responseError.code == 1013) {
+                const validationErrors = responseError.details || {};
+                console.log(validationErrors);
+                for ([key, value] of Object.entries(validationErrors)) {
+                    const input = document.querySelector(`[name='${key}']`);
+                    const span = document.createElement("span");
+                    span.style.color = "red";
+                    span.textContent  = value;
+                    input.parentElement.appendChild(span);
+                }
+            }
+        }
     } catch (err) {
         throw err;
     }
@@ -255,12 +276,14 @@ window.onload = function () {
                     },
                     ...options
                 });
-                const json = response.json();
-                // Handle error
-                if (!response.ok) {
-                    throw new Error(json.message || "");
-                }
-                return json;
+                // const json = response.json();
+                // // Handle error
+                // if (!response.ok) {
+                //     throw new Error(json.message || "");
+                // }
+                // return json;
+
+                return response;
             } catch (err) {
                 throw err;
             }
