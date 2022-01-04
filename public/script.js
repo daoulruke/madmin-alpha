@@ -176,9 +176,9 @@ let getRecord = async (url) => {
 let createRecord = async (url) => {
 
 
-alert(current_path);
+alert(window.location.pathname);
         // #raw
-        const raw = JSON.stringify(openapi['paths'][current_path], undefined, 4);
+        const raw = JSON.stringify(openapi['paths'][window.location.pathname], undefined, 4);
         document.getElementById('raw').innerHTML = raw;
 
 
