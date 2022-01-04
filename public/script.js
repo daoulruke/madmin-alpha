@@ -197,27 +197,31 @@ let editRecord = async (url) => {
 
 function submitForm(form_id) {
 
-  // Prevent the form from submitting.
-  event.preventDefault();
+    // Prevent the form from submitting.
+    event.preventDefault();
 
-  // Set url for submission and collect data.
-  const url = apiUrl;
-  const formData = new FormData(document.getElementById(form_id));
-  // Build the data object.
- // const data = {};
- // formData.forEach((value, key) => (data[key] = value));
-  // Log the data.
- // console.log(data);
+    // Set url for submission and collect data.
+    const url = apiUrl;
+    const formData = new FormData(document.getElementById(form_id));
+    // Build the data object.
+    // const data = {};
+    // formData.forEach((value, key) => (data[key] = value));
+    // Log the data.
+    // console.log(data);
 
-var json = JSON.stringify(Object.fromEntries(formData));
+    var json = JSON.stringify(Object.fromEntries(formData));
 
- var accessToken = localStorage.getItem('accessToken');
+    //  var accessToken = localStorage.getItem('accessToken');
 
-  var request = new XMLHttpRequest();
-request.open("PUT", url + window.location.pathname);
-request.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
-request.send(json);
+    //   var request = new XMLHttpRequest();
+    // request.open("PUT", url + window.location.pathname);
+    // request.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
+    // request.send(json);
 
+    _fetch(url + window.location.pathname, {
+        method: "PUT",
+        body: json
+    });
 }
 
 window.onload = function () {
