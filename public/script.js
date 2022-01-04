@@ -363,7 +363,8 @@ window.onload = function () {
 
                 const response = await fetch(url, {
                     headers: {
-                        "X-Authorization": `Bearer ${accessToken}`
+                        'Content-Type': `application/json`,
+                        'X-Authorization': `Bearer ${accessToken}`
                     },
                     ...options
                 });
