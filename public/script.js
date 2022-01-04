@@ -7,6 +7,37 @@ var apiUrl = 'https://api.halcyon-beta.com'; // api audience as defined in php-a
 // Fetch wrapper
 let _fetch = null;
 
+// Update #current_path
+let updatePath = (url) => {
+    const urlSegments = url.split("/");
+    const current_path = document.getElementById("current_path");
+
+    if (current_path.childNodes[4]) current_path.removeChild(current_path.childNodes[4]);
+    if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
+    if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
+
+    const subject = urlSegments[2];
+    if (subject) {
+        var li = document.createElement("li");
+        li.innerHTML = `<a href="#" onclick="getRecords('${`/records/${subject}`}')">/${subject}</a>`;
+        current_path.appendChild(li);
+    }
+
+    const subjectId = urlSegments[3];
+    if (subjectId) {
+        var li = document.createElement("li");
+        li.innerHTML = `<a href="#" onclick="getRecord('${`/records/${subject}/${subjectId}`}')">/${subjectId}</a>`;
+        current_path.appendChild(li);
+    }
+
+    const join = urlSegments[4];
+    if (join) {
+        var li = document.createElement("li");
+        li.innerHTML = `<a href="#" onclick="getRecords('${`/records/${subject}/${subjectId}/${join}`}')">/${join}</a>`;
+        current_path.appendChild(li);
+    }
+};
+
 // Fetch openapi
 let openapi = null;
 let getOpenapi = async () => {
@@ -43,19 +74,28 @@ let listPaths = () => {
 
 // Fetch and display records
 let getRecords = async (url) => {
-
-    const records = await _fetch(`${apiUrl}${url}`)
+    const urlSegments = url.split("/");
+    
+    let fetchUrl = url;
+    // For join records
+    if (urlSegments.length > 4) {
+        fetchUrl = url.replace("/records", "");
+    }
+    const records = await _fetch(`${apiUrl}${fetchUrl}`)
         .then(response => response.records);
 
     // #content
     const ul = document.createElement("ul");
-
     for (record of records) {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecord('${url + `/${record.id}`}')">${record.id} ${record.name}</a>`;
+        let recordUrl = `${url}/${record.id}`;
+        // For join records
+        if (urlSegments.length > 4) {
+            recordUrl = `/records/${urlSegments[4]}/${record.id}`;
+        }
+        li.innerHTML = `<a href="#" onclick="getRecord('${recordUrl}')">${record.id} ${record.name}</a>`;
         ul.appendChild(li);
     }
-
     document.getElementById('content').innerHTML = ul.outerHTML;
 
     // #raw
@@ -63,12 +103,7 @@ let getRecords = async (url) => {
     document.getElementById('raw').innerHTML = raw;
 
     // #current_path
-    const current_path = document.getElementById("current_path");
-    if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
-    if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
-    var li = document.createElement("li");
-    li.innerHTML = `<a href="#" onclick="getRecords('${url}')">/${url.split("/")[2]}</a>`;
-    current_path.appendChild(li);
+    updatePath(url);
 
     // url bar
     window.history.replaceState(
@@ -76,7 +111,6 @@ let getRecords = async (url) => {
         document.title,
         `${location.protocol}//${location.host}${url}`
     );
-
 };
 
 // Fetch and display records
@@ -94,19 +128,21 @@ let getRecord = async (url) => {
     li.innerHTML = `<input type="button" value="EDIT" onclick="editRecord('${url}')" />`;
     ul.appendChild(li);
     // Related links
-    const referenced = openapi.components.schemas[`read-${url.split("/")[2]}`].properties.id["x-referenced"];
-    const relatedTables = referenced.reduce((acc, val) => {
-        const x_y = val.split(".")[0];
-        const x = x_y.split("_")[0];
-        if (!acc.includes(x)) acc.push(x);
-        return acc;
-    }, []);
     var li = document.createElement("li");
     li.innerHTML = "<br /><b>RELATED LINKS</b>";
     ul.appendChild(li);
-    for (relatedTable of relatedTables) {
+    const referenced = openapi.components.schemas[`read-${url.split("/")[2]}`].properties.id["x-referenced"];
+    const joins = referenced.reduce((acc, val) => {
+        const x_y = val.split(".")[0];
+        const x = x_y.split("_")[0];
+        const y = x_y.split("_")[1];
+        console.log(x, y, url.split("/")[2]);
+        if (x == url.split("/")[2] && !acc.includes(y)) acc.push(y);
+        return acc;
+    }, []);
+    for (join of joins) {
         var li = document.createElement("li");
-        li.innerHTML = `<a href="#">${`${url}/${relatedTable}`}</a>`;
+        li.innerHTML = `<a href="#" onclick="getRecords('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
         ul.appendChild(li);
     }
     document.getElementById('content').innerHTML = ul.outerHTML;
@@ -117,11 +153,7 @@ let getRecord = async (url) => {
     document.getElementById('raw').innerHTML = raw;
 
     // #current_path
-    const current_path = document.getElementById("current_path");
-    if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
-    var li = document.createElement("li");
-    li.innerHTML = `<a href="#" onclick="getRecord('${url}')">/${url.split("/")[3]}</a>`;
-    current_path.appendChild(li);
+    updatePath(url);
 
     // url bar
     window.history.replaceState(
@@ -129,9 +161,7 @@ let getRecord = async (url) => {
         document.title,
         `${location.protocol}//${location.host}${url}`
     );
-
 };
-
 
 // Fetch and display records
 let editRecord = async (url) => {
