@@ -196,13 +196,13 @@ console.log(fields);
     // #content
     const ul = document.createElement("ul");
 
-    fields.forEach(field => { 
+    fields.forEach(field => {
         const li = document.createElement("li");
         if(key != 'id') {
             li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
         }
         ul.appendChild(li);
-    }
+    });
 
 
 
