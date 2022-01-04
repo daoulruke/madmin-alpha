@@ -196,7 +196,7 @@ console.log(fields);
     // #content
     const ul = document.createElement("ul");
 
-    for (const [key, value] of Object.entries(object1)) {
+    for (const [key, value] of Object.entries(fields)) {
         const li = document.createElement("li");
         if(key != 'id') {
             li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
