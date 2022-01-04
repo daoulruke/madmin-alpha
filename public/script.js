@@ -175,48 +175,7 @@ let getRecord = async (url) => {
 // Fetch and display records
 let createRecord = async (url) => {
 
-    const object1 = {
-        "id": {
-            "type": "integer",
-            "format": "int32",
-            "pattern": "^-?[0-9]{1,10}$",
-            "x-primary-key": true,
-            "x-referenced": [
-                "model_firm.firm_id",
-                "person.admin_firm_id",
-                "person.active_firm_id",
-                "persons.admin_firm_id",
-                "persons.active_firm_id",
-                "persons_firms.firm_id"
-            ]
-        },
-        "name": {
-            "type": "string",
-            "maxLength": 255,
-            "pattern": "^.{0,255}$"
-        },
-        "code": {
-            "type": "string",
-            "maxLength": 255,
-            "nullable": true,
-            "pattern": "^.{0,255}$"
-        },
-        "data": {
-            "type": "string",
-            "format": "large-string",
-            "nullable": true,
-            "pattern": "^.*$"
-        },
-        "status": {
-            "type": "string",
-            "maxLength": 255,
-            "pattern": "^.{0,255}$"
-        }
-    };
 
-    for (const [key, value] of Object.entries(object1)) {
-      console.log(`${key}`);
-    }
 
     // For join records
 
@@ -227,7 +186,9 @@ let createRecord = async (url) => {
         var raw = JSON.stringify(openapi['components']['schemas']['create-'+tableName]['properties'], undefined, 4);
         document.getElementById('raw').innerHTML = raw;
 
-
+        for (const [key, value] of Object.entries(raw)) {
+          console.log(`${key}`);
+        }
 
     document.getElementById('content').innerHTML = '<form>';
 
