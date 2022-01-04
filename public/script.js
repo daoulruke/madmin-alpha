@@ -196,16 +196,15 @@ console.log(fields);
     // #content
     const ul = document.createElement("ul");
 
-    for (const [key, value] of Object.entries(fields)) {
+    for (const [key, value] of Object.entries(object1)) {
         const li = document.createElement("li");
         if(key != 'id') {
-
-                li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
-
-
+            li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
         }
         ul.appendChild(li);
     }
+
+
 
 
 
