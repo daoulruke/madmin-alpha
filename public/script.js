@@ -99,12 +99,12 @@ let getRecords = async (url) => {
         li.innerHTML = `<a href="#" onclick="getRecord('${recordUrl}')">${record.id} ${record.name}</a>`;
         ul.appendChild(li);
     }
-    document.getElementById('content').innerHTML = ul.outerHTML;
+
 
     var li = document.createElement("li");
     li.innerHTML = `<input type="button" value="CREATE" onclick="createRecord('${url}')" />`;
     ul.appendChild(li);
-
+document.getElementById('content').innerHTML = ul.outerHTML;
     // #raw
     const raw = JSON.stringify(records, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
