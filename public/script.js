@@ -82,7 +82,8 @@ let getRecords = async (url) => {
     if (urlSegments.length > 4) {
         fetchUrl = url.replace("/records", "");
     }
-    const records = await _fetch(`${apiUrl}${fetchUrl}?filter=name,cs,test`)
+    //const records = await _fetch(`${apiUrl}${fetchUrl}?filter=name,cs,test`)
+    const records = await _fetch(`${apiUrl}${fetchUrl}`)
         .then(response => response.json())
         .then(response => response.records);
 
