@@ -287,9 +287,6 @@ let submitForm = async (form_id) => {
         if(form_id == 'create_form') {
             var response = await _fetch(url + window.location.pathname, {
                 method: "POST",
-                headers: {
-                  'Content-Type': 'application/json'
-                },
                 body: json
             });
         }
@@ -297,9 +294,6 @@ let submitForm = async (form_id) => {
         if(form_id == 'edit_form') {
             var response = await _fetch(url + window.location.pathname, {
                 method: "PUT",
-                headers: {
-                  'Content-Type': 'application/json'
-                },
                 body: json
             });
         }
