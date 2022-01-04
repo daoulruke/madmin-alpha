@@ -190,7 +190,7 @@ let createRecord = async (url) => {
 
 
 
-    
+
 
 
 
@@ -285,7 +285,7 @@ let submitForm = async (form_id) => {
         // request.send(json);
 
         if(form_id == 'create_form') {
-                const response = await _fetch(url + window.location.pathname, {
+                var response = await _fetch(url + window.location.pathname, {
                     method: "POST",
                     body: json
                 });
@@ -293,7 +293,7 @@ let submitForm = async (form_id) => {
             }
 
 if(form_id == 'edit_form') {
-        const response = await _fetch(url + window.location.pathname, {
+        var response = await _fetch(url + window.location.pathname, {
             method: "PUT",
             body: json
         });
