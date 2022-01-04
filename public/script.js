@@ -175,6 +175,14 @@ let getRecord = async (url) => {
 // Fetch and display records
 let createRecord = async (url) => {
 
+
+
+        // #raw
+        const raw = JSON.stringify(openapi, undefined, 4);
+        document.getElementById('raw').innerHTML = raw;
+
+    
+
     document.getElementById('content').innerHTML = '<form>';
 
     const record = await _fetch(`${apiUrl}${url}`)
