@@ -101,6 +101,10 @@ let getRecords = async (url) => {
     }
     document.getElementById('content').innerHTML = ul.outerHTML;
 
+    var li = document.createElement("li");
+    li.innerHTML = `<input type="button" value="CREATE" onclick="createRecord('${url}')" />`;
+    ul.appendChild(li);
+
     // #raw
     const raw = JSON.stringify(records, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
@@ -167,6 +171,41 @@ let getRecord = async (url) => {
     );
 };
 
+
+// Fetch and display records
+let createRecord = async (url) => {
+
+    document.getElementById('content').innerHTML = '<form>';
+
+    const record = await _fetch(`${apiUrl}${url}`)
+        .then(response => response.json());
+
+    // #content
+    const ul = document.createElement("ul");
+
+    for ([key, value] of Object.entries(record)) {
+        const li = document.createElement("li");
+        if(key != 'id') {
+
+                li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
+
+
+        }
+        ul.appendChild(li);
+    }
+
+    var li = document.createElement("li");
+    li.innerHTML = `<input type="button" value="SUBMIT" onclick="submitForm('create_form')" />`;
+    ul.appendChild(li);
+
+    const form = document.createElement("form");
+    form.setAttribute('id', 'create_form');
+    form.appendChild(ul);
+
+    document.getElementById('content').innerHTML = form.outerHTML;
+
+};
+
 // Fetch and display records
 let editRecord = async (url) => {
 
@@ -229,10 +268,20 @@ let submitForm = async (form_id) => {
         // request.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
         // request.send(json);
 
+        if(form_id == 'create_form') {
+                const response = await _fetch(url + window.location.pathname, {
+                    method: "POST",
+                    body: json
+                });
+                console.log(response);
+            }
+
+if(form_id == 'edit_form') {
         const response = await _fetch(url + window.location.pathname, {
             method: "PUT",
             body: json
         });
+    }
 
         if (response.ok) {
             // Go back to read view
