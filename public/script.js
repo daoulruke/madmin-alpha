@@ -277,34 +277,43 @@ let submitForm = async (form_id) => {
 
         var json = JSON.stringify(Object.fromEntries(formData));
 
-        //  var accessToken = localStorage.getItem('accessToken');
+        // var accessToken = localStorage.getItem('accessToken');
 
-        //   var request = new XMLHttpRequest();
+        // var request = new XMLHttpRequest();
         // request.open("PUT", url + window.location.pathname);
         // request.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
         // request.send(json);
 
         if(form_id == 'create_form') {
-                var response = await _fetch(url + window.location.pathname, {
-                    method: "POST",
-                    body: json
-                });
-                console.log(response);
-            }
+            var response = await _fetch(url + window.location.pathname, {
+                method: "POST",
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: json
+            });
+        }
 
-if(form_id == 'edit_form') {
-        var response = await _fetch(url + window.location.pathname, {
-            method: "PUT",
-            body: json
-        });
-    }
+        if(form_id == 'edit_form') {
+            var response = await _fetch(url + window.location.pathname, {
+                method: "PUT",
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: json
+            });
+        }
 
         if (response.ok) {
+
             // Go back to read view
             getRecord(window.location.pathname);
+
         } else {
+
             // Display errors
             const responseError = await response.json();
+
             // code 1013 === validation error
             if (responseError.code == 1013) {
                 const validationErrors = responseError.details || {};
@@ -318,13 +327,18 @@ if(form_id == 'edit_form') {
                 }
             }
 
+            // code 9999 === unknown error
             if (responseError.code == 9999) {
                 const validationErrors = responseError.message || {};
                 console.log(validationErrors);
             }
+
         }
+
     } catch (err) {
+
         throw err;
+
     }
 }
 
@@ -346,6 +360,7 @@ window.onload = function () {
         // Fetch wrapper with default options
         _fetch = async (url, options = {}) => {
             try {
+
                 const response = await fetch(url, {
                     headers: {
                         "X-Authorization": `Bearer ${accessToken}`
@@ -359,7 +374,9 @@ window.onload = function () {
                 // }
                 // return json;
 
+                console.log(response);
                 return response;
+
             } catch (err) {
                 throw err;
             }
