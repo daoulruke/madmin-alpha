@@ -190,7 +190,7 @@ let createRecord = async (url) => {
 
 
 
-    document.getElementById('content').innerHTML = '<form>';
+    
 
 
 
@@ -225,7 +225,7 @@ console.log(fields);
 // Fetch and display records
 let editRecord = async (url) => {
 
-    document.getElementById('content').innerHTML = '<form>';
+
 
     const record = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json());
