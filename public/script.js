@@ -300,6 +300,9 @@ let submitForm = async (form_id) => {
 
         if (response.ok) {
 
+            const responseCheck = await response.json();
+            console.log(responseCheck);
+
             // Go back to read view
             getRecord(window.location.pathname);
 
