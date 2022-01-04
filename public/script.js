@@ -300,11 +300,20 @@ let submitForm = async (form_id) => {
 
         if (response.ok) {
 
-            const responseCheck = await response.json();
-            console.log(responseCheck);
+            //const responseCheck = await response.json();
+            //console.log(responseCheck);
+
+            if(form_id == 'create_form') {
+                getRecord(window.location.pathname);
+
+            }
+
+            if(form_id == 'edit_form') {
+                getRecord(window.location.pathname);
+            }
 
             // Go back to read view
-            getRecord(window.location.pathname);
+
 
         } else {
 
@@ -372,8 +381,7 @@ window.onload = function () {
                 // }
                 // return json;
 
-                console.log(response);
-                return response;
+                return response.json();
 
             } catch (err) {
                 throw err;
