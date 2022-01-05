@@ -144,8 +144,8 @@ let getRecord = async (url) => {
         const x_y = val.split(".")[0];
         const x = x_y.split("_")[0];
         const y = x_y.split("_")[1];
-        console.log(x, y, url.split("/")[2]);
-        if (x == url.split("/")[2] && !acc.includes(y)) acc.push(y);
+        // console.log(x, y, url.split("/")[2]);
+        if (y && x == url.split("/")[2] && !acc.includes(y)) acc.push(y);
         return acc;
     }, []);
     for (join of joins) {
@@ -380,7 +380,6 @@ window.onload = function () {
 
                 const response = await fetch(url, {
                     headers: {
-                        'Content-Type': `application/json`,
                         'X-Authorization': `Bearer ${accessToken}`
                     },
                     ...options
