@@ -316,6 +316,10 @@ let submitForm = async (form_id) => {
 
         } else {
 
+            // Remove previous error msgs
+            document.querySelectorAll(".error_msg")
+                .forEach(el => el.remove());
+
             // Display errors
             const responseError = await response.json();
 
@@ -326,6 +330,7 @@ let submitForm = async (form_id) => {
                 for ([key, value] of Object.entries(validationErrors)) {
                     const input = document.querySelector(`[name='${key}']`);
                     const span = document.createElement("span");
+                    span.classList.add("error_msg");
                     span.style.color = "red";
                     span.textContent  = value;
                     input.parentElement.appendChild(span);
@@ -336,6 +341,13 @@ let submitForm = async (form_id) => {
             if (responseError.code == 9999) {
                 const validationErrors = responseError.message || {};
                 console.log(validationErrors);
+
+                const form = document.querySelector(`#${form_id}`);
+                const span = document.createElement("span");
+                span.classList.add("error_msg");
+                span.style.color = "red";
+                span.textContent  = responseError.message;
+                form.parentElement.prepend(span);
             }
 
         }
