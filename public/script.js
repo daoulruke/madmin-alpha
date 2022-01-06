@@ -208,7 +208,7 @@ let createRecord = async (url) => {
 
     fields.forEach(field => {
         const li = document.createElement("li");
-        if(field != 'id') {
+        if(field != 'id' && field != 'created_by') {
             li.innerHTML = `${field} <input type="text" name="${field}" value="" />`;
         }
         ul.appendChild(li);
@@ -250,7 +250,7 @@ let editRecord = async (url) => {
         input.setAttribute('name', key);
         input.setAttribute('type', 'text');
 
-        if(key == 'id') {
+        if(key == 'id' || key == 'created_by') {
             input.setAttribute('readonly', true);
         }
 
@@ -375,7 +375,7 @@ let submitForm = async (form_id) => {
         throw err;
 
     }
-    
+
 }
 
 window.onload = function () {
