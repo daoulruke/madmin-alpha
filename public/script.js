@@ -237,6 +237,7 @@ let editRecord = async (url) => {
 
         const label = document.createElement("label");
         label.setAttribute('for', key);
+        label.innerHTML = key;
         li.appendChild(label);
 
         const input = document.createElement("input");
