@@ -225,8 +225,6 @@ console.log(fields);
 // Fetch and display records
 let editRecord = async (url) => {
 
-
-
     const record = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json());
 
@@ -234,18 +232,32 @@ let editRecord = async (url) => {
     const ul = document.createElement("ul");
 
     for ([key, value] of Object.entries(record)) {
-        const li = document.createElement("li");
-        if(key == 'id') {
-            li.innerHTML = `${key}: ${value}`;
-        } else {
-            if(value === null) {
-                li.innerHTML = `${key} <input type="text" name="${key}" value="" />`;
-            } else {
-                li.innerHTML = `${key} <input type="text" name="${key}" value="${value}" />`;
-            }
 
+        const li = document.createElement("li");
+
+        const label = document.createElement("label");
+        label.setAttribute('for', key);
+        li.appendChild(label);
+
+        const input = document.createElement("input");
+
+        input.setAttribute('id', key);
+        input.setAttribute('name', key);
+        input.setAttribute('type', 'text');
+
+        if(key == 'id') {
+            input.setAttribute('readonly', true);
         }
+
+        if(value === null) {
+            input.setAttribute('value', null);
+        } else {
+            input.setAttribute('value', value);
+        }
+
+        li.appendChild(input);
         ul.appendChild(li);
+
     }
 
     var li = document.createElement("li");
