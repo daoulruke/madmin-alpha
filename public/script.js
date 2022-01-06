@@ -9,6 +9,7 @@ let _fetch = null;
 
 // Update #current_path
 let updatePath = (url) => {
+
     const urlSegments = url.split("/");
     const current_path = document.getElementById("current_path");
 
@@ -36,15 +37,18 @@ let updatePath = (url) => {
         li.innerHTML = `<a href="#" onclick="getRecords('${`/records/${subject}/${subjectId}/${join}`}')">/${join}</a>`;
         current_path.appendChild(li);
     }
+
 };
 
 // Fetch openapi
 let openapi = null;
+
 let getOpenapi = async () => {
     openapi = await _fetch(`${apiUrl}/openapi`)
         .then(response => response.json());
     listPaths();
 };
+
 // Display openapi
 let listPaths = () => {
     // #content
@@ -75,13 +79,16 @@ let listPaths = () => {
 
 // Fetch and display records
 let getRecords = async (url) => {
+
     const urlSegments = url.split("/");
 
     let fetchUrl = url;
+
     // For join records
     if (urlSegments.length > 4) {
         fetchUrl = url.replace("/records", "");
     }
+
     //const records = await _fetch(`${apiUrl}${fetchUrl}?filter=name,cs,test`)
     const records = await _fetch(`${apiUrl}${fetchUrl}`)
         .then(response => response.json())
@@ -100,11 +107,11 @@ let getRecords = async (url) => {
         ul.appendChild(li);
     }
 
-
     var li = document.createElement("li");
     li.innerHTML = `<input type="button" value="CREATE" onclick="createRecord('${url}')" />`;
     ul.appendChild(li);
-document.getElementById('content').innerHTML = ul.outerHTML;
+    document.getElementById('content').innerHTML = ul.outerHTML;
+
     // #raw
     const raw = JSON.stringify(records, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
@@ -118,27 +125,33 @@ document.getElementById('content').innerHTML = ul.outerHTML;
         document.title,
         `${location.protocol}//${location.host}${url}`
     );
+
 };
 
 // Fetch and display records
 let getRecord = async (url) => {
+
     const record = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json());
 
     // START - #content
     const ul = document.createElement("ul");
+
     for ([key, value] of Object.entries(record)) {
         const li = document.createElement("li");
         li.innerHTML = `${key}: ${value}`;
         ul.appendChild(li);
     }
+
     var li = document.createElement("li");
     li.innerHTML = `<input type="button" value="EDIT" onclick="editRecord('${url}')" />`;
     ul.appendChild(li);
+
     // Related links
     var li = document.createElement("li");
     li.innerHTML = "<br /><b>RELATED LINKS</b>";
     ul.appendChild(li);
+
     const referenced = openapi.components.schemas[`read-${url.split("/")[2]}`].properties.id["x-referenced"];
     const joins = referenced.reduce((acc, val) => {
         const x_y = val.split(".")[0];
@@ -148,11 +161,13 @@ let getRecord = async (url) => {
         if (y && x == url.split("/")[2] && !acc.includes(y)) acc.push(y);
         return acc;
     }, []);
+
     for (join of joins) {
         var li = document.createElement("li");
         li.innerHTML = `<a href="#" onclick="getRecords('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
         ul.appendChild(li);
     }
+
     document.getElementById('content').innerHTML = ul.outerHTML;
     // END - #content
 
@@ -169,32 +184,25 @@ let getRecord = async (url) => {
         document.title,
         `${location.protocol}//${location.host}${url}`
     );
+
 };
 
 
 // Fetch and display records
 let createRecord = async (url) => {
 
-
-
     // For join records
 
-        let tableName = url.replace("/records/", "");
+    let tableName = url.replace("/records/", "");
 
+    // #raw
+    var raw = openapi['components']['schemas']['read-'+tableName]['properties'];
+    var fields = Object.keys(raw);
+    var raw = JSON.stringify(raw, undefined, 4);
+    document.getElementById('raw').innerHTML = raw;
 
-        // #raw
-        var raw = openapi['components']['schemas']['read-'+tableName]['properties'];
-        var fields = Object.keys(raw);
-        var raw = JSON.stringify(raw, undefined, 4);
-        document.getElementById('raw').innerHTML = raw;
+    console.log(fields);
 
-
-
-
-
-
-
-console.log(fields);
     // #content
     const ul = document.createElement("ul");
 
@@ -205,10 +213,6 @@ console.log(fields);
         }
         ul.appendChild(li);
     });
-
-
-
-
 
     var li = document.createElement("li");
     li.innerHTML = `<input type="button" value="SUBMIT" onclick="submitForm('create_form')" />`;
@@ -279,6 +283,7 @@ let submitForm = async (form_id) => {
     event.preventDefault();
 
     try {
+
         // Set url for submission and collect data.
         const url = apiUrl;
         const formData = new FormData(document.getElementById(form_id));
@@ -370,6 +375,7 @@ let submitForm = async (form_id) => {
         throw err;
 
     }
+    
 }
 
 window.onload = function () {
