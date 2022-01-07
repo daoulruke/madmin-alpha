@@ -242,6 +242,8 @@ let createRecord = async (url) => {
     li.innerHTML = `<a class="pure-button" href="/">CANCEL</a>`;
     ul.appendChild(li);
 
+    var li = document.createElement("li");
+    
     li.innerHTML = `<input type="button" class="pure-button pure-button-success" value="CREATE" onclick="submitForm('create_form')" />`;
     ul.appendChild(li);
 
@@ -303,6 +305,8 @@ let editRecord = async (url) => {
 
     li.innerHTML = `<a class="pure-button" href="/">CANCEL</a>`;
     ul.appendChild(li);
+
+    var li = document.createElement("li");
 
     li.innerHTML = `<input type="button" class="pure-button pure-button-success" value="UPDATE_FORM" onclick="submitForm('update_form')" />`;
     ul.appendChild(li);
