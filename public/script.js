@@ -311,7 +311,7 @@ let editRecord = async (url) => {
     const div = document.createElement("div");
     div.classList.add('pure-control-group');
 
-    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><input type="button" class="pure-button button-green" value="UPDATE_FORM" onclick="submitForm('update_form')" />`;
+    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button button-green" onclick="submitForm('update_form')">UPDATE</button>`;
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
