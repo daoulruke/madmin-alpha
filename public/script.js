@@ -239,10 +239,10 @@ let createRecord = async (url) => {
 
     var li = document.createElement("li");
 
-    li.innerHTML = `<input type="button" class="pure-button pure-button-default" value="CANCEL" onclick="submitForm('create_form')" />`;
+    li.innerHTML = `<a class="pure-button" href="/">CANCEL</a>`;
     ul.appendChild(li);
 
-    li.innerHTML = `<input type="button" class="pure-button pure-button-primary" value="CREATE" onclick="submitForm('create_form')" />`;
+    li.innerHTML = `<input type="button" class="pure-button pure-button-success" value="CREATE" onclick="submitForm('create_form')" />`;
     ul.appendChild(li);
 
     const form = document.createElement("form");
@@ -301,10 +301,10 @@ let editRecord = async (url) => {
 
     var li = document.createElement("li");
 
-    li.innerHTML = `<input type="button" class="pure-button pure-button-default" value="SUBMIT" onclick="submitForm('update_form')" />`;
+    li.innerHTML = `<a class="pure-button" href="/">CANCEL</a>`;
     ul.appendChild(li);
 
-    li.innerHTML = `<input type="button" class="pure-button pure-button-primary" value="SUBMIT" onclick="submitForm('update_form')" />`;
+    li.innerHTML = `<input type="button" class="pure-button pure-button-success" value="UPDATE_FORM" onclick="submitForm('update_form')" />`;
     ul.appendChild(li);
 
     const form = document.createElement("form");
