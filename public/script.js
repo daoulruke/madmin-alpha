@@ -117,7 +117,7 @@ let getRecords = async (url) => {
     }
 
     var tr = document.createElement("tr");
-    tr.innerHTML = `<input type="button" class="pure-button button-green" value="CREATE" onclick="createRecord('${url}')" />`;
+    tr.innerHTML = `<td></td><td class="text-right"><button class="pure-button button-green" onclick="createRecord('${url}')">CREATE</button></td>`;
     table.appendChild(tr);
     document.getElementById('content').innerHTML = table.outerHTML;
 
