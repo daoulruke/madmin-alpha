@@ -380,7 +380,7 @@ let submitForm = async (form_id) => {
                 const validationErrors = responseError.message || {};
                 console.log(validationErrors);
 
-                displayMsg(`[${response.status}] ${responseError.message}`);
+                displayMsg(`[${response.status}] ${responseError.message}`, "red");
             }
 
         }
@@ -393,11 +393,11 @@ let submitForm = async (form_id) => {
 
 }
 
-let displayMsg = (msg = null) => {
+let displayMsg = (msg = null, color = "green") => {
     document.querySelector("#msg").innerHTML = "";
     if (msg) {
         const span = document.createElement("span");
-        span.style.color = "green";
+        span.style.color = color;
         span.textContent = msg;
         document.querySelector("#msg").appendChild(span);
     }
