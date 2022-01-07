@@ -244,7 +244,7 @@ let createRecord = async (url) => {
     const form = document.createElement("form");
     form.setAttribute('id', 'create_form');
     form.classList.add('pure-form');
-    form.classList.add('pure-form-stacked');
+    form.classList.add('pure-form-aligned');
 
     const fieldset = document.createElement("fieldset");
     form.appendChild(fieldset);
