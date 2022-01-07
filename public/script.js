@@ -263,17 +263,23 @@ let editRecord = async (url) => {
     const record = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json());
 
-    // #content
-    const ul = document.createElement("ul");
+    const form = document.createElement("form");
+    form.setAttribute('id', 'update_form');
+    form.classList.add('pure-form');
+    form.classList.add('pure-form-aligned');
+
+    const fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
 
     for ([key, value] of Object.entries(record)) {
 
-        const li = document.createElement("li");
+        const div = document.createElement("div");
+        div.classList.add('pure-control-group');
 
         const label = document.createElement("label");
         label.setAttribute('for', key);
         label.innerHTML = key;
-        li.appendChild(label);
+        div.appendChild(label);
 
         const input = document.createElement("input");
 
@@ -291,12 +297,23 @@ let editRecord = async (url) => {
             input.setAttribute('value', value);
         }
 
-        li.appendChild(input);
-        ul.appendChild(li);
+        div.appendChild(input);
+
+        const span = document.createElement("span");
+        span.classList.add('pure-form-message-inline');
+        div.appendChild(span);
+
+        fieldset.appendChild(div);
 
     }
 
     var li = document.createElement("li");
+
+    <div class="pure-control-group">
+            <label for="aligned-name">Username</label>
+            <input type="text" id="aligned-name" placeholder="Username" />
+            <span class="pure-form-message-inline">This is a required field.</span>
+        </div>
 
     li.innerHTML = `<a class="pure-button" href="/">CANCEL</a><input type="button" class="pure-button button-success" value="UPDATE_FORM" onclick="submitForm('update_form')" />`;
     ul.appendChild(li);
@@ -305,6 +322,10 @@ let editRecord = async (url) => {
     form.setAttribute('id', 'update_form');
     form.classList.add('pure-form');
     form.classList.add('pure-form-aligned');
+    form.appendChild(ul);
+
+    const fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
     form.appendChild(ul);
 
     document.getElementById('content').innerHTML = form.outerHTML;
