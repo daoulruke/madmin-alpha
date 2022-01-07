@@ -238,7 +238,11 @@ let createRecord = async (url) => {
     });
 
     var li = document.createElement("li");
-    li.innerHTML = `<input type="button" value="SUBMIT" onclick="submitForm('create_form')" />`;
+
+    li.innerHTML = `<input type="button" class="pure-button pure-button-default" value="CANCEL" onclick="submitForm('create_form')" />`;
+    ul.appendChild(li);
+
+    li.innerHTML = `<input type="button" class="pure-button pure-button-primary" value="CREATE" onclick="submitForm('create_form')" />`;
     ul.appendChild(li);
 
     const form = document.createElement("form");
@@ -296,11 +300,17 @@ let editRecord = async (url) => {
     }
 
     var li = document.createElement("li");
-    li.innerHTML = `<input type="button" value="SUBMIT" onclick="submitForm('edit_form')" />`;
+
+    li.innerHTML = `<input type="button" class="pure-button pure-button-default" value="SUBMIT" onclick="submitForm('update_form')" />`;
+    ul.appendChild(li);
+
+    li.innerHTML = `<input type="button" class="pure-button pure-button-primary" value="SUBMIT" onclick="submitForm('update_form')" />`;
     ul.appendChild(li);
 
     const form = document.createElement("form");
-    form.setAttribute('id', 'edit_form');
+    form.setAttribute('id', 'update_form');
+    form.classList.add('pure-form');
+    form.classList.add('pure-form-aligned');
     form.appendChild(ul);
 
     document.getElementById('content').innerHTML = form.outerHTML;
@@ -339,7 +349,7 @@ let submitForm = async (form_id) => {
             });
         }
 
-        if(form_id == 'edit_form') {
+        if(form_id == 'update_form') {
             var response = await _fetch(url + window.location.pathname, {
                 method: "PUT",
                 body: json
@@ -356,7 +366,7 @@ let submitForm = async (form_id) => {
                 var successMsg = `[${response.status}] Record has been created.`;
             }
 
-            if(form_id == 'edit_form') {
+            if(form_id == 'update_form') {
                 var returnPath = window.location.pathname;
                 var successMsg = `[${response.status}] Record has been updated.`;
             }
