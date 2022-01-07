@@ -307,20 +307,11 @@ let editRecord = async (url) => {
 
     }
 
-    var li = document.createElement("li");
+    const div = document.createElement("div");
+    div.classList.add('pure-control-group');
 
-    li.innerHTML = `<a class="pure-button" href="/">CANCEL</a><input type="button" class="pure-button button-success" value="UPDATE_FORM" onclick="submitForm('update_form')" />`;
-    ul.appendChild(li);
-
-    const form = document.createElement("form");
-    form.setAttribute('id', 'update_form');
-    form.classList.add('pure-form');
-    form.classList.add('pure-form-aligned');
-    form.appendChild(ul);
-
-    const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
-    form.appendChild(ul);
+    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><input type="button" class="pure-button button-success" value="UPDATE_FORM" onclick="submitForm('update_form')" />`;
+    fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
 
