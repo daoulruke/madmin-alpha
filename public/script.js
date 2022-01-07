@@ -220,6 +220,10 @@ let createRecord = async (url) => {
 
     const form = document.createElement("form");
     form.setAttribute('id', 'create_form');
+    form.classList.add('pure-form pure-form-stacked');
+
+    const fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
     form.appendChild(ul);
 
     document.getElementById('content').innerHTML = form.outerHTML;
