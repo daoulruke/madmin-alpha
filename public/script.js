@@ -309,12 +309,6 @@ let editRecord = async (url) => {
 
     var li = document.createElement("li");
 
-    <div class="pure-control-group">
-            <label for="aligned-name">Username</label>
-            <input type="text" id="aligned-name" placeholder="Username" />
-            <span class="pure-form-message-inline">This is a required field.</span>
-        </div>
-
     li.innerHTML = `<a class="pure-button" href="/">CANCEL</a><input type="button" class="pure-button button-success" value="UPDATE_FORM" onclick="submitForm('update_form')" />`;
     ul.appendChild(li);
 
