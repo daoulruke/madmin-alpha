@@ -51,6 +51,9 @@ let getOpenapi = async () => {
 
 // Display openapi
 let listPaths = () => {
+    // Reset #msg
+    displayMsg();
+
     // #content
     const ul = document.createElement("ul");
     for ([key, value] of Object.entries(openapi.paths)) {
@@ -65,9 +68,9 @@ let listPaths = () => {
     document.getElementById('raw').innerHTML = raw;
 
     // #current_path
-    const current_path = document.getElementById("current_path");
-    if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
-    if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
+    // const current_path = document.getElementById("current_path");
+    // if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
+    // if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
 
     // url bar
     window.history.replaceState(
@@ -75,10 +78,15 @@ let listPaths = () => {
         document.title,
         `${location.protocol}//${location.host}`
     );
+
+    // #current_path
+    updatePath(location.pathname);
 };
 
 // Fetch and display records
 let getRecords = async (url) => {
+    // Reset #msg
+    displayMsg();
 
     const urlSegments = url.split("/");
 
@@ -130,6 +138,8 @@ let getRecords = async (url) => {
 
 // Fetch and display records
 let getRecord = async (url) => {
+    // Reset #msg
+    displayMsg();
 
     const record = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json());
@@ -190,6 +200,8 @@ let getRecord = async (url) => {
 
 // Fetch and display records
 let createRecord = async (url) => {
+    // Reset #msg
+    displayMsg();
 
     // For join records
 
@@ -228,6 +240,8 @@ let createRecord = async (url) => {
 
 // Fetch and display records
 let editRecord = async (url) => {
+    // Reset #msg
+    displayMsg();
 
     const record = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json());
@@ -323,30 +337,26 @@ let submitForm = async (form_id) => {
 
             if(form_id == 'create_form') {
                 var returnPath = window.location.pathname + '/' + responseJson;
-                var responseMsg = "Record has been created.";
+                var successMsg = `[${response.status}] Record has been created.`;
             }
 
             if(form_id == 'edit_form') {
                 var returnPath = window.location.pathname;
-                var responseMsg = "Record has been updated.";
-            }
-
-            if (responseMsg) {
-                const span = document.createElement("span");
-                span.style.color = "green";
-                span.textContent  = responseMsg;
-                document.querySelector("#msg").innerHTML = "";
-                document.querySelector("#msg").appendChild(span);
+                var successMsg = `[${response.status}] Record has been updated.`;
             }
 
             // Go back to read view
             getRecord(returnPath);
+
+            displayMsg(successMsg);
 
         } else {
 
             // Remove previous error msgs
             document.querySelectorAll(".error_msg")
                 .forEach(el => el.remove());
+            // Reset #msg
+            displayMsg();
 
             // Display errors
             const responseError = await response.json();
@@ -370,12 +380,7 @@ let submitForm = async (form_id) => {
                 const validationErrors = responseError.message || {};
                 console.log(validationErrors);
 
-                const form = document.querySelector(`#${form_id}`);
-                const span = document.createElement("span");
-                span.classList.add("error_msg");
-                span.style.color = "red";
-                span.textContent  = responseError.message;
-                form.parentElement.prepend(span);
+                displayMsg(`[${response.status}] ${responseError.message}`);
             }
 
         }
@@ -387,6 +392,16 @@ let submitForm = async (form_id) => {
     }
 
 }
+
+let displayMsg = (msg = null) => {
+    document.querySelector("#msg").innerHTML = "";
+    if (msg) {
+        const span = document.createElement("span");
+        span.style.color = "green";
+        span.textContent = msg;
+        document.querySelector("#msg").appendChild(span);
+    }
+};
 
 window.onload = function () {
 

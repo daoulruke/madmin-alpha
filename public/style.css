@@ -22,6 +22,10 @@ ul {
     height: 50px;
 }
 
+#msg {
+    padding: 10px;
+}
+
 #content {
     padding: 10px;
     background-color: white;
