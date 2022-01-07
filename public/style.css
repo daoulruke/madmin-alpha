@@ -57,3 +57,7 @@ ul {
     background-color: whitesmoke;
     color: grey;
 }
+
+label {
+    text-align: left;
+}
