@@ -103,22 +103,23 @@ let getRecords = async (url) => {
         .then(response => response.records);
 
     // #content
-    const ul = document.createElement("ul");
+    const table = document.createElement("table");
+    table.classList.add('pure-table');
     for (record of records) {
-        const li = document.createElement("li");
+        const tr = document.createElement("tr");
         let recordUrl = `${url}/${record.id}`;
         // For join records
         if (urlSegments.length > 4) {
             recordUrl = `/records/${urlSegments[4]}/${record.id}`;
         }
-        li.innerHTML = `<a href="#" onclick="getRecord('${recordUrl}')">${record.id} ${record.name}</a>`;
-        ul.appendChild(li);
+        tr.innerHTML = `<td><a href="#" onclick="getRecord('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
+        table.appendChild(tr);
     }
 
-    var li = document.createElement("li");
-    li.innerHTML = `<input type="button" class="pure-button button-green" value="CREATE" onclick="createRecord('${url}')" />`;
-    ul.appendChild(li);
-    document.getElementById('content').innerHTML = ul.outerHTML;
+    var tr = document.createElement("tr");
+    tr.innerHTML = `<input type="button" class="pure-button button-green" value="CREATE" onclick="createRecord('${url}')" />`;
+    table.appendChild(tr);
+    document.getElementById('content').innerHTML = table.outerHTML;
 
     // #raw
     const raw = JSON.stringify(records, undefined, 4);
