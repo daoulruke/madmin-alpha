@@ -168,12 +168,12 @@ let getRecord = async (url) => {
     }
 
     var li = document.createElement("li");
-    li.innerHTML = `<input type="button" value="EDIT" onclick="editRecord('${url}')" />`;
+    li.innerHTML = `<button onclick="editRecord('${url}')">UPDATE</button>`;
     ul.appendChild(li);
 
     // Related links
     var li = document.createElement("li");
-    li.innerHTML = "<br /><b>RELATED LINKS</b>";
+    li.innerHTML = "<br /><b>RELATED DATA</b>";
     ul.appendChild(li);
 
     const referenced = openapi.components.schemas[`read-${subject}`].properties.id["x-referenced"];
