@@ -20,21 +20,21 @@ let updatePath = (url) => {
     const subject = urlSegments[2];
     if (subject) {
         var li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecords('${`/records/${subject}`}')">/${subject}</a>`;
+        li.innerHTML = `/&nbsp;<a href="#" onclick="getRecords('${`/records/${subject}`}')">${subject}</a>`;
         current_path.appendChild(li);
     }
 
     const subjectId = urlSegments[3];
     if (subjectId) {
         var li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecord('${`/records/${subject}/${subjectId}`}')">/${subjectId}</a>`;
+        li.innerHTML = `/&nbsp;<a href="#" onclick="getRecord('${`/records/${subject}/${subjectId}`}')">${subjectId}</a>`;
         current_path.appendChild(li);
     }
 
     const join = urlSegments[4];
     if (join) {
         var li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecords('${`/records/${subject}/${subjectId}/${join}`}')">/${join}</a>`;
+        li.innerHTML = `/&nbsp;<a href="#" onclick="getRecords('${`/records/${subject}/${subjectId}/${join}`}')">${join}</a>`;
         current_path.appendChild(li);
     }
 
