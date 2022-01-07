@@ -141,7 +141,14 @@ let getRecord = async (url) => {
     // Reset #msg
     displayMsg();
 
-    const record = await _fetch(`${apiUrl}${url}`)
+    let subject = url.split("/")[2];
+
+    let columnReferences = {};
+    Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
+        if (v["x-references"]) columnReferences[k] = v["x-references"];
+    });
+    let joinQuery = [... new Set(Object.values(columnReferences).map(v => v))].map(v => `join=${v}`).join("&");
+    const record = await _fetch(`${apiUrl}${url}?${joinQuery}`)
         .then(response => response.json());
 
     // START - #content
@@ -150,6 +157,12 @@ let getRecord = async (url) => {
     for ([key, value] of Object.entries(record)) {
         const li = document.createElement("li");
         li.innerHTML = `${key}: ${value}`;
+
+        // Display reference name
+        if (columnReferences[key] && value) {
+            li.innerHTML = `${key}: <a href="#" onclick="getRecord('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
+        }
+
         ul.appendChild(li);
     }
 
@@ -162,13 +175,12 @@ let getRecord = async (url) => {
     li.innerHTML = "<br /><b>RELATED LINKS</b>";
     ul.appendChild(li);
 
-    const referenced = openapi.components.schemas[`read-${url.split("/")[2]}`].properties.id["x-referenced"];
+    const referenced = openapi.components.schemas[`read-${subject}`].properties.id["x-referenced"];
     const joins = referenced.reduce((acc, val) => {
         const x_y = val.split(".")[0];
         const x = x_y.split("_")[0];
         const y = x_y.split("_")[1];
-        // console.log(x, y, url.split("/")[2]);
-        if (y && x == url.split("/")[2] && !acc.includes(y)) acc.push(y);
+        if (y && x == subject && !acc.includes(y)) acc.push(y);
         return acc;
     }, []);
 
@@ -194,7 +206,6 @@ let getRecord = async (url) => {
         document.title,
         `${location.protocol}//${location.host}${url}`
     );
-
 };
 
 
