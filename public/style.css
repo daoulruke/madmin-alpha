@@ -64,7 +64,7 @@ ul {
 #current_path {
     display: flex;
     background-color: whitesmoke;
-    height: 50px;
+    padding: 20px;
 }
 
 #msg {
