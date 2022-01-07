@@ -323,10 +323,20 @@ let submitForm = async (form_id) => {
 
             if(form_id == 'create_form') {
                 var returnPath = window.location.pathname + '/' + responseJson;
+                var responseMsg = "Record has been created.";
             }
 
             if(form_id == 'edit_form') {
                 var returnPath = window.location.pathname;
+                var responseMsg = "Record has been updated.";
+            }
+
+            if (responseMsg) {
+                const span = document.createElement("span");
+                span.style.color = "green";
+                span.textContent  = responseMsg;
+                document.querySelector("#msg").innerHTML = "";
+                document.querySelector("#msg").appendChild(span);
             }
 
             // Go back to read view
