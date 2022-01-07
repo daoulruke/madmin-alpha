@@ -58,6 +58,6 @@ ul {
     color: grey;
 }
 
-label {
+.pure-form-aligned .pure-control-group label {
     text-align: left;
 }
