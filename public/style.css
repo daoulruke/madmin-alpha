@@ -28,30 +28,34 @@ html, body {
     display: none;
 }
 
-        .button-green,
-        .button-red,
-        .button-orange,
-        .button-lblue {
-            color: white;
-            border-radius: 4px;
-            text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
-        }
+.button-green,
+.button-red,
+.button-orange,
+.button-lblue {
+    color: white;
+    border-radius: 4px;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+}
 
-        .button-green {
-            background: rgb(28, 184, 65);
-        }
+.button-green {
+    background: rgb(28, 184, 65);
+}
 
-        .button-red {
-            background: rgb(202, 60, 60);
-        }
+.button-red {
+    background: rgb(202, 60, 60);
+}
 
-        .button-orange {
-            background: rgb(223, 117, 20);
-        }
+.button-orange {
+    background: rgb(223, 117, 20);
+}
 
-        .button-lblue {
-            background: rgb(66, 184, 221);
-        }
+.button-lblue {
+    background: rgb(66, 184, 221);
+}
+
+.text-right {
+    text-align: right;
+}
 
 ul {
     list-style-type: none;
