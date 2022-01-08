@@ -242,17 +242,17 @@ let createRecord = async (url) => {
         div.classList.add('pure-control-group');
 
         const label = document.createElement("label");
-        label.setAttribute('for', key);
-        label.innerHTML = key;
+        label.setAttribute('for', field);
+        label.innerHTML = field;
         div.appendChild(label);
 
         const input = document.createElement("input");
 
-        input.setAttribute('id', key);
-        input.setAttribute('name', key);
+        input.setAttribute('id', field);
+        input.setAttribute('name', field);
         input.setAttribute('type', 'text');
 
-        if(key == 'id' || key == 'created_by') {
+        if(field == 'id' || field == 'created_by') {
             input.setAttribute('readonly', true);
         }
 
