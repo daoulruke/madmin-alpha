@@ -228,6 +228,21 @@ let createRecord = async (url) => {
     console.log(fields);
 
     // #content
+    const ul = document.createElement("ul");
+
+    fields.forEach(field => {
+        const li = document.createElement("li");
+        if(field != 'id' && field != 'created_by') {
+            li.innerHTML = `${field} <input type="text" name="${field}" value="" />`;
+        }
+        ul.appendChild(li);
+    });
+
+    var li = document.createElement("li");
+
+    li.innerHTML = `<a class="pure-button" href="/">CANCEL</a><input type="button" class="pure-button button-green" value="CREATE" onclick="submitForm('create_form')" />`;
+    ul.appendChild(li);
+
     const form = document.createElement("form");
     form.setAttribute('id', 'create_form');
     form.classList.add('pure-form');
@@ -235,42 +250,7 @@ let createRecord = async (url) => {
 
     const fieldset = document.createElement("fieldset");
     form.appendChild(fieldset);
-
-    fields.forEach(field => {
-
-        const div = document.createElement("div");
-        div.classList.add('pure-control-group');
-
-        const label = document.createElement("label");
-        label.setAttribute('for', field);
-        label.innerHTML = field;
-        div.appendChild(label);
-
-        const input = document.createElement("input");
-
-        input.setAttribute('id', field);
-        input.setAttribute('name', field);
-        input.setAttribute('type', 'text');
-
-        if(field == 'id' || field == 'created_by') {
-            input.setAttribute('readonly', true);
-        }
-
-        if(value === null) {
-            input.setAttribute('value', null);
-        } else {
-            input.setAttribute('value', value);
-        }
-
-        div.appendChild(input);
-
-    });
-
-    const div = document.createElement("div");
-    div.classList.add('pure-control-group');
-
-    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button button-green" onclick="submitForm('create_form')">CREATE</button>`;
-    fieldset.appendChild(div);
+    form.appendChild(ul);
 
     document.getElementById('content').innerHTML = form.outerHTML;
 
