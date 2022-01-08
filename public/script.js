@@ -211,7 +211,7 @@ let getRecord = async (url) => {
 
 
 // Fetch and display records
-let createRecordOld = async (url) => {
+let createRecord = async (url) => {
     // Reset #msg
     displayMsg();
 
@@ -228,90 +228,43 @@ let createRecordOld = async (url) => {
     console.log(fields);
 
     // #content
-    const ul = document.createElement("ul");
+    const form = document.createElement("form");
+    form.setAttribute('id', 'update_form');
+    form.classList.add('pure-form');
+    form.classList.add('pure-form-aligned');
+
+    const fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
 
     fields.forEach(field => {
-        const li = document.createElement("li");
-        if(field != 'id' && field != 'created_by') {
-            li.innerHTML = `${field} <input type="text" name="${field}" value="" />`;
+
+        const div = document.createElement("div");
+        div.classList.add('pure-control-group');
+
+        const label = document.createElement("label");
+        label.setAttribute('for', key);
+        label.innerHTML = key;
+        div.appendChild(label);
+
+        const input = document.createElement("input");
+
+        input.setAttribute('id', key);
+        input.setAttribute('name', key);
+        input.setAttribute('type', 'text');
+
+        if(key == 'id' || key == 'created_by') {
+            input.setAttribute('readonly', true);
         }
-        ul.appendChild(li);
+
+        if(value === null) {
+            input.setAttribute('value', null);
+        } else {
+            input.setAttribute('value', value);
+        }
+
+        div.appendChild(input);
+
     });
-
-    var li = document.createElement("li");
-
-    li.innerHTML = `<a class="pure-button" href="/">CANCEL</a><input type="button" class="pure-button button-green" value="CREATE" onclick="submitForm('create_form')" />`;
-    ul.appendChild(li);
-
-    const form = document.createElement("form");
-    form.setAttribute('id', 'create_form');
-    form.classList.add('pure-form');
-    form.classList.add('pure-form-aligned');
-
-    const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
-    form.appendChild(ul);
-
-    document.getElementById('content').innerHTML = form.outerHTML;
-
-};
-
-// Fetch and display records
-let createRecord = async (url) => {
-
-    // Reset #msg
-    displayMsg();
-
-    const record = await _fetch(`${apiUrl}${url}`)
-        .then(response => response.json());
-
-    const form = document.createElement("form");
-    form.setAttribute('id', 'create_form');
-    form.classList.add('pure-form');
-    form.classList.add('pure-form-aligned');
-
-    const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
-
-    for ([key, value] of Object.entries(record)) {
-
-        if(key != 'id' && key != 'created_by') {
-
-            const div = document.createElement("div");
-            div.classList.add('pure-control-group');
-
-            const label = document.createElement("label");
-            label.setAttribute('for', key);
-            label.innerHTML = key;
-            div.appendChild(label);
-
-            const input = document.createElement("input");
-
-            input.setAttribute('id', key);
-            input.setAttribute('name', key);
-            input.setAttribute('type', 'text');
-
-            if(key == 'id' || key == 'created_by') {
-                input.setAttribute('readonly', true);
-            }
-
-            if(value === null) {
-                input.setAttribute('value', null);
-            } else {
-                input.setAttribute('value', value);
-            }
-
-            div.appendChild(input);
-
-            const span = document.createElement("span");
-            span.classList.add('pure-form-message-inline');
-            div.appendChild(span);
-
-            fieldset.appendChild(div);
-
-        }
-
-    }
 
     const div = document.createElement("div");
     div.classList.add('pure-control-group');
@@ -325,7 +278,6 @@ let createRecord = async (url) => {
 
 // Fetch and display records
 let editRecord = async (url) => {
-
     // Reset #msg
     displayMsg();
 
