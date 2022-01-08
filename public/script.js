@@ -138,7 +138,7 @@ let getRecords = async (url) => {
 };
 
 // Fetch and display records
-let getRecordOld = async (url) => {
+let getRecord = async (url) => {
     // Reset #msg
     displayMsg();
 
@@ -315,61 +315,6 @@ let updateRecord = async (url) => {
         } else {
             input.setAttribute('value', value);
         }
-
-        div.appendChild(input);
-
-        const span = document.createElement("span");
-        span.classList.add('pure-form-message-inline');
-        div.appendChild(span);
-
-        fieldset.appendChild(div);
-
-    }
-
-    const div = document.createElement("div");
-    div.classList.add('pure-control-group');
-
-    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button button-green" onclick="submitForm('update_form')">UPDATE</button>`;
-    fieldset.appendChild(div);
-
-    document.getElementById('content').innerHTML = form.outerHTML;
-
-};
-
-
-// Fetch and display records
-let getRecord = async (url) => {
-    // Reset #msg
-    displayMsg();
-
-    const record = await _fetch(`${apiUrl}${url}`)
-        .then(response => response.json());
-
-    const form = document.createElement("form");
-    form.setAttribute('id', 'read_form');
-    form.classList.add('pure-form');
-    form.classList.add('pure-form-aligned');
-
-    const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
-
-    for ([key, value] of Object.entries(record)) {
-
-        const div = document.createElement("div");
-        div.classList.add('pure-control-group');
-
-        const label = document.createElement("label");
-        label.setAttribute('for', key);
-        label.innerHTML = key;
-        div.appendChild(label);
-
-        const input = document.createElement("input");
-
-        input.setAttribute('id', key);
-        input.setAttribute('name', key);
-        input.setAttribute('type', 'text');
-        input.setAttribute('readonly', true);
-        input.setAttribute('value', value);
 
         div.appendChild(input);
 
