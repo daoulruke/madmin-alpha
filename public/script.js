@@ -117,7 +117,7 @@ let getRecords = async (url) => {
     }
 
     var tr = document.createElement("tr");
-    tr.innerHTML = `<td></td><td class="text-right"><button class="pure-button button-green" onclick="createRecord('${url}')">CREATE</button></td>`;
+    tr.innerHTML = `<td></td><td class="text-right"><button class="pure-button" onclick="navigate('back')">BACK</button><button class="pure-button button-green" onclick="createRecord('${url}')">CREATE</button></td>`;
     table.appendChild(tr);
     document.getElementById('content').innerHTML = table.outerHTML;
 
@@ -342,7 +342,7 @@ let submitForm = async (form_id) => {
     event.preventDefault();
 
     try {
-
+ ,8
         // Set url for submission and collect data.
         const url = apiUrl;
         const formData = new FormData(document.getElementById(form_id));
