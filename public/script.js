@@ -229,7 +229,7 @@ let createRecord = async (url) => {
 
     // #content
     const form = document.createElement("form");
-    form.setAttribute('id', 'update_form');
+    form.setAttribute('id', 'create_form');
     form.classList.add('pure-form');
     form.classList.add('pure-form-aligned');
 
