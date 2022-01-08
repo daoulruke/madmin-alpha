@@ -28,6 +28,8 @@ html, body {
     display: none;
 }
 
+/* BUTTONS */
+
 .button-green,
 .button-red,
 .button-orange,
@@ -51,6 +53,22 @@ html, body {
 
 .button-lblue {
     background: rgb(66, 184, 221);
+}
+
+.button-xsmall {
+    font-size: 70%;
+}
+
+.button-small {
+    font-size: 85%;
+}
+
+.button-large {
+    font-size: 110%;
+}
+
+.button-xlarge {
+    font-size: 125%;
 }
 
 .text-right {
