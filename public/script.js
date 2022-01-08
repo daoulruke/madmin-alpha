@@ -212,12 +212,19 @@ let getRecord = async (url) => {
 
 // Fetch and display records
 let createRecord = async (url) => {
+
     // Reset #msg
     displayMsg();
 
-    // For join records
-
     let tableName = url.replace("/records/", "");
+
+    const form = document.createElement("form");
+    form.setAttribute('id', 'create_form');
+    form.classList.add('pure-form');
+    form.classList.add('pure-form-aligned');
+
+    const fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
 
     // #raw
     var raw = openapi['components']['schemas']['read-'+tableName]['properties'];
@@ -227,30 +234,41 @@ let createRecord = async (url) => {
 
     console.log(fields);
 
-    // #content
-    const ul = document.createElement("ul");
-
     fields.forEach(field => {
-        const li = document.createElement("li");
+
         if(field != 'id' && field != 'created_by') {
-            li.innerHTML = `${field} <input type="text" name="${field}" value="" />`;
+
+            const div = document.createElement("div");
+            div.classList.add('pure-control-group');
+
+            const label = document.createElement("label");
+            label.setAttribute('for', field);
+            label.innerHTML = field;
+            div.appendChild(label);
+
+            const input = document.createElement("input");
+
+            input.setAttribute('id', field);
+            input.setAttribute('name', field);
+            input.setAttribute('type', 'text');
+
+            div.appendChild(input);
+
+            const span = document.createElement("span");
+            span.classList.add('pure-form-message-inline');
+            div.appendChild(span);
+
+            fieldset.appendChild(div);
+
         }
-        ul.appendChild(li);
+
     });
 
-    var li = document.createElement("li");
+    const div = document.createElement("div");
+    div.classList.add('pure-control-group');
 
-    li.innerHTML = `<a class="pure-button" href="/">CANCEL</a><input type="button" class="pure-button button-green" value="CREATE" onclick="submitForm('create_form')" />`;
-    ul.appendChild(li);
-
-    const form = document.createElement("form");
-    form.setAttribute('id', 'create_form');
-    form.classList.add('pure-form');
-    form.classList.add('pure-form-aligned');
-
-    const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
-    form.appendChild(ul);
+    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button button-green" onclick="submitForm('create_form')">CREATE</button>`;
+    fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
 
