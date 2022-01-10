@@ -55,13 +55,33 @@ let listPaths = () => {
     displayMsg();
 
     // #content
+    const paths = [];
+    for ([key, value] of Object.entries(openapi.paths)) {
+        paths[] = key;
+    }
+
+    paths = paths.sort();
+    paths.forEach(outputPaths);
+
     const ul = document.createElement("ul");
-    for ([key, value] of Object.entries(openapi.paths.sort())) {
+
+    function outputPaths(path) {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="#" onclick="getRecords('${path}')">${path}</a>`;
+        ul.appendChild(li);
+    }
+
+    document.getElementById('content').innerHTML = ul.outerHTML;
+
+    /*
+    const ul = document.createElement("ul");
+    for ([key, value] of Object.entries(openapi.paths)) {
         const li = document.createElement("li");
         li.innerHTML = `<a href="#" onclick="getRecords('${key}')">${key}</a>`;
         ul.appendChild(li);
     }
     document.getElementById('content').innerHTML = ul.outerHTML;
+    */
 
     // #raw
     const raw = JSON.stringify(openapi, undefined, 4);
