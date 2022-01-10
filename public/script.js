@@ -221,62 +221,9 @@ let createRecord = async (url) => {
     // Reset #msg
     displayMsg();
 
-    let tableName = url.replace("/records/", "");
-
-    const form = document.createElement("form");
-    form.setAttribute('id', 'create_form');
-    form.classList.add('pure-form');
-    form.classList.add('pure-form-aligned');
-
-    const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
-
-    // #raw
-    var raw = openapi['components']['schemas']['read-'+tableName]['properties'];
-    var fields = Object.keys(raw);
-    var raw = JSON.stringify(raw, undefined, 4);
-    document.getElementById('raw').innerHTML = raw;
-
-    console.log(fields);
-
-    fields.forEach(field => {
-
-        if(field != 'id' && field != 'created_by') {
-
-            const div = document.createElement("div");
-            div.classList.add('pure-control-group');
-
-            const label = document.createElement("label");
-            label.setAttribute('for', field);
-            label.innerHTML = field;
-            div.appendChild(label);
-
-            const input = document.createElement("input");
-
-            input.setAttribute('id', field);
-            input.setAttribute('name', field);
-            input.setAttribute('type', 'text');
-
-            div.appendChild(input);
-
-            const span = document.createElement("span");
-            span.classList.add('pure-form-message-inline');
-            div.appendChild(span);
-
-            fieldset.appendChild(div);
-
-        }
-
-    });
-
-    const div = document.createElement("div");
-    div.classList.add('pure-control-group');
-
-    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button button-green" onclick="submitForm('create_form')">CREATE</button>`;
-    fieldset.appendChild(div);
-
-    document.getElementById('content').innerHTML = form.outerHTML;
-
+    // #content
+    const subject = url.split("/")[2];
+    setForm("create_form", subject);
 };
 
 // Fetch and display records
@@ -287,15 +234,28 @@ let updateRecord = async (url) => {
     const record = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json());
 
+    // #content
+    const subject = url.split("/")[2];
+    setForm("update_form", subject, record);
+};
+
+let setForm = async (formId, subject, record = null) => {
+
     const form = document.createElement("form");
-    form.setAttribute('id', 'update_form');
+    form.setAttribute('id', formId);
     form.classList.add('pure-form');
     form.classList.add('pure-form-aligned');
 
     const fieldset = document.createElement("fieldset");
     form.appendChild(fieldset);
 
-    for ([key, value] of Object.entries(record)) {
+    const fields = openapi['components']['schemas']['read-'+subject]['properties'];
+
+    // #raw
+    const raw = JSON.stringify(fields, undefined, 4);
+    document.getElementById('raw').innerHTML = raw;
+
+    for ([key, field] of Object.entries(fields)) {
 
         const div = document.createElement("div");
         div.classList.add('pure-control-group');
@@ -305,20 +265,49 @@ let updateRecord = async (url) => {
         label.innerHTML = key;
         div.appendChild(label);
 
-        const input = document.createElement("input");
+        let input = document.createElement("input");
+
+        // Change to select
+        if (field["x-references"]) {
+            input = document.createElement("select");
+            // Collect options
+            const records = await _fetch(`${apiUrl}/records/${field["x-references"]}s`)
+                .then(response => response.json())
+                .then(response => response.records);
+            // Append options
+            var option = document.createElement("option");
+                option.value = "";
+                option.text = "Please select";
+                input.appendChild(option);
+            for (const record of records) {
+                var option = document.createElement("option");
+                option.value = record.id;
+                option.text = record.name;
+                input.appendChild(option);
+            }
+        }
 
         input.setAttribute('id', key);
         input.setAttribute('name', key);
         input.setAttribute('type', 'text');
 
-        if(key == 'id' || key == 'created_by') {
-            input.setAttribute('readonly', true);
+        // Update
+        if (record) {
+            if (key == 'id' || key == 'created_by') {
+                input.setAttribute('readonly', true);
+            }
+    
+            if (record[key]) {
+                input.setAttribute('value', `${record[key]}`);
+            } else {
+                input.setAttribute('value', null);
+            }
         }
-
-        if(value === null) {
-            input.setAttribute('value', null);
-        } else {
-            input.setAttribute('value', value);
+        // Create
+        else {
+            if (key == 'id' || key == 'created_by') {
+                continue;
+            }
         }
 
         div.appendChild(input);
@@ -334,7 +323,7 @@ let updateRecord = async (url) => {
     const div = document.createElement("div");
     div.classList.add('pure-control-group');
 
-    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button button-green" onclick="submitForm('update_form')">UPDATE</button>`;
+    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button button-green" onclick="submitForm('${formId}')">${record ? 'UPDATE' : 'CREATE'}</button>`;
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
