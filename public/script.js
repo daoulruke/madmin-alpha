@@ -139,15 +139,18 @@ let getRecords = async (url) => {
 
 // Fetch and display records
 let getRecord = async (url) => {
+
     // Reset #msg
     displayMsg();
 
     let subject = url.split("/")[2];
 
     let columnReferences = {};
+
     Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
         if (v["x-references"]) columnReferences[k] = v["x-references"];
     });
+
     let joinQuery = [... new Set(Object.values(columnReferences).map(v => v))].map(v => `join=${v}`).join("&");
     const record = await _fetch(`${apiUrl}${url}?${joinQuery}`)
         .then(response => response.json());
@@ -156,6 +159,7 @@ let getRecord = async (url) => {
     const ul = document.createElement("ul");
 
     for ([key, value] of Object.entries(record)) {
+
         const li = document.createElement("li");
         li.innerHTML = `${key}: ${value}`;
 
@@ -165,6 +169,7 @@ let getRecord = async (url) => {
         }
 
         ul.appendChild(li);
+
     }
 
     var li = document.createElement("li");
@@ -342,7 +347,7 @@ let submitForm = async (form_id) => {
     event.preventDefault();
 
     try {
- ,8
+
         // Set url for submission and collect data.
         const url = apiUrl;
         const formData = new FormData(document.getElementById(form_id));
