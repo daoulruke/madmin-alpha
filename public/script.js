@@ -57,7 +57,7 @@ let listPaths = () => {
     // #content
     const paths = [];
     for ([key, value] of Object.entries(openapi.paths)) {
-        paths[] = key;
+        paths.push(key);
     }
 
     paths = paths.sort();
