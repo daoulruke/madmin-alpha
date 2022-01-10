@@ -271,7 +271,7 @@ let setForm = async (formId, subject, record = null) => {
         if (field["x-references"]) {
             input = document.createElement("select");
             // Collect options
-            const records = await _fetch(`${apiUrl}/records/${field["x-references"]}s`)
+            const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}s`)
                 .then(response => response.json())
                 .then(response => response.records);
             // Append options
@@ -279,10 +279,14 @@ let setForm = async (formId, subject, record = null) => {
                 option.value = "";
                 option.text = "Please select";
                 input.appendChild(option);
-            for (const record of records) {
+            for (const optionRecord of optionRecords) {
                 var option = document.createElement("option");
-                option.value = record.id;
-                option.text = record.name;
+                option.value = optionRecord.id;
+                option.text = optionRecord.name;
+                // Select default option
+                if (record && record[key] == option.value) {
+                    option.setAttribute("selected", "selected");
+                }
                 input.appendChild(option);
             }
         }
