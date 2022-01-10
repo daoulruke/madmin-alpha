@@ -60,10 +60,10 @@ let listPaths = () => {
         paths.push(key);
     }
 
+    const ul = document.createElement("ul");
+
     paths.sort();
     paths.forEach(outputPaths);
-
-    const ul = document.createElement("ul");
 
     function outputPaths(path) {
         const li = document.createElement("li");
