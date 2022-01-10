@@ -60,7 +60,7 @@ let listPaths = () => {
         paths.push(key);
     }
 
-    paths = paths.sort();
+    paths.sort();
     paths.forEach(outputPaths);
 
     const ul = document.createElement("ul");
