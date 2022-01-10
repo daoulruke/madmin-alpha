@@ -27,14 +27,14 @@ let updatePath = (url) => {
     const subjectId = urlSegments[3];
     if (subjectId) {
         var li = document.createElement("li");
-        li.innerHTML = `/<a href="#" onclick="getRecord('${`/records/${subject}/${subjectId}`}')">${subjectId}</a>`;
+        li.innerHTML = `/<a href="#" onclick="getRecord('${`/records/${subject}s/${subjectId}`}')">${subjectId}</a>`;
         current_path.appendChild(li);
     }
 
     const join = urlSegments[4];
     if (join) {
         var li = document.createElement("li");
-        li.innerHTML = `/<a href="#" onclick="getRecords('${`/records/${subject}/${subjectId}/${join}`}')">${join}</a>`;
+        li.innerHTML = `/<a href="#" onclick="getRecords('${`/records/${subject}s/${subjectId}/${join}`}')">${join}</a>`;
         current_path.appendChild(li);
     }
 
@@ -300,7 +300,7 @@ let setForm = async (formId, subject, record = null) => {
             if (key == 'id' || key == 'created_by') {
                 input.setAttribute('readonly', true);
             }
-    
+
             if (record[key]) {
                 input.setAttribute('value', `${record[key]}`);
             } else {
