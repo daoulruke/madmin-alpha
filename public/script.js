@@ -56,7 +56,7 @@ let listPaths = () => {
 
     // #content
     const ul = document.createElement("ul");
-    for ([key, value] of Object.entries(openapi.paths)) {
+    for ([key, value] of Object.entries(openapi.paths.sort())) {
         const li = document.createElement("li");
         li.innerHTML = `<a href="#" onclick="getRecords('${key}')">${key}</a>`;
         ul.appendChild(li);
