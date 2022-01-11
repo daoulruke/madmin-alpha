@@ -269,7 +269,7 @@ let setForm = async (formId, subject, record = null) => {
     const fieldset = document.createElement("fieldset");
     form.appendChild(fieldset);
 
-    const fields = openapi['components']['schemas']['read-'+subject+'s']['properties'];
+    const fields = openapi['components']['schemas']['read-'+subject]['properties'];
 
     // #raw
     const raw = JSON.stringify(fields, undefined, 4);
