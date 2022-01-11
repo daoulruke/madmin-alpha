@@ -185,7 +185,8 @@ let getRecord = async (url) => {
     form.classList.add('pure-form-aligned');
 
     const fieldset = document.createElement("fieldset");
-    
+    form.appendChild(fieldset);
+
     for ([key, value] of Object.entries(record)) {
 
         const div = document.createElement("div");
@@ -221,18 +222,20 @@ let getRecord = async (url) => {
         }
 
         fieldset.appendChild(div);
-        form.appendChild(fieldset);
+
 
     }
 
-    var li = document.createElement("li");
-    li.innerHTML = `<button onclick="updateRecord('${url}')">UPDATE</button>`;
-    ul.appendChild(li);
+    let input = document.createElement("input");
+
+    var div = document.createElement("div");
+    div.innerHTML = `<button onclick="updateRecord('${url}')">UPDATE</button>`;
+    fieldset.appendChild(div);
 
     // Related links
-    var li = document.createElement("li");
-    li.innerHTML = "<br /><b>RELATED DATA</b>";
-    ul.appendChild(li);
+    var div = document.createElement("div");
+    div.innerHTML = "<br /><b>RELATED DATA</b>";
+    fieldset.appendChild(div);
 
     const referenced = openapi.components.schemas[`read-${subject}`].properties.id["x-referenced"];
     const joins = referenced.reduce((acc, val) => {
@@ -244,12 +247,12 @@ let getRecord = async (url) => {
     }, []);
 
     for (join of joins) {
-        var li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecords('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
-        ul.appendChild(li);
+        var div = document.createElement("div");
+        div.innerHTML = `<a href="#" onclick="getRecords('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
+        fieldset.appendChild(div);
     }
 
-    document.getElementById('content').innerHTML = ul.outerHTML;
+    document.getElementById('content').innerHTML = form.outerHTML;
     // END - #content
 
     // #raw
