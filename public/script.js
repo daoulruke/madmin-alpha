@@ -167,7 +167,7 @@ let getRecord = async (url) => {
 
     let columnReferences = {};
 
-    Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
+    Object.entries(openapi.components.schemas[`read-${subject}s`].properties).forEach(([k, v]) => {
         if (v["x-references"]) columnReferences[k] = v["x-references"];
     });
 
@@ -201,7 +201,7 @@ let getRecord = async (url) => {
     li.innerHTML = "<br /><b>RELATED DATA</b>";
     ul.appendChild(li);
 
-    const referenced = openapi.components.schemas[`read-${subject}`].properties.id["x-referenced"];
+    const referenced = openapi.components.schemas[`read-${subject}s`].properties.id["x-referenced"];
     const joins = referenced.reduce((acc, val) => {
         const x_y = val.split(".")[0];
         const x = x_y.split("_")[0];
@@ -269,7 +269,7 @@ let setForm = async (formId, subject, record = null) => {
     const fieldset = document.createElement("fieldset");
     form.appendChild(fieldset);
 
-    const fields = openapi['components']['schemas']['read-'+subject]['properties'];
+    const fields = openapi['components']['schemas']['read-'+subject+'s']['properties'];
 
     // #raw
     const raw = JSON.stringify(fields, undefined, 4);
