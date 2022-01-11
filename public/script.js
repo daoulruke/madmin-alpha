@@ -315,7 +315,7 @@ let setForm = async (formId, subject, record = null) => {
         // Change to select
         if (field["x-references"]) {
 
-            let input = document.createElement("select");
+            var input = document.createElement("select");
 
             // Collect options
             const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}`)
@@ -339,7 +339,7 @@ let setForm = async (formId, subject, record = null) => {
 
         } else {
 
-            let input = document.createElement("input");
+            var input = document.createElement("input");
 
             input.setAttribute('id', key);
             input.setAttribute('name', key);
