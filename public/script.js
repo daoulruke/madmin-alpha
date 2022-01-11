@@ -167,7 +167,7 @@ let getRecord = async (url) => {
 
     let columnReferences = {};
 
-    Object.entries(openapi.components.schemas[`read-${subject}s`].properties).forEach(([k, v]) => {
+    Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
         if (v["x-references"]) columnReferences[k] = v["x-references"];
     });
 
@@ -291,7 +291,7 @@ let setForm = async (formId, subject, record = null) => {
         if (field["x-references"]) {
             input = document.createElement("select");
             // Collect options
-            const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}s`)
+            const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}`)
                 .then(response => response.json())
                 .then(response => response.records);
             // Append options
