@@ -180,11 +180,14 @@ let getRecord = async (url) => {
         .then(response => response.json());
 
     // START - #content
-    const ul = document.createElement("ul");
+    const form = document.createElement("form");
+    form.classList.add('pure-form');
+    form.classList.add('pure-form-aligned');
+
+    const fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
 
     for ([key, value] of Object.entries(record)) {
-
-        const li = document.createElement("li");
 
         const div = document.createElement("div");
         div.classList.add('pure-control-group');
@@ -192,11 +195,12 @@ let getRecord = async (url) => {
         const label = document.createElement("label");
         label.setAttribute('for', key);
         label.innerHTML = key;
-
-        const span = document.createElement("span");
+        div.appendChild(label);
 
         // Display reference name
         if (columnReferences[key] && value) {
+
+            const span = document.createElement("span");
 
             if(columnReferences[key].substr(columnReferences[key].length - 1) != 's') {
                 columnReferences[key] = columnReferences[key] + 's';
@@ -204,12 +208,19 @@ let getRecord = async (url) => {
 
             span.innerHTML = `<a href="#" onclick="getRecord('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
 
+            div.appendChild(span);
+
         } else {
-            span.innerHTML = value;
+
+            let input = document.createElement("input");
+            input.setAttribute('id', key);
+            input.setAttribute('name', key);
+            input.setAttribute('type', 'text');
+            input.setAttribute('value', value);
+            div.appendChild(input);
+
         }
 
-        div.appendChild(label);
-        div.appendChild(span);
         li.appendChild(div);
         ul.appendChild(li);
 
@@ -311,11 +322,11 @@ let setForm = async (formId, subject, record = null) => {
         label.innerHTML = key;
         div.appendChild(label);
 
-        let input = document.createElement("input");
-
         // Change to select
         if (field["x-references"]) {
-            input = document.createElement("select");
+
+            let select = document.createElement("select");
+
             // Collect options
             const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}`)
                 .then(response => response.json())
@@ -324,7 +335,7 @@ let setForm = async (formId, subject, record = null) => {
             var option = document.createElement("option");
                 option.value = "";
                 option.text = "Please select";
-                input.appendChild(option);
+                select.appendChild(option);
             for (const optionRecord of optionRecords) {
                 var option = document.createElement("option");
                 option.value = optionRecord.id;
@@ -333,13 +344,17 @@ let setForm = async (formId, subject, record = null) => {
                 if (record && record[key] == option.value) {
                     option.setAttribute("selected", "selected");
                 }
-                input.appendChild(option);
+                select.appendChild(option);
             }
-        }
 
-        input.setAttribute('id', key);
-        input.setAttribute('name', key);
-        input.setAttribute('type', 'text');
+        } else {
+
+            let input = document.createElement("input");
+            input.setAttribute('id', key);
+            input.setAttribute('name', key);
+            input.setAttribute('type', 'text');
+
+        }
 
         // Update
         if (record) {
