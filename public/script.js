@@ -165,7 +165,7 @@ let getRecord = async (url) => {
 
     let subject = url.split("/")[2];
 
-    if(subject.substr(id.length - 1) != 's') {
+    if(subject.substr(subject.length - 1) != 's') {
         subject = subject + 's';
     }
 
