@@ -349,7 +349,7 @@ let setForm = async (formId, subject, record = null) => {
 
         // Update
         if (record) {
-            if (key == 'id' || key == 'created_by_persons_id') {
+            if (key == 'id' || key == 'admin_person_id') {
                 input.setAttribute('readonly', true);
             }
 
@@ -361,7 +361,7 @@ let setForm = async (formId, subject, record = null) => {
         }
         // Create
         else {
-            if (key == 'id' || key == 'created_by') {
+            if (key == 'id' || key == 'admin_person_id') {
                 continue;
             }
         }
