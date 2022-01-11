@@ -165,6 +165,10 @@ let getRecord = async (url) => {
 
     let subject = url.split("/")[2];
 
+    if(subject.substr(id.length - 1) != 's') {
+        subject = subject + 's';
+    }
+
     let columnReferences = {};
 
     Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
