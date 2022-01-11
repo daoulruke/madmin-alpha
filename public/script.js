@@ -185,8 +185,7 @@ let getRecord = async (url) => {
     form.classList.add('pure-form-aligned');
 
     const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
-
+    
     for ([key, value] of Object.entries(record)) {
 
         const div = document.createElement("div");
@@ -221,8 +220,8 @@ let getRecord = async (url) => {
 
         }
 
-        li.appendChild(div);
-        ul.appendChild(li);
+        fieldset.appendChild(div);
+        form.appendChild(fieldset);
 
     }
 
