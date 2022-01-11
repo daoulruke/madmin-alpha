@@ -180,12 +180,9 @@ let getRecord = async (url) => {
         .then(response => response.json());
 
     // START - #content
-    const form = document.createElement("form");
-    form.classList.add('pure-form');
-    form.classList.add('pure-form-aligned');
-
-    const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
+    const card = document.createElement("div");
+    card.classList.add('pure-form');
+    card.classList.add('pure-form-aligned');
 
     for ([key, value] of Object.entries(record)) {
 
@@ -197,10 +194,10 @@ let getRecord = async (url) => {
         label.innerHTML = key;
         div.appendChild(label);
 
+        const span = document.createElement("span");
+
         // Display reference name
         if (columnReferences[key] && value) {
-
-            const span = document.createElement("span");
 
             if(columnReferences[key].substr(columnReferences[key].length - 1) != 's') {
                 columnReferences[key] = columnReferences[key] + 's';
@@ -208,34 +205,26 @@ let getRecord = async (url) => {
 
             span.innerHTML = `<a href="#" onclick="getRecord('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
 
-            div.appendChild(span);
-
         } else {
 
-            let input = document.createElement("input");
-            input.setAttribute('id', key);
-            input.setAttribute('name', key);
-            input.setAttribute('type', 'text');
-            input.setAttribute('value', value);
-            div.appendChild(input);
+            span.innerHTML = value;
 
         }
 
-        fieldset.appendChild(div);
-
+        div.appendChild(span);
 
     }
 
-    let input = document.createElement("input");
+    card.appendChild(div);
 
     var div = document.createElement("div");
     div.innerHTML = `<button onclick="updateRecord('${url}')">UPDATE</button>`;
-    fieldset.appendChild(div);
+    card.appendChild(div);
 
     // Related links
     var div = document.createElement("div");
     div.innerHTML = "<br /><b>RELATED DATA</b>";
-    fieldset.appendChild(div);
+    card.appendChild(div);
 
     const referenced = openapi.components.schemas[`read-${subject}`].properties.id["x-referenced"];
     const joins = referenced.reduce((acc, val) => {
@@ -249,10 +238,10 @@ let getRecord = async (url) => {
     for (join of joins) {
         var div = document.createElement("div");
         div.innerHTML = `<a href="#" onclick="getRecords('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
-        fieldset.appendChild(div);
+        card.appendChild(div);
     }
 
-    document.getElementById('content').innerHTML = form.outerHTML;
+    document.getElementById('content').innerHTML = card.outerHTML;
     // END - #content
 
     // #raw
