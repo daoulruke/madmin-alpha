@@ -180,12 +180,25 @@ let getRecord = async (url) => {
         .then(response => response.json());
 
     // START - #content
-    const ul = document.createElement("ul");
+    const form = document.createElement("form");
+    form.setAttribute('id', formId);
+    form.classList.add('pure-form');
+    form.classList.add('pure-form-aligned');
+
+    const fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
+
+    const fields = openapi['components']['schemas']['read-'+subject]['properties'];
 
     for ([key, value] of Object.entries(record)) {
 
-        const li = document.createElement("li");
-        li.innerHTML = `${key}: ${value}`;
+        const div = document.createElement("div");
+        div.classList.add('pure-control-group');
+
+        const label = document.createElement("label");
+        label.setAttribute('for', key);
+        label.innerHTML = key;
+        div.appendChild(label);
 
         // Display reference name
         if (columnReferences[key] && value) {
