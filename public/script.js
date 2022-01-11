@@ -312,10 +312,12 @@ let setForm = async (formId, subject, record = null) => {
         label.innerHTML = key;
         div.appendChild(label);
 
+        let input = document.createElement("input");
+
         // Change to select
         if (field["x-references"]) {
 
-            let select = document.createElement("select");
+            let input = document.createElement("select");
 
             // Collect options
             const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}`)
@@ -325,7 +327,7 @@ let setForm = async (formId, subject, record = null) => {
             var option = document.createElement("option");
                 option.value = "";
                 option.text = "Please select";
-                select.appendChild(option);
+                input.appendChild(option);
             for (const optionRecord of optionRecords) {
                 var option = document.createElement("option");
                 option.value = optionRecord.id;
@@ -334,12 +336,11 @@ let setForm = async (formId, subject, record = null) => {
                 if (record && record[key] == option.value) {
                     option.setAttribute("selected", "selected");
                 }
-                select.appendChild(option);
+                input.appendChild(option);
             }
 
         } else {
 
-            let input = document.createElement("input");
             input.setAttribute('id', key);
             input.setAttribute('name', key);
             input.setAttribute('type', 'text');
@@ -348,7 +349,7 @@ let setForm = async (formId, subject, record = null) => {
 
         // Update
         if (record) {
-            if (key == 'id' || key == 'created_by') {
+            if (key == 'id' || key == 'created_by_persons_id') {
                 input.setAttribute('readonly', true);
             }
 
