@@ -312,8 +312,6 @@ let setForm = async (formId, subject, record = null) => {
         label.innerHTML = key;
         div.appendChild(label);
 
-        let input = document.createElement("input");
-
         // Change to select
         if (field["x-references"]) {
 
@@ -340,6 +338,8 @@ let setForm = async (formId, subject, record = null) => {
             }
 
         } else {
+
+            let input = document.createElement("input");
 
             input.setAttribute('id', key);
             input.setAttribute('name', key);
