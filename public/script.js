@@ -260,6 +260,9 @@ let updateRecord = async (url) => {
 
     // #content
     const subject = url.split("/")[2];
+    if(subject.substr(subject.length - 1) != 's') {
+        subject = subject + 's';
+    }
     setForm("update_form", subject, record);
 };
 
