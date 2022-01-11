@@ -180,17 +180,11 @@ let getRecord = async (url) => {
         .then(response => response.json());
 
     // START - #content
-    const form = document.createElement("form");
-    form.setAttribute('id', formId);
-    form.classList.add('pure-form');
-    form.classList.add('pure-form-aligned');
-
-    const fieldset = document.createElement("fieldset");
-    form.appendChild(fieldset);
-
-    const fields = openapi['components']['schemas']['read-'+subject]['properties'];
+    const ul = document.createElement("ul");
 
     for ([key, value] of Object.entries(record)) {
+
+        const li = document.createElement("li");
 
         const div = document.createElement("div");
         div.classList.add('pure-control-group');
@@ -198,7 +192,8 @@ let getRecord = async (url) => {
         const label = document.createElement("label");
         label.setAttribute('for', key);
         label.innerHTML = key;
-        div.appendChild(label);
+
+        const span = document.createElement("span");
 
         // Display reference name
         if (columnReferences[key] && value) {
@@ -207,9 +202,15 @@ let getRecord = async (url) => {
                 columnReferences[key] = columnReferences[key] + 's';
             }
 
-            li.innerHTML = `${key}: <a href="#" onclick="getRecord('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
+            span.innerHTML = `<a href="#" onclick="getRecord('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
+
+        } else {
+            span.innerHTML = value;
         }
 
+        div.appendChild(label);
+        div.appendChild(span);
+        li.appendChild(div);
         ul.appendChild(li);
 
     }
