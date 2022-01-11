@@ -189,7 +189,12 @@ let getRecord = async (url) => {
 
         // Display reference name
         if (columnReferences[key] && value) {
-            li.innerHTML = `${key}: <a href="#" onclick="getRecord('${`/records/${columnReferences[key]}s/${value.id}`}')">${value.name}</a>`;
+
+            if(columnReferences[key].substr(columnReferences[key].length - 1) != 's') {
+                columnReferences[key] = columnReferences[key] + 's';
+            }
+
+            li.innerHTML = `${key}: <a href="#" onclick="getRecord('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
         }
 
         ul.appendChild(li);
