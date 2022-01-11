@@ -201,7 +201,7 @@ let getRecord = async (url) => {
     li.innerHTML = "<br /><b>RELATED DATA</b>";
     ul.appendChild(li);
 
-    const referenced = openapi.components.schemas[`read-${subject}s`].properties.id["x-referenced"];
+    const referenced = openapi.components.schemas[`read-${subject}`].properties.id["x-referenced"];
     const joins = referenced.reduce((acc, val) => {
         const x_y = val.split(".")[0];
         const x = x_y.split("_")[0];
