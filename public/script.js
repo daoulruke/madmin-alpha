@@ -212,10 +212,9 @@ let getRecord = async (url) => {
         }
 
         div.appendChild(span);
+        card.appendChild(div);
 
     }
-
-    card.appendChild(div);
 
     var div = document.createElement("div");
     div.innerHTML = `<button onclick="updateRecord('${url}')">UPDATE</button>`;
