@@ -171,9 +171,9 @@ let getRecord = async (url) => {
 
     let columnReferences = {};
 
-    Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
-        if (v["x-references"]) columnReferences[k] = v["x-references"];
-    });
+    //Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
+    //    if (v["x-references"]) columnReferences[k] = v["x-references"];
+    //});
 
     let joinQuery = [... new Set(Object.values(columnReferences).map(v => v))].map(v => `join=${v}`).join("&");
     const record = await _fetch(`${apiUrl}${url}?${joinQuery}`)
