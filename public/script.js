@@ -312,10 +312,12 @@ let setForm = async (formId, subject, record = null) => {
         label.innerHTML = key;
         div.appendChild(label);
 
+        var input = document.createElement("input");
+
         // Change to select
         if (field["x-references"]) {
 
-            var input = document.createElement("select");
+            input = document.createElement("select");
 
             // Collect options
             const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}`)
@@ -337,15 +339,11 @@ let setForm = async (formId, subject, record = null) => {
                 input.appendChild(option);
             }
 
-        } else {
-
-            var input = document.createElement("input");
-
-            input.setAttribute('id', key);
-            input.setAttribute('name', key);
-            input.setAttribute('type', 'text');
-
         }
+
+        input.setAttribute('id', key);
+        input.setAttribute('name', key);
+        input.setAttribute('type', 'text');
 
         // Update
         if (record) {
