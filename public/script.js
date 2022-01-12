@@ -166,7 +166,7 @@ let getRecord = async (url) => {
     let subject = url.split("/")[2];
 
     if(subject.substr(subject.length - 1) != 's') {
-        subject = subject + 's';
+        //subject = subject + 's';
     }
 
     let columnReferences = {};
@@ -200,7 +200,7 @@ let getRecord = async (url) => {
         if (columnReferences[key] && value) {
 
             if(columnReferences[key].substr(columnReferences[key].length - 1) != 's') {
-                columnReferences[key] = columnReferences[key] + 's';
+                //columnReferences[key] = columnReferences[key] + 's';
             }
 
             span.innerHTML = `<a href="#" onclick="getRecord('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
@@ -281,7 +281,7 @@ let updateRecord = async (url) => {
     // #content
     const subject = url.split("/")[2];
     if(subject.substr(subject.length - 1) != 's') {
-        subject = subject + 's';
+        //subject = subject + 's';
     }
     setForm("update_form", subject, record);
 };
