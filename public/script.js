@@ -320,7 +320,7 @@ let setForm = async (formId, subject, record = null) => {
             input = document.createElement("select");
 
             // Collect options
-            const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}s`)
+            const optionRecords = await _fetch(`${apiUrl}/records/${field["x-references"]}`)
                 .then(response => response.json())
                 .then(response => response.records);
             // Append options
