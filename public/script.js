@@ -216,9 +216,20 @@ let getRecord = async (url) => {
 
     }
 
-    var div = document.createElement("div");
-    div.innerHTML = `<button onclick="updateRecord('${url}')">UPDATE</button>`;
-    card.appendChild(div);
+    const actions = document.createElement("div");
+    actions.setAttribute('id', 'actions');
+
+    const update_button = document.createElement("button");
+    update_button.setAttribute('id', 'update_button');
+    update_button.setAttribute('onclick', updateRecord(url));
+    actions.appendChild(update_button);
+
+    const delete_button = document.createElement("button");
+    delete_button.setAttribute('id', 'delete_button');
+    delete_button.setAttribute('onclick', deleteRecord(url));
+    actions.appendChild(delete_button);
+
+    card.appendChild(actions);
 
     // Related links
     var div = document.createElement("div");
@@ -284,6 +295,22 @@ let updateRecord = async (url) => {
         //subject = subject + 's';
     }
     setForm("update_form", subject, record);
+};
+
+// Fetch and display records
+let deleteRecord = async (url) => {
+    // Reset #msg
+    displayMsg();
+
+    const record = await _fetch(`${apiUrl}${url}`)
+        .then(response => response.json());
+
+    // #content
+    const subject = url.split("/")[2];
+    if(subject.substr(subject.length - 1) != 's') {
+        //subject = subject + 's';
+    }
+    setForm('delete_form', subject, record);
 };
 
 let setForm = async (formId, subject, record = null) => {
@@ -423,6 +450,13 @@ let submitForm = async (form_id) => {
             });
         }
 
+        if(form_id == 'delete_form') {
+            var response = await _fetch(url + window.location.pathname, {
+                method: "DELETE",
+                body: json
+            });
+        }
+
         if (response.ok) {
 
             const responseJson = await response.json();
@@ -436,6 +470,11 @@ let submitForm = async (form_id) => {
             if(form_id == 'update_form') {
                 var returnPath = window.location.pathname;
                 var successMsg = `[${response.status}] Record has been updated.`;
+            }
+
+            if(form_id == 'delete_form') {
+                var returnPath = window.location.pathname;
+                var successMsg = `[${response.status}] Record has been deleted.`;
             }
 
             // Go back to read view
