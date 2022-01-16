@@ -223,12 +223,15 @@ let getRecord = async (url) => {
     update_button.setAttribute('id', 'update_button');
     update_button.setAttribute('onclick', 'updateRecord("'+url+'")');
     update_button.innerHTML = 'UPDATE';
+    update_button.classList.add("pure-button");
     actions.appendChild(update_button);
 
     const delete_button = document.createElement("button");
     delete_button.setAttribute('id', 'delete_button');
-    delete_button.setAttribute('onclick', 'submitForm("delete_form")');
+    delete_button.setAttribute('onclick', 'deleteRecord()');
     delete_button.innerHTML = 'DELETE';
+    delete_button.classList.add("pure-button");
+    delete_button.classList.add("button-orange");
     actions.appendChild(delete_button);
 
     card.appendChild(actions);
@@ -297,22 +300,6 @@ let updateRecord = async (url) => {
         //subject = subject + 's';
     }
     setForm("update_form", subject, record);
-};
-
-// Fetch and display records
-let deleteRecord = async (url) => {
-    // Reset #msg
-    displayMsg();
-
-    const record = await _fetch(`${apiUrl}${url}`)
-        .then(response => response.json());
-
-    // #content
-    const subject = url.split("/")[2];
-    if(subject.substr(subject.length - 1) != 's') {
-        //subject = subject + 's';
-    }
-    setForm('delete_form', subject, record);
 };
 
 let setForm = async (formId, subject, record = null) => {
@@ -452,13 +439,6 @@ let submitForm = async (form_id) => {
             });
         }
 
-        if(form_id == 'delete_form') {
-            var response = await _fetch(url + window.location.pathname, {
-                method: "DELETE",
-                body: json
-            });
-        }
-
         if (response.ok) {
 
             const responseJson = await response.json();
@@ -482,6 +462,77 @@ let submitForm = async (form_id) => {
             // Go back to read view
             getRecord(returnPath);
 
+            displayMsg(successMsg);
+
+        } else {
+
+            // Remove previous error msgs
+            document.querySelectorAll(".error_msg")
+                .forEach(el => el.remove());
+            // Reset #msg
+            displayMsg();
+
+            // Display errors
+            const responseError = await response.json();
+
+            // code 1013 === validation error
+            if (responseError.code == 1013) {
+                const validationErrors = responseError.details || {};
+                console.log(validationErrors);
+                for ([key, value] of Object.entries(validationErrors)) {
+                    const input = document.querySelector(`[name='${key}']`);
+                    const span = document.createElement("span");
+                    span.classList.add("error_msg");
+                    span.style.color = "red";
+                    span.textContent  = value;
+                    input.parentElement.appendChild(span);
+                }
+            }
+
+            // code 9999 === unknown error
+            if (responseError.code == 9999) {
+                const validationErrors = responseError.message || {};
+                console.log(validationErrors);
+
+                displayMsg(`[${response.status}] ${responseError.message}`, "red");
+            }
+
+        }
+
+    } catch (err) {
+
+        throw err;
+
+    }
+
+}
+
+
+let deleteRecord = async () => {
+
+    // Prevent the form from submitting.
+    event.preventDefault();
+
+    try {
+
+        // Set url for submission and collect data.
+        const url = apiUrl;
+
+        var response = await _fetch(url + window.location.pathname, {
+            method: "DELETE",
+            body: json
+        });
+
+        if (response.ok) {
+
+            const responseJson = await response.json();
+            console.log(responseJson);
+
+            var returnPath = window.location.pathname;
+            var successMsg = `[${response.status}] Record has been deleted.`;
+
+            // Go back to read view
+            getRecord(returnPath);
             displayMsg(successMsg);
 
         } else {
