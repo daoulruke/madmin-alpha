@@ -222,7 +222,7 @@ let getRecord = async (url) => {
     const update_button = document.createElement("button");
     update_button.setAttribute('id', 'update_button');
     update_button.setAttribute('onclick', 'updateRecord('+url+')');
-    delete_button.innerHTML('UPDATE');
+    update_button.innerHTML('UPDATE');
     actions.appendChild(update_button);
 
     const delete_button = document.createElement("button");
