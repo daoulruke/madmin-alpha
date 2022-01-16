@@ -221,12 +221,12 @@ let getRecord = async (url) => {
 
     const update_button = document.createElement("button");
     update_button.setAttribute('id', 'update_button');
-    update_button.setAttribute('onclick', updateRecord(url));
+    update_button.setAttribute('onclick', 'updateRecord('+url+')');
     actions.appendChild(update_button);
 
     const delete_button = document.createElement("button");
     delete_button.setAttribute('id', 'delete_button');
-    delete_button.setAttribute('onclick', deleteRecord(url));
+    delete_button.setAttribute('onclick', 'deleteRecord('+url+')');
     actions.appendChild(delete_button);
 
     card.appendChild(actions);
