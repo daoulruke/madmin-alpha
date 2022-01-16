@@ -227,7 +227,7 @@ let getRecord = async (url) => {
 
     const delete_button = document.createElement("button");
     delete_button.setAttribute('id', 'delete_button');
-    delete_button.setAttribute('onclick', 'deleteRecord("'+url+'")');
+    delete_button.setAttribute('onclick', 'submitForm("delete_form")');
     delete_button.innerHTML = 'DELETE';
     actions.appendChild(delete_button);
 
