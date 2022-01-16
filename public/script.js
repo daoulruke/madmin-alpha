@@ -519,8 +519,7 @@ let deleteRecord = async () => {
         const url = apiUrl;
 
         var response = await _fetch(url + window.location.pathname, {
-            method: "DELETE",
-            body: json
+            method: "DELETE"
         });
 
         if (response.ok) {
