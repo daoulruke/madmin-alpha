@@ -217,6 +217,14 @@ let getRecord = async (url) => {
     const actions = document.createElement("div");
     actions.setAttribute('id', 'actions');
 
+    const back_button = document.createElement("button");
+    back_button.setAttribute('id', 'back_button');
+    back_button.setAttribute('href', '/');
+    back_button.innerHTML = 'BACK';
+    back_button.classList.add("pure-button");
+    back_button.classList.add("pure-bg-dark");
+    actions.appendChild(back_button);
+
     const update_button = document.createElement("button");
     update_button.setAttribute('id', 'update_button');
     update_button.setAttribute('onclick', 'updateRecord("'+url+'")');
