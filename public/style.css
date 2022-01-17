@@ -35,27 +35,27 @@ html, body {
     width: 100px;
 }
 
-.bg-dark {
+.pure-bg-dark {
     background: grey;
 }
 
-.bg-light {
+.pure-bg-light {
     background: whitesmoke;
 }
 
-.bg-green {
+.pure-bg-green {
     background: rgb(28, 184, 65);
 }
 
-.bg-red {
+.pure-bg-red {
     background: rgb(202, 60, 60);
 }
 
-.bg-orange {
+.pure-bg-orange {
     background: rgb(223, 117, 20);
 }
 
-.bg-blue {
+.pure-bg-blue {
     background: rgb(66, 184, 221);
 }
 
