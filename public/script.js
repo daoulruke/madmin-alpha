@@ -118,6 +118,7 @@ let getRecords = async (url) => {
     // #content
     const table = document.createElement("table");
     table.classList.add('pure-table');
+    table.classList.add('pure-table-bordered');
 
     var thead = document.createElement("thead");
     thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
