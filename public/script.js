@@ -125,12 +125,12 @@ let getRecords = async (url) => {
         if (urlSegments.length > 4) {
             recordUrl = `/records/${urlSegments[4]}/${record.id}`;
         }
-        tr.innerHTML = `<td><a href="#" onclick="getRecord('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
+        tr.innerHTML = `<td><input type="checkbox"/></td><td><a href="#" onclick="getRecord('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
         table.appendChild(tr);
     }
 
     var tr = document.createElement("tr");
-    tr.innerHTML = `<td></td><td class="text-right"><button class="pure-button" onclick="navigate('back')">BACK</button><button class="pure-button button-green" onclick="createRecord('${url}')">CREATE</button></td>`;
+    tr.innerHTML = `<td></td><td></td><td class="text-right"><button class="pure-button" onclick="navigate('back')">BACK</button><button class="pure-button" onclick="createRecord('${url}')">CREATE</button></td>`;
     table.appendChild(tr);
     document.getElementById('content').innerHTML = table.outerHTML;
 
@@ -224,7 +224,7 @@ let getRecord = async (url) => {
     delete_button.setAttribute('onclick', 'deleteRecord()');
     delete_button.innerHTML = 'DELETE';
     delete_button.classList.add("pure-button");
-    delete_button.classList.add("button-orange");
+    delete_button.classList.add("button-red");
     actions.appendChild(delete_button);
 
     card.appendChild(actions);
