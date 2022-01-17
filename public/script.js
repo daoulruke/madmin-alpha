@@ -110,15 +110,8 @@ let getRecords = async (url) => {
 
     const urlSegments = url.split("/");
 
-    let fetchUrl = url;
-
-    // For join records
-    if (urlSegments.length > 4) {
-        fetchUrl = url.replace("/records", "");
-    }
-
     //const records = await _fetch(`${apiUrl}${fetchUrl}?filter=name,cs,test`)
-    const records = await _fetch(`${apiUrl}${fetchUrl}`)
+    const records = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json())
         .then(response => response.records);
 
@@ -281,8 +274,14 @@ let createRecord = async (url) => {
     // Reset #msg
     displayMsg();
 
+    const urlSegments = url.split("/");
+
     // #content
-    const subject = url.split("/")[2];
+    let subject = url.split("/")[2];
+    // For join records
+    if (urlSegments.length > 4) {
+        subject = urlSegments[4];
+    }
     setForm("create_form", subject);
 };
 
@@ -447,6 +446,12 @@ let submitForm = async (form_id) => {
             if(form_id == 'create_form') {
                 var returnPath = window.location.pathname + '/' + responseJson;
                 var successMsg = `[${response.status}] Record has been created.`;
+                // For join records
+                if (location.pathname.split("/").length > 4) {
+                    var returnPath = location.pathname;
+                    getRecords(returnPath);
+                    return;
+                }
             }
 
             if(form_id == 'update_form') {
