@@ -120,7 +120,7 @@ let getRecords = async (url) => {
     table.classList.add('pure-table');
 
     var thead = document.createElement("thead");
-    thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
+    thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
     table.appendChild(thead);
 
     var tbody = document.createElement("tbody");
@@ -222,6 +222,7 @@ let getRecord = async (url) => {
     update_button.setAttribute('onclick', 'updateRecord("'+url+'")');
     update_button.innerHTML = 'UPDATE';
     update_button.classList.add("pure-button");
+    update_button.classList.add("pure-bg-dark");
     actions.appendChild(update_button);
 
     const delete_button = document.createElement("button");
@@ -229,7 +230,7 @@ let getRecord = async (url) => {
     delete_button.setAttribute('onclick', 'deleteRecord()');
     delete_button.innerHTML = 'DELETE';
     delete_button.classList.add("pure-button");
-    delete_button.classList.add("bg-red");
+    delete_button.classList.add("pure-bg-red");
     actions.appendChild(delete_button);
 
     card.appendChild(actions);
@@ -397,7 +398,7 @@ let setForm = async (formId, subject, record = null) => {
     const div = document.createElement("div");
     div.classList.add('pure-control-group');
 
-    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button bg-green" onclick="submitForm('${formId}')">${record ? 'UPDATE' : 'CREATE'}</button>`;
+    div.innerHTML = `<a class="pure-button" href="/">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${formId}')">${record ? 'UPDATE' : 'CREATE'}</button>`;
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
