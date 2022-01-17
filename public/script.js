@@ -124,6 +124,9 @@ let getRecords = async (url) => {
     table.appendChild(thead);
     document.getElementById('content').innerHTML = table.outerHTML;
 
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+
     for (record of records) {
         const tr = document.createElement("tr");
         let recordUrl = `${url}/${record.id}`;
@@ -132,7 +135,7 @@ let getRecords = async (url) => {
             recordUrl = `/records/${urlSegments[4]}/${record.id}`;
         }
         tr.innerHTML = `<td><input type="checkbox"/></td><td><a href="#" onclick="getRecord('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
-        table.appendChild(tr);
+        tbody.appendChild(tr);
     }
 
     // #raw
