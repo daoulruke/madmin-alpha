@@ -118,6 +118,12 @@ let getRecords = async (url) => {
     // #content
     const table = document.createElement("table");
     table.classList.add('pure-table');
+
+    var thead = document.createElement("thead");
+    thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button" onclick="navigate('back')">BACK</button><button class="pure-button" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
+    table.appendChild(thead);
+    document.getElementById('content').innerHTML = table.outerHTML;
+
     for (record of records) {
         const tr = document.createElement("tr");
         let recordUrl = `${url}/${record.id}`;
@@ -128,11 +134,6 @@ let getRecords = async (url) => {
         tr.innerHTML = `<td><input type="checkbox"/></td><td><a href="#" onclick="getRecord('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
         table.appendChild(tr);
     }
-
-    var tr = document.createElement("tr");
-    tr.innerHTML = `<td></td><td></td><td class="text-right"><button class="pure-button" onclick="navigate('back')">BACK</button><button class="pure-button" onclick="createRecord('${url}')">CREATE</button></td>`;
-    table.appendChild(tr);
-    document.getElementById('content').innerHTML = table.outerHTML;
 
     // #raw
     const raw = JSON.stringify(records, undefined, 4);
