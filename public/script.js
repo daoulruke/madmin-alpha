@@ -173,14 +173,21 @@ let getRelatedRecords = async (subject, subjectId, join) => {
         ]);
         const records = response[0];
         const relatedRecords = response[1];
-        
+
+        const isAllChecked = function(records, relatedRecords) {
+            return records.reduce((acc, r) => {
+                if (acc) acc = !!relatedRecords.find(rr => rr.id == r.id);
+                return acc;
+            }, true);
+        };
+
         // #content
         const table = document.createElement("table");
         table.classList.add('pure-table');
         table.classList.add('pure-table-bordered');
 
         const thead = document.createElement("thead");
-        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" ${records.length == relatedRecords.length ? 'checked' : ''} /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
+        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" ${isAllChecked(records, relatedRecords) ? 'checked' : ''} /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
         table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
