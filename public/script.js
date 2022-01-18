@@ -242,6 +242,14 @@ let getRecord = async (url) => {
     delete_button.classList.add("pure-bg-red");
     actions.appendChild(delete_button);
 
+    const recover_button = document.createElement("button");
+    recover_button.setAttribute('id', 'recover_button');
+    recover_button.setAttribute('onclick', 'recoverRecord()');
+    recover_button.innerHTML = 'RECOVER';
+    recover_button.classList.add("pure-button");
+    recover_button.classList.add("pure-bg-green");
+    actions.appendChild(recover_button);
+
     card.appendChild(actions);
 
     // Related links
@@ -595,6 +603,39 @@ let deleteRecord = async () => {
 
     }
 
+}
+
+let recoverRecord = async () => {
+    // Prevent the form from submitting.
+    event.preventDefault();
+
+    try {
+        // Set url for submission and collect data.
+        const url = apiUrl;
+        var response = await _fetch(url + window.location.pathname + "/recover", {
+            method: "PUT"
+        });
+
+        if (response.ok) {
+            await response.json();
+            var returnPath = window.location.pathname;
+            var successMsg = `[${response.status}] Record has been recovered.`;
+            // Go back to read view
+            getRecord(returnPath);
+            displayMsg(successMsg);
+        } else {
+            // Reset #msg
+            displayMsg();
+            // Display errors
+            const responseError = await response.json();
+            // code 9999 === unknown error
+            if (responseError.code == 9999) {
+                displayMsg(`[${response.status}] ${responseError.message}`, "red");
+            }
+        }
+    } catch (err) {
+        throw err;
+    }
 }
 
 let displayMsg = (msg = null, color = "green") => {
