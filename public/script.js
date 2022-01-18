@@ -180,7 +180,7 @@ let getRelatedRecords = async (subject, subjectId, join) => {
         table.classList.add('pure-table-bordered');
 
         const thead = document.createElement("thead");
-        thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
+        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" ${records.length == relatedRecords.length ? 'checked' : ''} /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
         table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
@@ -215,13 +215,23 @@ let getRelatedRecords = async (subject, subjectId, join) => {
         document.getElementById('content').innerHTML = table.outerHTML;
 
         // Add event listeners
-        const checkboxes = document.querySelectorAll(".cb-attach-detach");
-        for (const checkbox of checkboxes) {
-            checkbox.addEventListener("change", function() {
-                // console.log(this.checked, this.value);
-                attachOrDetachRecord(this.checked ? "attach" : "detach", subject, subjectId, join, this.value);
+        document.querySelector(".cb-attach-detach-all").addEventListener("click", function() {
+            if (this.checked) {
+                document.querySelectorAll(".cb-attach-detach")
+                    .forEach(el => el.setAttribute("checked", "checked"));
+            } else {
+                document.querySelectorAll(".cb-attach-detach")
+                    .forEach(el => el.removeAttribute("checked"));
+            }
+            attachOrDetachRecord(this.checked ? "attach" : "detach", subject, subjectId, join, records.map(v => v.id).join(","));
+        });
+        document.querySelectorAll(".cb-attach-detach")
+            .forEach(el => {
+                el.addEventListener("click", function() {
+                    console.log(this.checked, this.value);
+                    attachOrDetachRecord(this.checked ? "attach" : "detach", subject, subjectId, join, this.value);
+                });
             });
-        }
 
         // #raw
         const raw = JSON.stringify(records, undefined, 4);
