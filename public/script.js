@@ -250,6 +250,22 @@ let getRecord = async (url) => {
     recover_button.classList.add("pure-bg-green");
     actions.appendChild(recover_button);
 
+    const archiveRecord = document.createElement("button");
+    archiveRecord.setAttribute('id', 'archiveRecord');
+    archiveRecord.setAttribute('onclick', 'archiveRecord()');
+    archiveRecord.innerHTML = 'ARCHIVE';
+    archiveRecord.classList.add("pure-button");
+    archiveRecord.classList.add("pure-bg-orange");
+    actions.appendChild(archiveRecord);
+
+    const restoreRecord = document.createElement("button");
+    restoreRecord.setAttribute('id', 'restoreRecord');
+    restoreRecord.setAttribute('onclick', 'restoreRecord()');
+    restoreRecord.innerHTML = 'RESTORE';
+    restoreRecord.classList.add("pure-button");
+    restoreRecord.classList.add("pure-bg-green");
+    actions.appendChild(restoreRecord);
+
     card.appendChild(actions);
 
     // Related links
@@ -605,6 +621,8 @@ let deleteRecord = async () => {
 
 }
 
+// The 3 methods below can be merged together?
+
 let recoverRecord = async () => {
     // Prevent the form from submitting.
     event.preventDefault();
@@ -620,6 +638,72 @@ let recoverRecord = async () => {
             await response.json();
             var returnPath = window.location.pathname;
             var successMsg = `[${response.status}] Record has been recovered.`;
+            // Go back to read view
+            getRecord(returnPath);
+            displayMsg(successMsg);
+        } else {
+            // Reset #msg
+            displayMsg();
+            // Display errors
+            const responseError = await response.json();
+            // code 9999 === unknown error
+            if (responseError.code == 9999) {
+                displayMsg(`[${response.status}] ${responseError.message}`, "red");
+            }
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+let archiveRecord = async () => {
+    // Prevent the form from submitting.
+    event.preventDefault();
+
+    try {
+        // Set url for submission and collect data.
+        const url = apiUrl;
+        var response = await _fetch(url + window.location.pathname + "/archive", {
+            method: "PUT"
+        });
+
+        if (response.ok) {
+            await response.json();
+            var returnPath = window.location.pathname;
+            var successMsg = `[${response.status}] Record has been archived.`;
+            // Go back to read view
+            getRecord(returnPath);
+            displayMsg(successMsg);
+        } else {
+            // Reset #msg
+            displayMsg();
+            // Display errors
+            const responseError = await response.json();
+            // code 9999 === unknown error
+            if (responseError.code == 9999) {
+                displayMsg(`[${response.status}] ${responseError.message}`, "red");
+            }
+        }
+    } catch (err) {
+        throw err;
+    }
+}
+
+let restoreRecord = async () => {
+    // Prevent the form from submitting.
+    event.preventDefault();
+
+    try {
+        // Set url for submission and collect data.
+        const url = apiUrl;
+        var response = await _fetch(url + window.location.pathname + "/restore", {
+            method: "PUT"
+        });
+
+        if (response.ok) {
+            await response.json();
+            var returnPath = window.location.pathname;
+            var successMsg = `[${response.status}] Record has been restored.`;
             // Go back to read view
             getRecord(returnPath);
             displayMsg(successMsg);
