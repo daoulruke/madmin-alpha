@@ -350,7 +350,7 @@ let getRecord = async (url) => {
     recover_button.setAttribute('onclick', 'recoverRecord()');
     recover_button.innerHTML = 'RECOVER';
     recover_button.classList.add("pure-button");
-    recover_button.classList.add("pure-bg-green");
+    recover_button.classList.add("pure-bg-black");
     actions.appendChild(recover_button);
 
     const archiveRecord = document.createElement("button");
@@ -366,7 +366,7 @@ let getRecord = async (url) => {
     restoreRecord.setAttribute('onclick', 'restoreRecord()');
     restoreRecord.innerHTML = 'RESTORE';
     restoreRecord.classList.add("pure-button");
-    restoreRecord.classList.add("pure-bg-green");
+    restoreRecord.classList.add("pure-bg-yellow");
     actions.appendChild(restoreRecord);
 
     card.appendChild(actions);
