@@ -43,8 +43,12 @@ html, body {
     background: whitesmoke;
 }
 
-.pure-bg-green {
-    background: rgb(28, 184, 65);
+.pure-bg-black {
+    background: black;
+}
+
+.pure-bg-white {
+    background: white;
 }
 
 .pure-bg-red {
@@ -55,8 +59,24 @@ html, body {
     background: rgb(223, 117, 20);
 }
 
+.pure-bg-yellow {
+    background: rgb(246, 190, 0);
+}
+
+.pure-bg-green {
+    background: rgb(28, 184, 65);
+}
+
 .pure-bg-blue {
     background: rgb(66, 184, 221);
+}
+
+.pure-bg-indigo {
+    background: rgb(75, 0, 130);
+}
+
+.pure-bg-violet {
+    background: rgb(75, 0, 130);
 }
 
 .xsmall {
