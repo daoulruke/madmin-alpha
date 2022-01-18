@@ -110,7 +110,6 @@ let getRecords = async (url) => {
 
     const urlSegments = url.split("/");
 
-    //const records = await _fetch(`${apiUrl}${fetchUrl}?filter=name,cs,test`)
     const records = await _fetch(`${apiUrl}${url}`)
         .then(response => response.json())
         .then(response => response.records);
@@ -127,7 +126,7 @@ let getRecords = async (url) => {
     var tbody = document.createElement("tbody");
     table.appendChild(tbody);
 
-    for (record of records) {
+    for (const record of records) {
         const tr = document.createElement("tr");
         let recordUrl = `${url}/${record.id}`;
         // For join records
@@ -156,6 +155,92 @@ let getRecords = async (url) => {
 
 };
 
+// Fetch and display related records
+let getRelatedRecords = async (subject, subjectId, join) => {
+    try {
+        // Reset #msg
+        displayMsg();
+
+        const path = `/records/${subject}/${subjectId}/${join}`;
+
+        const response = await Promise.all([
+            _fetch(`${apiUrl}/records/${join}`)
+                .then(response => response.json())
+                .then(response => response.records),
+            _fetch(`${apiUrl}${path}`)
+                .then(response => response.json())
+                .then(response => response.records)
+        ]);
+        const records = response[0];
+        const relatedRecords = response[1];
+        
+        // #content
+        const table = document.createElement("table");
+        table.classList.add('pure-table');
+        table.classList.add('pure-table-bordered');
+
+        const thead = document.createElement("thead");
+        thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
+        table.appendChild(thead);
+
+        const tbody = document.createElement("tbody");
+        table.appendChild(tbody);
+
+        for (const record of records) {
+            const tr = document.createElement("tr");
+            let td = document.createElement("td");
+            const checkbox = document.createElement("input");
+            checkbox.setAttribute("type", "checkbox");
+            checkbox.setAttribute("value", record.id);
+            checkbox.setAttribute("class", "cb-attach-detach");
+            // Check if record is related
+            if (!!relatedRecords.find(v => v.id == record.id)) {
+                checkbox.setAttribute("checked", "checked");
+            }
+            // Not working since element not yet present in DOM
+            // checkbox.addEventListener("change", function() {
+            //     // attachOrDetachRecord("attach", subject, subjectId, join, record.id);
+            // });
+            td.appendChild(checkbox);
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.innerHTML = `<a href="#" onclick="getRecord('/records/${join}/${record.id}')">${record.id}</a>`;
+            tr.appendChild(td);
+            td = document.createElement("td");
+            td.innerHTML = `${record.name}`;
+            tr.appendChild(td);
+            tbody.appendChild(tr);
+        }
+
+        document.getElementById('content').innerHTML = table.outerHTML;
+
+        // Add event listeners
+        const checkboxes = document.querySelectorAll(".cb-attach-detach");
+        for (const checkbox of checkboxes) {
+            checkbox.addEventListener("change", function() {
+                // console.log(this.checked, this.value);
+                attachOrDetachRecord(this.checked ? "attach" : "detach", subject, subjectId, join, this.value);
+            });
+        }
+
+        // #raw
+        const raw = JSON.stringify(records, undefined, 4);
+        document.getElementById('raw').innerHTML = raw;
+
+        // #current_path
+        updatePath(path);
+
+        // url bar
+        window.history.replaceState(
+            {},
+            document.title,
+            `${location.protocol}//${location.host}${path}`
+        );
+    } catch (err) {
+        throw err;
+    }
+};
+
 // Fetch and display records
 let getRecord = async (url) => {
 
@@ -163,6 +248,7 @@ let getRecord = async (url) => {
     displayMsg();
 
     let subject = url.split("/")[2];
+    let subjectId = url.split("/")[3];
 
     if(subject.substr(subject.length - 1) != 's') {
         //subject = subject + 's';
@@ -284,7 +370,8 @@ let getRecord = async (url) => {
 
     for (join of joins) {
         var div = document.createElement("div");
-        div.innerHTML = `<a href="#" onclick="getRecords('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
+        // div.innerHTML = `<a href="#" onclick="getRecords('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
+        div.innerHTML = `<a href="#" onclick="getRelatedRecords('${subject}', '${subjectId}', '${join}')">${`${url}/${join}`}</a>`;
         card.appendChild(div);
     }
 
@@ -721,6 +808,38 @@ let restoreRecord = async () => {
         throw err;
     }
 }
+
+let attachOrDetachRecord = async (attachOrDetach, subject, subjectId, attach, attachId) => {
+    try {
+        let response = null;
+
+        if (attachOrDetach == 'attach') {
+            response = await _fetch(`${apiUrl}/records/${subject}/${subjectId}/${attach}/${attachId}`, {
+                method: "PUT"
+            });
+        } else {
+            response = await _fetch(`${apiUrl}/records/${subject}/${subjectId}/${attach}/${attachId}`, {
+                method: "DELETE"
+            });
+        }
+
+        if (response && response.ok) {
+            await response.json();
+            displayMsg(`[${response.status}] Record has been ${attachOrDetach}ed.`);
+        } else {
+            // Reset #msg
+            displayMsg();
+            // Display errors
+            const responseError = await response.json();
+            // code 9999 === unknown error
+            if (responseError.code == 9999) {
+                displayMsg(`[${response.status}] ${responseError.message}`, "red");
+            }
+        }
+    } catch (err) {
+        throw err;
+    }
+};
 
 let displayMsg = (msg = null, color = "green") => {
     document.querySelector("#msg").innerHTML = "";
