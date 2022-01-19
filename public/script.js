@@ -214,14 +214,28 @@ let getRelatedRecords = async (subject, subjectId, join) => {
 
         // Add event listeners
         document.querySelector(".cb-attach-detach-all").addEventListener("click", function() {
+            // Only attach detached records and vice versa
+            const attachDetachIds = [];
+
             if (this.checked) {
                 document.querySelectorAll(".cb-attach-detach")
-                    .forEach(el => el.checked = true);
+                    .forEach(el => {
+                        if (!el.checked) {
+                            el.checked = true;
+                            attachDetachIds.push(el.value);
+                        }
+                    });
             } else {
                 document.querySelectorAll(".cb-attach-detach")
-                    .forEach(el => el.checked = false);
+                    .forEach(el => {
+                        if (el.checked) {
+                            el.checked = false;
+                            attachDetachIds.push(el.value);
+                        }
+                    });
             }
-            attachOrDetachRecord(this.checked ? "attach" : "detach", subject, subjectId, join, records.map(v => v.id).join(","));
+            // console.log(attachDetachIds);
+            attachOrDetachRecord(this.checked ? "attach" : "detach", subject, subjectId, join, attachDetachIds.join(","));
         });
         document.querySelectorAll(".cb-attach-detach")
             .forEach(el => {
