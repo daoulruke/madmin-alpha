@@ -174,20 +174,13 @@ let getRelatedRecords = async (subject, subjectId, join) => {
         const records = response[0];
         const relatedRecords = response[1];
 
-        const isAllChecked = function(records, relatedRecords) {
-            return records.reduce((acc, r) => {
-                if (acc) acc = !!relatedRecords.find(rr => rr.id == r.id);
-                return acc;
-            }, true);
-        };
-
         // #content
         const table = document.createElement("table");
         table.classList.add('pure-table');
         table.classList.add('pure-table-bordered');
 
         const thead = document.createElement("thead");
-        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" ${isAllChecked(records, relatedRecords) ? 'checked' : ''} /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
+        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
         table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
@@ -195,47 +188,46 @@ let getRelatedRecords = async (subject, subjectId, join) => {
 
         for (const record of records) {
             const tr = document.createElement("tr");
-            let td = document.createElement("td");
-            const checkbox = document.createElement("input");
-            checkbox.setAttribute("type", "checkbox");
-            checkbox.setAttribute("value", record.id);
-            checkbox.setAttribute("class", "cb-attach-detach");
-            // Check if record is related
-            if (!!relatedRecords.find(v => v.id == record.id)) {
-                checkbox.setAttribute("checked", "checked");
-            }
-            // Not working since element not yet present in DOM
-            // checkbox.addEventListener("change", function() {
-            //     // attachOrDetachRecord("attach", subject, subjectId, join, record.id);
-            // });
-            td.appendChild(checkbox);
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.innerHTML = `<a href="#" onclick="getRecord('/records/${join}/${record.id}')">${record.id}</a>`;
-            tr.appendChild(td);
-            td = document.createElement("td");
-            td.innerHTML = `${record.name}`;
-            tr.appendChild(td);
+            tr.innerHTML = `<td><input type="checkbox" value="${record.id}" class="cb-attach-detach" ${!!relatedRecords.find(v => v.id == record.id) ? 'checked' : ''} /></td><td><a href="#" onclick="getRecord('/records/${join}/${record.id}')">${record.id}</a></td><td>${record.name}</td>`;
             tbody.appendChild(tr);
         }
 
         document.getElementById('content').innerHTML = table.outerHTML;
 
+        // Update batch checkbox
+        const syncBatchCheckbox = function(records) {
+            const checkedIds = [];
+            for (checkbox of document.querySelectorAll(".cb-attach-detach")) {
+                if (checkbox.checked) checkedIds.push(checkbox.value);
+            }
+            const isAllChecked = records.reduce((acc, record) => {
+                if (acc) acc = !!checkedIds.find(checkedId => checkedId == record.id);
+                return acc;
+            }, true);
+            if (isAllChecked) {
+                document.querySelector(".cb-attach-detach-all").checked = true;
+            } else {
+                document.querySelector(".cb-attach-detach-all").checked = false;
+            }
+        };
+        syncBatchCheckbox(records);
+
         // Add event listeners
         document.querySelector(".cb-attach-detach-all").addEventListener("click", function() {
             if (this.checked) {
                 document.querySelectorAll(".cb-attach-detach")
-                    .forEach(el => el.setAttribute("checked", "checked"));
+                    .forEach(el => el.checked = true);
             } else {
                 document.querySelectorAll(".cb-attach-detach")
-                    .forEach(el => el.removeAttribute("checked"));
+                    .forEach(el => el.checked = false);
             }
             attachOrDetachRecord(this.checked ? "attach" : "detach", subject, subjectId, join, records.map(v => v.id).join(","));
         });
         document.querySelectorAll(".cb-attach-detach")
             .forEach(el => {
                 el.addEventListener("click", function() {
-                    console.log(this.checked, this.value);
+                    // console.log(this.checked, this.value);
+                    syncBatchCheckbox(records);
                     attachOrDetachRecord(this.checked ? "attach" : "detach", subject, subjectId, join, this.value);
                 });
             });
