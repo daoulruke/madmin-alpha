@@ -879,6 +879,8 @@ window.onload = function () {
     var match = RegExp('[#&]access_token=([^&]*)').exec(window.location.hash);
     var accessToken = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 
+    localStorage.setItem("path", location.pathname);
+
     if (!accessToken) {
 
         document.location = authUrl+'?audience='+audience+'&response_type=token&client_id='+clientId+'&redirect_uri='+document.location.href;
@@ -914,7 +916,9 @@ window.onload = function () {
         };
 
         // Basic router
-        const path = location.pathname;
+        // const path = location.pathname;
+        const path = localStorage.getItem("path");
+        console.log(path);
         if (path === "/") {
             getOpenapi();
         } else {
