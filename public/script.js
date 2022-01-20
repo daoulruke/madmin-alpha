@@ -913,7 +913,24 @@ window.onload = function () {
             }
         };
 
-        getOpenapi();
+        // Basic router
+        const path = location.pathname;
+        if (path === "/") {
+            getOpenapi();
+        } else {
+            const pathSegments = path.split("/");
+            switch (pathSegments.length) {
+                case 2:
+                    getRecords(path);
+                    break;
+                case 3:
+                    getRecord(path);
+                    break;
+                case 4:
+                    getRelatedRecords(pathSegments[1], pathSegments[2], pathSegments[3]);
+                    break;
+            }
+        }
 
     }
 
