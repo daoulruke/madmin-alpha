@@ -879,7 +879,9 @@ window.onload = function () {
     var match = RegExp('[#&]access_token=([^&]*)').exec(window.location.hash);
     var accessToken = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
 
-    localStorage.setItem("path", location.pathname);
+    if (!localStorage.getItem("path")) {
+        localStorage.setItem("path", location.pathname);
+    }
 
     if (!accessToken) {
 
@@ -918,6 +920,7 @@ window.onload = function () {
         // Basic router
         // const path = location.pathname;
         const path = localStorage.getItem("path");
+        localStorage.removeItem("path");
         console.log(path);
         if (path === "/") {
             getOpenapi();
