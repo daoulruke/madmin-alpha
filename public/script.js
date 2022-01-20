@@ -20,21 +20,21 @@ let updatePath = (url) => {
     const subject = urlSegments[2];
     if (subject) {
         var li = document.createElement("li");
-        li.innerHTML = `/<a href="#" onclick="getRecords('${`/records/${subject}`}')">${subject}</a>`;
+        li.innerHTML = `/<a href="#" onclick="navigateTo('${`/records/${subject}`}')">${subject}</a>`;
         current_path.appendChild(li);
     }
 
     const subjectId = urlSegments[3];
     if (subjectId) {
         var li = document.createElement("li");
-        li.innerHTML = `/<a href="#" onclick="getRecord('${`/records/${subject}/${subjectId}`}')">${subjectId}</a>`;
+        li.innerHTML = `/<a href="#" onclick="navigateTo('${`/records/${subject}/${subjectId}`}')">${subjectId}</a>`;
         current_path.appendChild(li);
     }
 
     const join = urlSegments[4];
     if (join) {
         var li = document.createElement("li");
-        li.innerHTML = `/<a href="#" onclick="getRecords('${`/records/${subject}/${subjectId}/${join}`}')">${join}</a>`;
+        li.innerHTML = `/<a href="#" onclick="navigateTo('${`/records/${subject}/${subjectId}/${join}`}')">${join}</a>`;
         current_path.appendChild(li);
     }
 
@@ -67,7 +67,7 @@ let listPaths = () => {
 
     function outputPaths(path) {
         const li = document.createElement("li");
-        li.innerHTML = `<a href="#" onclick="getRecords('${path}')">${path}</a>`;
+        li.innerHTML = `<a href="#" onclick="navigateTo('${path}')">${path}</a>`;
         ul.appendChild(li);
     }
 
@@ -92,13 +92,6 @@ let listPaths = () => {
     // if (current_path.childNodes[2]) current_path.removeChild(current_path.childNodes[2]);
     // if (current_path.childNodes[3]) current_path.removeChild(current_path.childNodes[3]);
 
-    // url bar
-    window.history.replaceState(
-        {},
-        document.title,
-        `${location.protocol}//${location.host}`
-    );
-
     // #current_path
     updatePath(location.pathname);
 };
@@ -120,7 +113,7 @@ let getRecords = async (url) => {
     table.classList.add('pure-table-bordered');
 
     var thead = document.createElement("thead");
-    thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
+    thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigateBack()">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
     table.appendChild(thead);
 
     var tbody = document.createElement("tbody");
@@ -133,7 +126,7 @@ let getRecords = async (url) => {
         if (urlSegments.length > 4) {
             recordUrl = `/records/${urlSegments[4]}/${record.id}`;
         }
-        tr.innerHTML = `<td><input type="checkbox"/></td><td><a href="#" onclick="getRecord('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
+        tr.innerHTML = `<td><input type="checkbox"/></td><td><a href="#" onclick="navigateTo('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
         tbody.appendChild(tr);
     }
 
@@ -145,14 +138,6 @@ let getRecords = async (url) => {
 
     // #current_path
     updatePath(url);
-
-    // url bar
-    window.history.replaceState(
-        {},
-        document.title,
-        `${location.protocol}//${location.host}${url}`
-    );
-
 };
 
 // Fetch and display related records
@@ -180,7 +165,7 @@ let getRelatedRecords = async (subject, subjectId, join) => {
         table.classList.add('pure-table-bordered');
 
         const thead = document.createElement("thead");
-        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigate('back')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
+        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigateBack()">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
         table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
@@ -188,7 +173,7 @@ let getRelatedRecords = async (subject, subjectId, join) => {
 
         for (const record of records) {
             const tr = document.createElement("tr");
-            tr.innerHTML = `<td><input type="checkbox" value="${record.id}" class="cb-attach-detach" ${!!relatedRecords.find(v => v.id == record.id) ? 'checked' : ''} /></td><td><a href="#" onclick="getRecord('/records/${join}/${record.id}')">${record.id}</a></td><td>${record.name}</td>`;
+            tr.innerHTML = `<td><input type="checkbox" value="${record.id}" class="cb-attach-detach" ${!!relatedRecords.find(v => v.id == record.id) ? 'checked' : ''} /></td><td><a href="#" onclick="navigateTo('/records/${join}/${record.id}')">${record.id}</a></td><td>${record.name}</td>`;
             tbody.appendChild(tr);
         }
 
@@ -252,13 +237,6 @@ let getRelatedRecords = async (subject, subjectId, join) => {
 
         // #current_path
         updatePath(path);
-
-        // url bar
-        window.history.replaceState(
-            {},
-            document.title,
-            `${location.protocol}//${location.host}${path}`
-        );
     } catch (err) {
         throw err;
     }
@@ -266,7 +244,6 @@ let getRelatedRecords = async (subject, subjectId, join) => {
 
 // Fetch and display records
 let getRecord = async (url) => {
-
     // Reset #msg
     displayMsg();
 
@@ -311,7 +288,7 @@ let getRecord = async (url) => {
                 //columnReferences[key] = columnReferences[key] + 's';
             }
 
-            span.innerHTML = `<a href="#" onclick="getRecord('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
+            span.innerHTML = `<a href="#" onclick="navigateTo('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
 
         } else {
 
@@ -333,6 +310,7 @@ let getRecord = async (url) => {
     back_button.innerHTML = 'BACK';
     back_button.classList.add("pure-button");
     back_button.classList.add("pure-bg-dark");
+    back_button.setAttribute("onclick", "navigateBack()");
     actions.appendChild(back_button);
 
     const update_button = document.createElement("button");
@@ -393,8 +371,8 @@ let getRecord = async (url) => {
 
     for (join of joins) {
         var div = document.createElement("div");
-        // div.innerHTML = `<a href="#" onclick="getRecords('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
-        div.innerHTML = `<a href="#" onclick="getRelatedRecords('${subject}', '${subjectId}', '${join}')">${`${url}/${join}`}</a>`;
+        div.innerHTML = `<a href="#" onclick="navigateTo('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
+        // div.innerHTML = `<a href="#" onclick="getRelatedRecords('${subject}', '${subjectId}', '${join}')">${`${url}/${join}`}</a>`;
         card.appendChild(div);
     }
 
@@ -407,13 +385,6 @@ let getRecord = async (url) => {
 
     // #current_path
     updatePath(url);
-
-    // url bar
-    window.history.replaceState(
-        {},
-        document.title,
-        `${location.protocol}//${location.host}${url}`
-    );
 };
 
 
@@ -598,7 +569,7 @@ let submitForm = async (form_id) => {
                 // For join records
                 if (location.pathname.split("/").length > 4) {
                     var returnPath = location.pathname;
-                    getRecords(returnPath);
+                    navigateTo(returnPath);
                     return;
                 }
             }
@@ -614,7 +585,7 @@ let submitForm = async (form_id) => {
             }
 
             // Go back to read view
-            getRecord(returnPath);
+            navigateTo(returnPath);
 
             displayMsg(successMsg);
 
@@ -685,7 +656,7 @@ let deleteRecord = async () => {
             var successMsg = `[${response.status}] Record has been deleted.`;
 
             // Go back to read view
-            getRecord(returnPath);
+            navigateTo(returnPath);
             displayMsg(successMsg);
 
         } else {
@@ -749,7 +720,7 @@ let recoverRecord = async () => {
             var returnPath = window.location.pathname;
             var successMsg = `[${response.status}] Record has been recovered.`;
             // Go back to read view
-            getRecord(returnPath);
+            navigateTo(returnPath);
             displayMsg(successMsg);
         } else {
             // Reset #msg
@@ -782,7 +753,7 @@ let archiveRecord = async () => {
             var returnPath = window.location.pathname;
             var successMsg = `[${response.status}] Record has been archived.`;
             // Go back to read view
-            getRecord(returnPath);
+            navigateTo(returnPath);
             displayMsg(successMsg);
         } else {
             // Reset #msg
@@ -815,7 +786,7 @@ let restoreRecord = async () => {
             var returnPath = window.location.pathname;
             var successMsg = `[${response.status}] Record has been restored.`;
             // Go back to read view
-            getRecord(returnPath);
+            navigateTo(returnPath);
             displayMsg(successMsg);
         } else {
             // Reset #msg
@@ -874,6 +845,21 @@ let displayMsg = (msg = null, color = "green") => {
     }
 };
 
+// START - Basic router
+let navigateTo = (path) => {
+    if (event) event.preventDefault();
+    console.log("navigate to", path);
+    window.history.pushState(
+        {},
+        document.title,
+        path
+    );
+};
+let navigateBack = () => {
+    window.history.back();
+};
+// END - Basic router
+
 window.onload = async function () {
 
     var match = RegExp('[#&]access_token=([^&]*)').exec(window.location.hash);
@@ -917,29 +903,41 @@ window.onload = async function () {
             }
         };
 
-        // Basic router
-        // const path = location.pathname;
-        const path = localStorage.getItem("path");
-        console.log(path);
-        localStorage.removeItem("path");
-        await getOpenapi();
-        if (path === "/") {
-            listPaths();
-        } else {
-            const pathSegments = path.split("/");
-            switch (pathSegments.length) {
-                case 3:
-                    getRecords(path);
-                    break;
-                case 4:
-                    getRecord(path);
-                    break;
-                case 5:
-                    getRelatedRecords(pathSegments[2], pathSegments[3], pathSegments[4]);
-                    break;
-            }
-        }
+        // START - Basic router
+        // Fire event when pushState is called since onpopstate doesn't trigger on pushState
+        (function(history) {
+            var pushState = history.pushState;
+            history.pushState = function(state) {
+                if (typeof history.onpushstate == "function") {
+                    history.onpushstate({state: state});
+                }
+                return pushState.apply(history, arguments);
+            };
+        })(window.history);
+        //
+        window.onpopstate = history.onpushstate = () => {
+            // We wait so that location.pathname will be updated to current uri
+            setTimeout(() => {
+                const path = location.pathname;
+                switch (true) {
+                    case /^\/records\/([a-z]+)$/.test(path):
+                        getRecords(path);
+                        break;
+                    case /^\/records\/([a-z]+)\/([0-9]+)$/.test(path):
+                        getRecord(path);
+                        break;
+                    case /^\/records\/([a-z]+)\/([0-9]+)\/([a-z]+)$/.test(path):
+                        getRelatedRecords(path.split("/")[2], path.split("/")[3], path.split("/")[4]);
+                        break;
+                    default:
+                        listPaths();
+                }
+            }, 500);
+        };
+        // END - Basic router
 
+        await getOpenapi();
+        navigateTo(localStorage.getItem("path") || location.pathname);
     }
 
 };
