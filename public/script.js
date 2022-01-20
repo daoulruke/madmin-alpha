@@ -46,7 +46,7 @@ let openapi = null;
 let getOpenapi = async () => {
     openapi = await _fetch(`${apiUrl}/openapi`)
         .then(response => response.json());
-    listPaths();
+    // listPaths();
 };
 
 // Display openapi
@@ -874,7 +874,7 @@ let displayMsg = (msg = null, color = "green") => {
     }
 };
 
-window.onload = function () {
+window.onload = async function () {
 
     var match = RegExp('[#&]access_token=([^&]*)').exec(window.location.hash);
     var accessToken = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
@@ -920,10 +920,11 @@ window.onload = function () {
         // Basic router
         // const path = location.pathname;
         const path = localStorage.getItem("path");
-        localStorage.removeItem("path");
         console.log(path);
+        localStorage.removeItem("path");
+        await getOpenapi();
         if (path === "/") {
-            getOpenapi();
+            listPaths();
         } else {
             const pathSegments = path.split("/");
             switch (pathSegments.length) {
