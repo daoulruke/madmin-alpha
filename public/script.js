@@ -883,7 +883,7 @@ window.onload = function () {
 
     if (!accessToken) {
 
-        document.location = authUrl+'?audience='+audience+'&response_type=token&client_id='+clientId+'&redirect_uri='+document.location.href;
+        document.location = authUrl+'?audience='+audience+'&response_type=token&client_id='+clientId+'&redirect_uri='+document.location.origin;
 
     } else {
 
