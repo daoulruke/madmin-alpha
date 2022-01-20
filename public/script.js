@@ -928,14 +928,14 @@ window.onload = async function () {
         } else {
             const pathSegments = path.split("/");
             switch (pathSegments.length) {
-                case 2:
+                case 3:
                     getRecords(path);
                     break;
-                case 3:
+                case 4:
                     getRecord(path);
                     break;
-                case 4:
-                    getRelatedRecords(pathSegments[1], pathSegments[2], pathSegments[3]);
+                case 5:
+                    getRelatedRecords(pathSegments[2], pathSegments[3], pathSegments[4]);
                     break;
             }
         }
