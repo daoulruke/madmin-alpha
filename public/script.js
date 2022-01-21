@@ -256,9 +256,11 @@ let getRecord = async (url) => {
 
     let columnReferences = {};
 
-    Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
-        if (v["x-references"]) columnReferences[k] = v["x-references"];
-    });
+    if (openapi.components.schemas[`read-${subject}`]) {
+        Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
+            if (v["x-references"]) columnReferences[k] = v["x-references"];
+        });
+    }
 
     let joinQuery = [... new Set(Object.values(columnReferences).map(v => v))].map(v => `join=${v}`).join("&");
     const record = await _fetch(`${apiUrl}${url}?${joinQuery}`)
@@ -360,20 +362,22 @@ let getRecord = async (url) => {
     div.innerHTML = "<br /><b>RELATED DATA</b>";
     card.appendChild(div);
 
-    const referenced = openapi.components.schemas[`read-${subject}`].properties.id["x-referenced"];
-    const joins = referenced.reduce((acc, val) => {
-        const x_y = val.split(".")[0];
-        const x = x_y.split("_")[0];
-        const y = x_y.split("_")[1];
-        if (y && x == subject && !acc.includes(y)) acc.push(y);
-        return acc;
-    }, []);
-
-    for (join of joins) {
-        var div = document.createElement("div");
-        div.innerHTML = `<a href="#" onclick="navigateTo('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
-        // div.innerHTML = `<a href="#" onclick="getRelatedRecords('${subject}', '${subjectId}', '${join}')">${`${url}/${join}`}</a>`;
-        card.appendChild(div);
+    if (openapi.components.schemas[`read-${subject}`]) {
+        const referenced = openapi.components.schemas[`read-${subject}`].properties.id["x-referenced"];
+        const joins = referenced.reduce((acc, val) => {
+            const x_y = val.split(".")[0];
+            const x = x_y.split("_")[0];
+            const y = x_y.split("_")[1];
+            if (y && x == subject && !acc.includes(y)) acc.push(y);
+            return acc;
+        }, []);
+    
+        for (join of joins) {
+            var div = document.createElement("div");
+            div.innerHTML = `<a href="#" onclick="navigateTo('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
+            // div.innerHTML = `<a href="#" onclick="getRelatedRecords('${subject}', '${subjectId}', '${join}')">${`${url}/${join}`}</a>`;
+            card.appendChild(div);
+        }
     }
 
     document.getElementById('content').innerHTML = card.outerHTML;
