@@ -54,7 +54,9 @@ let listPaths = () => {
     // #content
     const paths = [];
     for ([key, value] of Object.entries(openapi.paths)) {
-        paths.push(key);
+        if (value.get && value.get.operationId.includes("list")) {
+            paths.push(key);
+        }
     }
 
     const ul = document.createElement("ul");
