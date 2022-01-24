@@ -448,11 +448,12 @@ let setForm = async (formId, subject, record = null) => {
 
         const div = document.createElement("div");
         div.classList.add('pure-control-group');
+        div.classList.add('pure-bg-light');
 
         const label = document.createElement("label");
         label.setAttribute('for', key);
-        label.classList.add('pure-bg-dark');
-        label.innerHTML = key.toUpperCase().replace('_', '');
+
+        label.innerHTML = key.toUpperCase().replace('_', ' ');
         div.appendChild(label);
 
         var input = document.createElement("input");
