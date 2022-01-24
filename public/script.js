@@ -272,7 +272,8 @@ let getRecord = async (url) => {
         const label = document.createElement("label");
         label.setAttribute('for', key);
         label.classList.add('pure-bg-light');
-        label.innerHTML = key;
+
+        label.innerHTML = key.toUpperCase().replace('_', ' ');
         div.appendChild(label);
 
         const span = document.createElement("span");
