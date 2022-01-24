@@ -51,9 +51,6 @@ let getOpenapi = async () => {
 
 // Display openapi
 let listPaths = () => {
-    // Reset #msg
-    displayMsg();
-
     // #content
     const paths = [];
     for ([key, value] of Object.entries(openapi.paths)) {
@@ -98,9 +95,6 @@ let listPaths = () => {
 
 // Fetch and display records
 let getRecords = async (url) => {
-    // Reset #msg
-    displayMsg();
-
     const urlSegments = url.split("/");
 
     const records = await _fetch(`${apiUrl}${url}`)
@@ -143,9 +137,6 @@ let getRecords = async (url) => {
 // Fetch and display related records
 let getRelatedRecords = async (subject, subjectId, join) => {
     try {
-        // Reset #msg
-        displayMsg();
-
         const path = `/records/${subject}/${subjectId}/${join}`;
 
         const response = await Promise.all([
@@ -244,9 +235,6 @@ let getRelatedRecords = async (subject, subjectId, join) => {
 
 // Fetch and display records
 let getRecord = async (url) => {
-    // Reset #msg
-    displayMsg();
-
     let subject = url.split("/")[2];
     let subjectId = url.split("/")[3];
 
@@ -398,7 +386,6 @@ let getRecord = async (url) => {
 
 // Fetch and display records
 let createRecord = async (url) => {
-
     // Reset #msg
     displayMsg();
 
@@ -871,6 +858,8 @@ let displayMsg = (msg = null, color = "green") => {
 let navigateTo = (path) => {
     if (event) event.preventDefault();
     console.log("navigate to", path);
+    // Reset #msg
+    displayMsg();
     window.history.pushState(
         {},
         document.title,
