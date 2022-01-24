@@ -308,13 +308,15 @@ let getRecord = async (url) => {
     back_button.setAttribute("onclick", "navigateBack()");
     actions.appendChild(back_button);
 
-    const update_button = document.createElement("button");
-    update_button.setAttribute('id', 'update_button');
-    update_button.setAttribute('onclick', 'updateRecord("'+url+'")');
-    update_button.innerHTML = 'UPDATE';
-    update_button.classList.add("pure-button");
-    update_button.classList.add("pure-bg-dark");
-    actions.appendChild(update_button);
+    if (!record.archived && !record.deleted) {
+        const update_button = document.createElement("button");
+        update_button.setAttribute('id', 'update_button');
+        update_button.setAttribute('onclick', 'updateRecord("'+url+'")');
+        update_button.innerHTML = 'UPDATE';
+        update_button.classList.add("pure-button");
+        update_button.classList.add("pure-bg-dark");
+        actions.appendChild(update_button);
+    }
 
     if (record.deleted) {
         const recover_button = document.createElement("button");
@@ -334,22 +336,24 @@ let getRecord = async (url) => {
         actions.appendChild(delete_button);
     }
 
-    if (record.archived) {
-        const restoreRecord = document.createElement("button");
-        restoreRecord.setAttribute('id', 'restoreRecord');
-        restoreRecord.setAttribute('onclick', 'restoreRecord()');
-        restoreRecord.innerHTML = 'RESTORE';
-        restoreRecord.classList.add("pure-button");
-        restoreRecord.classList.add("pure-bg-yellow");
-        actions.appendChild(restoreRecord);
-    } else {
-        const archiveRecord = document.createElement("button");
-        archiveRecord.setAttribute('id', 'archiveRecord');
-        archiveRecord.setAttribute('onclick', 'archiveRecord()');
-        archiveRecord.innerHTML = 'ARCHIVE';
-        archiveRecord.classList.add("pure-button");
-        archiveRecord.classList.add("pure-bg-orange");
-        actions.appendChild(archiveRecord);
+    if (!record.deleted) {
+        if (record.archived) {
+            const restoreRecord = document.createElement("button");
+            restoreRecord.setAttribute('id', 'restoreRecord');
+            restoreRecord.setAttribute('onclick', 'restoreRecord()');
+            restoreRecord.innerHTML = 'RESTORE';
+            restoreRecord.classList.add("pure-button");
+            restoreRecord.classList.add("pure-bg-yellow");
+            actions.appendChild(restoreRecord);
+        } else {
+            const archiveRecord = document.createElement("button");
+            archiveRecord.setAttribute('id', 'archiveRecord');
+            archiveRecord.setAttribute('onclick', 'archiveRecord()');
+            archiveRecord.innerHTML = 'ARCHIVE';
+            archiveRecord.classList.add("pure-button");
+            archiveRecord.classList.add("pure-bg-orange");
+            actions.appendChild(archiveRecord);
+        }
     }
 
     card.appendChild(actions);
@@ -368,7 +372,7 @@ let getRecord = async (url) => {
             if (y && x == subject && !acc.includes(y)) acc.push(y);
             return acc;
         }, []);
-    
+
         for (join of joins) {
             var div = document.createElement("div");
             div.innerHTML = `<a href="#" onclick="navigateTo('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
@@ -537,7 +541,7 @@ let submitForm = async (form_id) => {
         // formData.forEach((value, key) => (data[key] = value));
         // Log the data.
         // console.log(data);
-        
+
         // Set empty string to null
         const data = {};
         for ([key, value] of formData.entries()) {
