@@ -318,24 +318,6 @@ let getRecord = async (url) => {
         actions.appendChild(update_button);
     }
 
-    if (record.deleted) {
-        const recover_button = document.createElement("button");
-        recover_button.setAttribute('id', 'recover_button');
-        recover_button.setAttribute('onclick', 'recoverRecord()');
-        recover_button.innerHTML = 'RECOVER';
-        recover_button.classList.add("pure-button");
-        recover_button.classList.add("pure-bg-black");
-        actions.appendChild(recover_button);
-    } else {
-        const delete_button = document.createElement("button");
-        delete_button.setAttribute('id', 'delete_button');
-        delete_button.setAttribute('onclick', 'deleteRecord()');
-        delete_button.innerHTML = 'DELETE';
-        delete_button.classList.add("pure-button");
-        delete_button.classList.add("pure-bg-red");
-        actions.appendChild(delete_button);
-    }
-
     if (!record.deleted) {
         if (record.archived) {
             const restoreRecord = document.createElement("button");
@@ -354,6 +336,24 @@ let getRecord = async (url) => {
             archiveRecord.classList.add("pure-bg-orange");
             actions.appendChild(archiveRecord);
         }
+    }
+
+    if (record.deleted) {
+        const recover_button = document.createElement("button");
+        recover_button.setAttribute('id', 'recover_button');
+        recover_button.setAttribute('onclick', 'recoverRecord()');
+        recover_button.innerHTML = 'RECOVER';
+        recover_button.classList.add("pure-button");
+        recover_button.classList.add("pure-bg-black");
+        actions.appendChild(recover_button);
+    } else {
+        const delete_button = document.createElement("button");
+        delete_button.setAttribute('id', 'delete_button');
+        delete_button.setAttribute('onclick', 'deleteRecord()');
+        delete_button.innerHTML = 'DELETE';
+        delete_button.classList.add("pure-button");
+        delete_button.classList.add("pure-bg-red");
+        actions.appendChild(delete_button);
     }
 
     card.appendChild(actions);
