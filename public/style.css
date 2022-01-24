@@ -22,6 +22,7 @@ html, body {
     padding: 0;
     border: 0;
     font-family: monospace;
+    font-size: 12px;
 }
 
 .hidden {
@@ -115,6 +116,7 @@ ul {
 }
 
 #msg {
+    line-height: 24px;
     padding: 10px;
 }
 
