@@ -304,7 +304,7 @@ let getRecord = async (url) => {
     back_button.setAttribute('href', '/');
     back_button.innerHTML = 'BACK';
     back_button.classList.add("pure-button");
-    back_button.classList.add("pure-bg-dark");
+    back_button.classList.add("pure-bg-link");
     back_button.setAttribute("onclick", "navigateBack()");
     actions.appendChild(back_button);
 
