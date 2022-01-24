@@ -451,7 +451,8 @@ let setForm = async (formId, subject, record = null) => {
 
         const label = document.createElement("label");
         label.setAttribute('for', key);
-        label.innerHTML = key;
+        label.classList.add('pure-bg-dark');
+        label.innerHTML = key.toUpperCase().replace('_', '');
         div.appendChild(label);
 
         var input = document.createElement("input");
