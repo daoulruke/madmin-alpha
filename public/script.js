@@ -273,7 +273,7 @@ let getRecord = async (url) => {
         label.setAttribute('for', key);
         label.classList.add('pure-bg-light');
 
-        const label_text = key.split('_');
+        var label_text = key.split('_');
         label_text = label_text.join(' ');
         label.innerHTML = label_text;
 
@@ -458,10 +458,10 @@ let setForm = async (formId, subject, record = null) => {
         const label = document.createElement("label");
         label.setAttribute('for', key);
 
-        const label_text = key.split('_');
+        var label_text = key.split('_');
         label_text = label_text.join(' ');
         label.innerHTML = label_text;
-        
+
         div.appendChild(label);
 
         var input = document.createElement("input");
