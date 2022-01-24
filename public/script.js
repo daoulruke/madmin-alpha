@@ -109,7 +109,7 @@ let getRecords = async (url) => {
     table.classList.add('pure-table-bordered');
 
     var thead = document.createElement("thead");
-    thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigateBack()">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
+    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateBack()">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
     table.appendChild(thead);
 
     var tbody = document.createElement("tbody");
@@ -122,7 +122,7 @@ let getRecords = async (url) => {
         if (urlSegments.length > 4) {
             recordUrl = `/records/${urlSegments[4]}/${record.id}`;
         }
-        tr.innerHTML = `<td><input type="checkbox"/></td><td><a href="#" onclick="navigateTo('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
+        tr.innerHTML = `<td><a href="#" onclick="navigateTo('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
         tbody.appendChild(tr);
     }
 
