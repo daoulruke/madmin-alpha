@@ -116,6 +116,7 @@ ul {
 }
 
 #msg {
+    height: 24px;
     line-height: 24px;
     padding: 10px;
 }
