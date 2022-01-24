@@ -275,7 +275,7 @@ let getRecord = async (url) => {
 
         var label_text = key.split('_');
         label_text = label_text.join(' ');
-        label.innerHTML = label_text;
+        label.innerHTML = label_text.toUpperCase();
 
         div.appendChild(label);
 
@@ -460,7 +460,7 @@ let setForm = async (formId, subject, record = null) => {
 
         var label_text = key.split('_');
         label_text = label_text.join(' ');
-        label.innerHTML = label_text;
+        label.innerHTML = label_text.toUpperCase();
 
         div.appendChild(label);
 
