@@ -261,6 +261,9 @@ let getRecord = async (url) => {
 
     for ([key, value] of Object.entries(record)) {
 
+        // Hide hasMany relationships
+        if ((Object.values(columnReferences)).includes(key)) continue;
+
         const div = document.createElement("div");
         div.classList.add('pure-control-group');
 
