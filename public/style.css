@@ -51,6 +51,11 @@ html, body {
     background: white;
 }
 
+.pure-bg-link {
+    background: transparent;
+    color: black;
+}
+
 .pure-bg-red {
     background: rgb(202, 60, 60);
 }
