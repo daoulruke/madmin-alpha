@@ -323,37 +323,41 @@ let getRecord = async (url) => {
     update_button.classList.add("pure-bg-dark");
     actions.appendChild(update_button);
 
-    const delete_button = document.createElement("button");
-    delete_button.setAttribute('id', 'delete_button');
-    delete_button.setAttribute('onclick', 'deleteRecord()');
-    delete_button.innerHTML = 'DELETE';
-    delete_button.classList.add("pure-button");
-    delete_button.classList.add("pure-bg-red");
-    actions.appendChild(delete_button);
+    if (record.deleted) {
+        const recover_button = document.createElement("button");
+        recover_button.setAttribute('id', 'recover_button');
+        recover_button.setAttribute('onclick', 'recoverRecord()');
+        recover_button.innerHTML = 'RECOVER';
+        recover_button.classList.add("pure-button");
+        recover_button.classList.add("pure-bg-black");
+        actions.appendChild(recover_button);
+    } else {
+        const delete_button = document.createElement("button");
+        delete_button.setAttribute('id', 'delete_button');
+        delete_button.setAttribute('onclick', 'deleteRecord()');
+        delete_button.innerHTML = 'DELETE';
+        delete_button.classList.add("pure-button");
+        delete_button.classList.add("pure-bg-red");
+        actions.appendChild(delete_button);
+    }
 
-    const recover_button = document.createElement("button");
-    recover_button.setAttribute('id', 'recover_button');
-    recover_button.setAttribute('onclick', 'recoverRecord()');
-    recover_button.innerHTML = 'RECOVER';
-    recover_button.classList.add("pure-button");
-    recover_button.classList.add("pure-bg-black");
-    actions.appendChild(recover_button);
-
-    const archiveRecord = document.createElement("button");
-    archiveRecord.setAttribute('id', 'archiveRecord');
-    archiveRecord.setAttribute('onclick', 'archiveRecord()');
-    archiveRecord.innerHTML = 'ARCHIVE';
-    archiveRecord.classList.add("pure-button");
-    archiveRecord.classList.add("pure-bg-orange");
-    actions.appendChild(archiveRecord);
-
-    const restoreRecord = document.createElement("button");
-    restoreRecord.setAttribute('id', 'restoreRecord');
-    restoreRecord.setAttribute('onclick', 'restoreRecord()');
-    restoreRecord.innerHTML = 'RESTORE';
-    restoreRecord.classList.add("pure-button");
-    restoreRecord.classList.add("pure-bg-yellow");
-    actions.appendChild(restoreRecord);
+    if (record.archived) {
+        const restoreRecord = document.createElement("button");
+        restoreRecord.setAttribute('id', 'restoreRecord');
+        restoreRecord.setAttribute('onclick', 'restoreRecord()');
+        restoreRecord.innerHTML = 'RESTORE';
+        restoreRecord.classList.add("pure-button");
+        restoreRecord.classList.add("pure-bg-yellow");
+        actions.appendChild(restoreRecord);
+    } else {
+        const archiveRecord = document.createElement("button");
+        archiveRecord.setAttribute('id', 'archiveRecord');
+        archiveRecord.setAttribute('onclick', 'archiveRecord()');
+        archiveRecord.innerHTML = 'ARCHIVE';
+        archiveRecord.classList.add("pure-button");
+        archiveRecord.classList.add("pure-bg-orange");
+        actions.appendChild(archiveRecord);
+    }
 
     card.appendChild(actions);
 
@@ -443,6 +447,9 @@ let setForm = async (formId, subject, record = null) => {
 
     for ([key, field] of Object.entries(fields)) {
 
+        const hiddenFields = ["archived", "deleted"];
+        if (hiddenFields.includes(key)) continue;
+
         const div = document.createElement("div");
         div.classList.add('pure-control-group');
 
@@ -493,7 +500,7 @@ let setForm = async (formId, subject, record = null) => {
             if (record[key]) {
                 input.setAttribute('value', `${record[key]}`);
             } else {
-                input.setAttribute('value', null);
+                // input.setAttribute('value', null);
             }
         }
         // Create
@@ -538,8 +545,19 @@ let submitForm = async (form_id) => {
         // formData.forEach((value, key) => (data[key] = value));
         // Log the data.
         // console.log(data);
+        
+        // Set empty string to null
+        const data = {};
+        for ([key, value] of formData.entries()) {
+            if (value === "") {
+                data[key] = null;
+            } else {
+                data[key] = value;
+            }
+        }
 
-        var json = JSON.stringify(Object.fromEntries(formData));
+        // var json = JSON.stringify(Object.fromEntries(formData));
+        var json = JSON.stringify(data);
 
         // var accessToken = localStorage.getItem('accessToken');
 
