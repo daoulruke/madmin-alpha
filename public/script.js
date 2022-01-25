@@ -967,6 +967,7 @@ window.onload = async function () {
 
         await getOpenapi();
         navigateTo(localStorage.getItem("path") || location.pathname);
+        localStorage.removeItem("path");
     }
 
 };
