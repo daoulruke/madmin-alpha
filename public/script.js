@@ -566,16 +566,23 @@ let setForm = async (formId, subject, record = null) => {
                     "administrative_area_level_5"
                 ],
                 country: ["country"],
-                code: ["postal_code"]
+                // code: ["postal_code"]
             };
             // Name
             document.querySelector("input[name='name']").value = place.name || "";
+            // Latitude/Longitude
+            if (place.geometry && place.geometry.location) {
+                var input = document.querySelector("input[name='latitude']");
+                if (input) input.value = place.geometry.location.lat();
+                var input = document.querySelector("input[name='longitude']");
+                if (input) input.value = place.geometry.location.lng();
+            }
             // Address Components
             for ([key, types] of Object.entries(map)) {
                 for (type of types) {
                     const addressComponent = place.address_components.find(v => v.types.includes(type));
                     if (addressComponent) {
-                        const input = document.querySelector(`input[name='${key}']`)
+                        var input = document.querySelector(`input[name='${key}']`)
                         if (input) input.value = addressComponent.long_name;
                     }
                 }
