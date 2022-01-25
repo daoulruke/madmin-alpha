@@ -13,15 +13,15 @@
 
 * {
     font-family: 'SFMono', monospace;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+    border: 0;
 }
 
 html, body {
     width: 100%;
     height: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    font-family: monospace;
 }
 
 .hidden {
@@ -49,6 +49,11 @@ html, body {
 
 .pure-bg-white {
     background: white;
+}
+
+.pure-bg-link {
+    background: transparent;
+    color: black;
 }
 
 .pure-bg-red {
@@ -110,6 +115,8 @@ ul {
 }
 
 #msg {
+    height: 24px;
+    line-height: 24px;
     padding: 10px;
 }
 
@@ -131,4 +138,5 @@ ul {
 
 .pure-form-aligned .pure-control-group label {
     text-align: left;
+    padding: 6px;
 }

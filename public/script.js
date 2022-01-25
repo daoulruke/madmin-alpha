@@ -114,7 +114,7 @@ let getRecords = async (url) => {
     table.classList.add('pure-table-bordered');
 
     var thead = document.createElement("thead");
-    thead.innerHTML = `<tr><td></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigateBack()">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
+    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateBack()">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
     table.appendChild(thead);
 
     var tbody = document.createElement("tbody");
@@ -127,7 +127,7 @@ let getRecords = async (url) => {
         if (urlSegments.length > 4) {
             recordUrl = `/records/${urlSegments[4]}/${record.id}`;
         }
-        tr.innerHTML = `<td><input type="checkbox"/></td><td><a href="#" onclick="navigateTo('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
+        tr.innerHTML = `<td><a href="#" onclick="navigateTo('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
         tbody.appendChild(tr);
     }
 
@@ -276,7 +276,12 @@ let getRecord = async (url) => {
 
         const label = document.createElement("label");
         label.setAttribute('for', key);
-        label.innerHTML = key;
+        label.classList.add('pure-bg-light');
+
+        var label_text = key.split('_');
+        label_text = label_text.join(' ');
+        label.innerHTML = label_text.toUpperCase();
+
         div.appendChild(label);
 
         const span = document.createElement("span");
@@ -309,17 +314,39 @@ let getRecord = async (url) => {
     back_button.setAttribute('href', '/');
     back_button.innerHTML = 'BACK';
     back_button.classList.add("pure-button");
-    back_button.classList.add("pure-bg-dark");
+    back_button.classList.add("pure-bg-link");
     back_button.setAttribute("onclick", "navigateBack()");
     actions.appendChild(back_button);
 
-    const update_button = document.createElement("button");
-    update_button.setAttribute('id', 'update_button');
-    update_button.setAttribute('onclick', 'updateRecord("'+url+'")');
-    update_button.innerHTML = 'UPDATE';
-    update_button.classList.add("pure-button");
-    update_button.classList.add("pure-bg-dark");
-    actions.appendChild(update_button);
+    if (!record.archived && !record.deleted) {
+        const update_button = document.createElement("button");
+        update_button.setAttribute('id', 'update_button');
+        update_button.setAttribute('onclick', 'updateRecord("'+url+'")');
+        update_button.innerHTML = 'UPDATE';
+        update_button.classList.add("pure-button");
+        update_button.classList.add("pure-bg-dark");
+        actions.appendChild(update_button);
+    }
+
+    if (!record.deleted) {
+        if (record.archived) {
+            const restoreRecord = document.createElement("button");
+            restoreRecord.setAttribute('id', 'restoreRecord');
+            restoreRecord.setAttribute('onclick', 'restoreRecord()');
+            restoreRecord.innerHTML = 'RESTORE';
+            restoreRecord.classList.add("pure-button");
+            restoreRecord.classList.add("pure-bg-yellow");
+            actions.appendChild(restoreRecord);
+        } else {
+            const archiveRecord = document.createElement("button");
+            archiveRecord.setAttribute('id', 'archiveRecord');
+            archiveRecord.setAttribute('onclick', 'archiveRecord()');
+            archiveRecord.innerHTML = 'ARCHIVE';
+            archiveRecord.classList.add("pure-button");
+            archiveRecord.classList.add("pure-bg-orange");
+            actions.appendChild(archiveRecord);
+        }
+    }
 
     if (record.deleted) {
         const recover_button = document.createElement("button");
@@ -339,24 +366,6 @@ let getRecord = async (url) => {
         actions.appendChild(delete_button);
     }
 
-    if (record.archived) {
-        const restoreRecord = document.createElement("button");
-        restoreRecord.setAttribute('id', 'restoreRecord');
-        restoreRecord.setAttribute('onclick', 'restoreRecord()');
-        restoreRecord.innerHTML = 'RESTORE';
-        restoreRecord.classList.add("pure-button");
-        restoreRecord.classList.add("pure-bg-yellow");
-        actions.appendChild(restoreRecord);
-    } else {
-        const archiveRecord = document.createElement("button");
-        archiveRecord.setAttribute('id', 'archiveRecord');
-        archiveRecord.setAttribute('onclick', 'archiveRecord()');
-        archiveRecord.innerHTML = 'ARCHIVE';
-        archiveRecord.classList.add("pure-button");
-        archiveRecord.classList.add("pure-bg-orange");
-        actions.appendChild(archiveRecord);
-    }
-
     card.appendChild(actions);
 
     // Related links
@@ -373,7 +382,7 @@ let getRecord = async (url) => {
             if (y && x == subject && !acc.includes(y)) acc.push(y);
             return acc;
         }, []);
-    
+
         for (join of joins) {
             var div = document.createElement("div");
             div.innerHTML = `<a href="#" onclick="navigateTo('${`${url}/${join}`}')">${`${url}/${join}`}</a>`;
@@ -449,10 +458,15 @@ let setForm = async (formId, subject, record = null) => {
 
         const div = document.createElement("div");
         div.classList.add('pure-control-group');
+        div.classList.add('pure-bg-light');
 
         const label = document.createElement("label");
         label.setAttribute('for', key);
-        label.innerHTML = key;
+
+        var label_text = key.split('_');
+        label_text = label_text.join(' ');
+        label.innerHTML = label_text.toUpperCase();
+
         div.appendChild(label);
 
         var input = document.createElement("input");
@@ -520,7 +534,7 @@ let setForm = async (formId, subject, record = null) => {
     const div = document.createElement("div");
     div.classList.add('pure-control-group');
 
-    div.innerHTML = `<a class="pure-button pure-bg-dark" href="/">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${formId}')">${record ? 'UPDATE' : 'CREATE'}</button>`;
+    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateBack()">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${formId}')">${record ? 'UPDATE' : 'CREATE'}</button>`;
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
@@ -542,7 +556,7 @@ let submitForm = async (form_id) => {
         // formData.forEach((value, key) => (data[key] = value));
         // Log the data.
         // console.log(data);
-        
+
         // Set empty string to null
         const data = {};
         for ([key, value] of formData.entries()) {
