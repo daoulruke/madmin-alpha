@@ -114,7 +114,7 @@ let getRecords = async (url) => {
     table.classList.add('pure-table-bordered');
 
     var thead = document.createElement("thead");
-    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateBack()">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
+    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
     table.appendChild(thead);
 
     var tbody = document.createElement("tbody");
@@ -163,7 +163,7 @@ let getRelatedRecords = async (subject, subjectId, join) => {
         table.classList.add('pure-table-bordered');
 
         const thead = document.createElement("thead");
-        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigateBack()">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
+        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigateTo('/records/${subject}/${subjectId}')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
         table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
@@ -315,7 +315,7 @@ let getRecord = async (url) => {
     back_button.innerHTML = 'BACK';
     back_button.classList.add("pure-button");
     back_button.classList.add("pure-bg-link");
-    back_button.setAttribute("onclick", "navigateBack()");
+    back_button.setAttribute("onclick", `navigateTo('/records/${subject}')`);
     actions.appendChild(back_button);
 
     if (!record.archived && !record.deleted) {
@@ -534,7 +534,7 @@ let setForm = async (formId, subject, record = null) => {
     const div = document.createElement("div");
     div.classList.add('pure-control-group');
 
-    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateBack()">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${formId}')">${record ? 'UPDATE' : 'CREATE'}</button>`;
+    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateTo('${location.pathname}')">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${formId}')">${record ? 'UPDATE' : 'CREATE'}</button>`;
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
