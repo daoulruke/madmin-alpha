@@ -539,6 +539,51 @@ let setForm = async (formId, subject, record = null) => {
 
     document.getElementById('content').innerHTML = form.outerHTML;
 
+    // Google map places input
+    if (["locations"].includes(subject)) {
+        var gmapInput = document.createElement("input");
+        gmapInput.style = "width:100%";
+        var gmapAutocomplete = new google.maps.places.Autocomplete(gmapInput);
+        gmapAutocomplete.addListener("place_changed", () => {
+            const place = gmapAutocomplete.getPlace();
+            console.log(place);
+            var map = {
+                street_number: ["street_number"],
+                street_name: ["street_address", "route"],
+                city: [
+                    "locality",
+                    "sublocality",
+                    "sublocality_level_1",
+                    "sublocality_level_2",
+                    "sublocality_level_3",
+                    "sublocality_level_4"
+                ],
+                region: [
+                    "administrative_area_level_1",
+                    "administrative_area_level_2",
+                    "administrative_area_level_3",
+                    "administrative_area_level_4",
+                    "administrative_area_level_5"
+                ],
+                country: ["country"],
+                code: ["postal_code"]
+            };
+            // Name
+            document.querySelector("input[name='name']").value = place.name || "";
+            // Address Components
+            for ([key, types] of Object.entries(map)) {
+                for (type of types) {
+                    const addressComponent = place.address_components.find(v => v.types.includes(type));
+                    if (addressComponent) {
+                        const input = document.querySelector(`input[name='${key}']`)
+                        if (input) input.value = addressComponent.long_name;
+                    }
+                }
+            }
+        });
+        document.querySelector("#gmap").innerHTML = "";
+        document.querySelector("#gmap").appendChild(gmapInput);
+    }
 };
 
 let submitForm = async (form_id) => {
@@ -878,6 +923,8 @@ let navigateTo = (path) => {
     console.log("navigate to", path);
     // Reset #msg
     displayMsg();
+    // Reset #gmap
+    document.querySelector("#gmap").innerHTML = "";
     window.history.pushState(
         {},
         document.title,

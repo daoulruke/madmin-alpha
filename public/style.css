@@ -120,6 +120,10 @@ ul {
     padding: 10px;
 }
 
+#gmap {
+    padding: 0 10px;
+}
+
 #content {
     padding: 10px;
     background-color: white;
