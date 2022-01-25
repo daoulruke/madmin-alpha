@@ -633,26 +633,20 @@ let submitForm = async (form_id) => {
             // Display errors
             const responseError = await response.json();
 
-            // code 1013 === validation error
-            if (responseError.code == 1013) {
-                const validationErrors = responseError.details || {};
-                console.log(validationErrors);
-                for ([key, value] of Object.entries(validationErrors)) {
-                    const input = document.querySelector(`[name='${key}']`);
-                    const span = document.createElement("span");
-                    span.classList.add("error_msg");
-                    span.style.color = "red";
-                    span.textContent  = value;
-                    input.parentElement.appendChild(span);
-                }
-            }
-
-            // code 9999 === unknown error
-            if (responseError.code == 9999) {
-                const validationErrors = responseError.message || {};
-                console.log(validationErrors);
-
-                displayMsg(`[${response.status}] ${responseError.message}`, "red");
+            switch (responseError.code) {
+                case 1013:
+                    const validationErrors = responseError.details || {};
+                    console.log(validationErrors);
+                    for ([key, value] of Object.entries(validationErrors)) {
+                        const input = document.querySelector(`[name='${key}']`);
+                        const span = document.createElement("span");
+                        span.classList.add("error_msg");
+                        span.style.color = "red";
+                        span.textContent  = value;
+                        input.parentElement.appendChild(span);
+                    }
+                default:
+                    displayMsg(`[${response.status}] ${responseError.message}`, "red");
             }
 
         }
