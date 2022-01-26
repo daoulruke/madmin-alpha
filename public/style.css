@@ -86,6 +86,14 @@ html, body {
     background: rgb(75, 0, 130);
 }
 
+.pure-text-black {
+    background: black;
+}
+
+.pure-text-white {
+    background: white;
+}
+
 .xsmall {
     font-size: 70%;
 }
@@ -100,6 +108,10 @@ html, body {
 
 .xlarge {
     font-size: 125%;
+}
+
+.text-left {
+    text-align: left;
 }
 
 .text-right {
@@ -161,4 +173,8 @@ ul {
     display: inline-block;
     width: 50%;
     text-align: right;
+}
+
+header {
+
 }
