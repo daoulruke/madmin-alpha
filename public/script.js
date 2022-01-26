@@ -257,7 +257,15 @@ let getRecord = async (url) => {
         });
     }
 
-    let joinQuery = [... new Set(Object.values(columnReferences).map(v => v))].map(v => `join=${v}`).join("&");
+    // Join includes column references, logs, ...
+    let joins = [
+        ... new Set([
+            ...Object.values(columnReferences).map(v => v),
+        ]),
+        "logs"
+    ];
+
+    let joinQuery = joins.map(v => `join=${v}`).join("&");
     const record = await _fetch(`${apiUrl}${url}?${joinQuery}`)
         .then(response => response.json());
 
@@ -269,7 +277,7 @@ let getRecord = async (url) => {
     for ([key, value] of Object.entries(record)) {
 
         // Hide hasMany relationships
-        if ((Object.values(columnReferences)).includes(key)) continue;
+        if (joins.includes(key)) continue;
 
         const div = document.createElement("div");
         div.classList.add('pure-control-group');
@@ -389,6 +397,24 @@ let getRecord = async (url) => {
             // div.innerHTML = `<a href="#" onclick="getRelatedRecords('${subject}', '${subjectId}', '${join}')">${`${url}/${join}`}</a>`;
             card.appendChild(div);
         }
+    }
+
+    // Logs
+    var div = document.createElement("div");
+    div.innerHTML = "<br /><b>LOGS</b>";
+    card.appendChild(div);
+    if (record.logs) {
+        // Order by ID desc
+        const logs = record.logs.sort((a, b) => b.id - a.id);
+        var table = document.createElement("table");
+        var tbody = document.createElement("tbody");
+        for (log of logs) {
+            var tr = document.createElement("tr");
+            tr.innerHTML = `<tr><td>${log.name}</td></tr>`;
+            tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        card.appendChild(table);
     }
 
     document.getElementById('content').innerHTML = card.outerHTML;
