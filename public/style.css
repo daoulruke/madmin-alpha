@@ -148,3 +148,13 @@ ul {
 .pure-menu-item {
     height: auto;
 }
+
+#header_left {
+    width: 45%;
+    text-align:left;
+}
+
+#header_right {
+    width: 45%;
+    text-align:left;
+}
