@@ -987,6 +987,7 @@ window.onload = async function () {
         document.location.hash = '';
 
         localStorage.setItem('accessToken', accessToken);
+        document.getElementById('token').innerHTML = accessToken;
 
         // Fetch wrapper with default options
         _fetch = async (url, options = {}) => {
