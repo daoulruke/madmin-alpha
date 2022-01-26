@@ -18,26 +18,16 @@
 
     <body>
 
-        <header>
+        <div class="pure-menu pure-menu-horizontal">
+            <ul class="pure-menu-list">
+                <li class="pure-menu-item"><b class="pure-menu-link">ud.ax</b></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Persons</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Firms</a></li>
+                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Assets</a></li>
+            </ul>
+        </div>
 
-            <div class="pure-menu pure-menu-horizontal">
-                <b class="pure-menu-heading pure-menu-link">ud.ax</b>
-                <ul class="pure-menu-list">
-                    <li class="pure-menu-item">
-                        <a href="#" class="pure-menu-link">Firms</a>
-                    </li>
-                    <li class="pure-menu-item">
-                        <a href="#" class="pure-menu-link">Persons</a>
-                    </li>
-                    <li class="pure-menu-item">
-                        <a href="#" class="pure-menu-link">Assets</a>
-                    </li>
-                </ul>
-            </div>
-
-        </header>
-
-        <main>
+        <div class="main">
 
             <ul id="current_path">
                 <li>/<a href="#" onclick="navigateTo('/')">records</a></li>
@@ -48,9 +38,9 @@
             <pre id="content"></pre>
             <pre id="raw" class="hidden"></pre>
 
-        </main>
+        </div>
 
-        <footer></footer>
+    
 
     </body>
 
