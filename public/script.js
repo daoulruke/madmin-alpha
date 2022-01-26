@@ -266,7 +266,7 @@ let getRecord = async (url) => {
     ];
 
     let joinQuery = joins.map(v => `join=${v}`).join("&");
-    const record = await _fetch(`${apiUrl}${url}?${joinQuery}&join=logs`)
+    const record = await _fetch(`${apiUrl}${url}?${joinQuery}`)
         .then(response => response.json());
 
     // START - #content
