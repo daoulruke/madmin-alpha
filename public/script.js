@@ -505,7 +505,7 @@ let setForm = async (formId, subject, record = null) => {
         // Update
         if (record) {
             if (key == 'id' || key == 'admin_person_id') {
-                input.setAttribute('readonly', true);
+                input.setAttribute('disabled', true);
             }
 
             if (record[key]) {
