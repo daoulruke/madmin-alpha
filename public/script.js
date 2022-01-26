@@ -1,7 +1,7 @@
 
-var authUrl = 'https://sitevitals-beta.au.auth0.com/authorize'; // url of 'auth.php' from php-api-auth
-var clientId = '7FKABiIsVFrGmquJm5k1kf9MKbt1xw2F'; // client id as defined in php-api-auth
-var audience = 'https://api.sitevitals-beta.com'; // api audience as defined in php-api-auth
+var authUrl = 'https://auth.ud.ax/authorize'; // url of 'auth.php' from php-api-auth
+var clientId = 'gfi2y7zSyKYcvSDBELaKTfOC0MkLgDk8'; // client id as defined in php-api-auth
+var audience = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 var apiUrl = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 
 // Fetch wrapper
