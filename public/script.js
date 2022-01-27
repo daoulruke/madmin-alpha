@@ -40,9 +40,16 @@ let updatePath = (url) => {
 
 };
 
+// Fetch userinfo
+let userinfo = null;
+let getUserinfo = async () => {
+    userinfo = await _fetch(`${apiUrl}/userinfo`)
+        .then(response => response.json());
+    console.log("userinfo", userinfo);
+};
+
 // Fetch openapi
 let openapi = null;
-
 let getOpenapi = async () => {
     openapi = await _fetch(`${apiUrl}/openapi`)
         .then(response => response.json());
@@ -980,7 +987,8 @@ window.onload = async function () {
 
     if (!accessToken) {
 
-        document.location = authUrl+'?audience='+audience+'&response_type=token&client_id='+clientId+'&redirect_uri='+document.location.origin;
+        // document.location = authUrl+'?audience='+audience+'&response_type=token&client_id='+clientId+'&redirect_uri='+document.location.origin;
+        document.location = `${authUrl}?audience=${audience}&scope=openid profile email&response_type=token&client_id=${clientId}&redirect_uri=${document.location.origin}`;
 
     } else {
 
@@ -1049,6 +1057,8 @@ window.onload = async function () {
         await getOpenapi();
         navigateTo(localStorage.getItem("path") || location.pathname);
         localStorage.removeItem("path");
+
+        getUserinfo();
     }
 
 };
