@@ -14,6 +14,7 @@
 * {
     font-family: 'SFMono', monospace;
     font-size: 12px;
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
     border: 0;
@@ -22,6 +23,7 @@
 html, body {
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 .hidden {
@@ -84,6 +86,14 @@ html, body {
     background: rgb(75, 0, 130);
 }
 
+.pure-text-black {
+    color: black;
+}
+
+.pure-text-white {
+    color: white;
+}
+
 .xsmall {
     font-size: 70%;
 }
@@ -98,6 +108,10 @@ html, body {
 
 .xlarge {
     font-size: 125%;
+}
+
+.text-left {
+    text-align: left;
 }
 
 .text-right {
@@ -121,11 +135,11 @@ ul {
 }
 
 #gmap {
-    padding: 0 10px;
+    padding: 0 20px;
 }
 
 #content {
-    padding: 10px;
+    padding: 20px;
     background-color: white;
     color: black;
 }
@@ -143,4 +157,24 @@ ul {
 .pure-form-aligned .pure-control-group label {
     text-align: left;
     padding: 6px;
+}
+
+.pure-menu-item {
+    height: auto;
+}
+
+#header_left {
+    display: inline-block;
+    width: 50%;
+    padding-left:20px;
+}
+
+#header_right {
+    display: inline-block;
+    width: 50%;
+    padding-right:20px;
+}
+
+header {
+
 }

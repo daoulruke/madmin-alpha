@@ -538,7 +538,7 @@ let setForm = async (formId, subject, record = null) => {
         // Update
         if (record) {
             if (key == 'id' || key == 'admin_person_id') {
-                input.setAttribute('readonly', true);
+                input.setAttribute('disabled', true);
             }
 
             if (record[key]) {
@@ -995,6 +995,7 @@ window.onload = async function () {
         document.location.hash = '';
 
         localStorage.setItem('accessToken', accessToken);
+        document.getElementById('token').innerHTML = accessToken;
 
         // Fetch wrapper with default options
         _fetch = async (url, options = {}) => {

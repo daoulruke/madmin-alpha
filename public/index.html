@@ -18,7 +18,36 @@
 
     <body>
 
-        <main>
+        <header class="pure-bg-dark pure-text-white">
+
+            <div id="header_left" class="text-left">
+                <!--
+                <div class="pure-menu pure-menu-horizontal">
+                    <ul class="pure-menu-list">
+                        <li class="pure-menu-item"><b class="pure-menu-link">ud.ax</b></li>
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Persons</a></li>
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Firms</a></li>
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Assets</a></li>
+                    </ul>
+                </div>
+                -->
+            </div><div id="header_right" class="text-right">
+
+                <div class="pure-menu pure-menu-horizontal">
+                    <ul class="pure-menu-list">
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">ActiveAsset</a></li>
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">ActiveFirm</a></li>
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">ActiveUser</a></li>
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">System</a></li>
+                        <li class="pure-menu-item"><a href="#" class="pure-menu-link">Exit</a></li>
+                    </ul>
+                </div>
+
+            </div>
+
+        </header>
+
+        <div class="main">
 
             <ul id="current_path">
                 <li>/<a href="#" onclick="navigateTo('/')">records</a></li>
@@ -27,9 +56,12 @@
             <pre id="msg"></pre>
             <pre id="gmap"></pre>
             <pre id="content"></pre>
+            <pre id="token" class="hidden"></pre>
             <pre id="raw" class="hidden"></pre>
 
-        </main>
+        </div>
+
+
 
     </body>
 
