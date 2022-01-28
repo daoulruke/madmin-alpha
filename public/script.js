@@ -488,25 +488,29 @@ let setForm = async (formId, subject, record = null) => {
     // Check if columns can be updated
     // Will be disable if can't be updated
     let canUpdateX = true;
-    if (!record["record_admin_firms_id"] && !record["record_admin_persons_id"]) {
-        canUpdateX = false;
-    }
-    if (canUpdateX) {
-        if (record["record_admin_firms_id"]) {
-            canUpdateX = record["record_admin_firms_id"] == userinfo["active_firms_id"];
-        } else {
-            canUpdateX = record["record_admin_persons_id"] == userinfo["active_persons_id"];
+    if (record) {
+        if (!record["record_admin_firms_id"] && !record["record_admin_persons_id"]) {
+            canUpdateX = false;
+        }
+        if (canUpdateX) {
+            if (record["record_admin_firms_id"]) {
+                canUpdateX = record["record_admin_firms_id"] == userinfo["active_firms_id"];
+            } else {
+                canUpdateX = record["record_admin_persons_id"] == userinfo["active_persons_id"];
+            }
         }
     }
     let canUpdateModel = true;
-    if (!record["admin_firms_id"] && !record["admin_persons_id"]) {
-        canUpdateModel = false;
-    }
-    if (canUpdateModel) {
-        if (record["admin_firms_id"]) {
-            canUpdateModel = record["admin_firms_id"] == userinfo["active_firms_id"];
-        } else {
-            canUpdateModel = record["admin_persons_id"] == userinfo["active_persons_id"];
+    if (record) {
+        if (!record["admin_firms_id"] && !record["admin_persons_id"]) {
+            canUpdateModel = false;
+        }
+        if (canUpdateModel) {
+            if (record["admin_firms_id"]) {
+                canUpdateModel = record["admin_firms_id"] == userinfo["active_firms_id"];
+            } else {
+                canUpdateModel = record["admin_persons_id"] == userinfo["active_persons_id"];
+            }
         }
     }
 
