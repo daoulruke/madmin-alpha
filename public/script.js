@@ -738,6 +738,15 @@ let submitForm = async (form_id) => {
                 var successMsg = `[${response.status}] Record has been deleted.`;
             }
 
+            // Update userinfo
+            if (
+                location.pathname.split("/").length === 4 &&
+                location.pathname.split("/")[2] == "persons" &&
+                location.pathname.split("/")[3] == userinfo.id
+            ) {
+                getUserinfo();
+            }
+
             // Go back to read view
             navigateTo(returnPath);
 
