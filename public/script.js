@@ -1046,6 +1046,8 @@ window.onload = async function () {
         localStorage.setItem('accessToken', accessToken);
         document.getElementById('token').innerHTML = accessToken;
 
+        document.querySelector("#exit-btn").setAttribute("href", `https://auth.ud.ax/logout?returnTo=${location.origin}`);
+
         // Fetch wrapper with default options
         _fetch = async (url, options = {}) => {
             try {
