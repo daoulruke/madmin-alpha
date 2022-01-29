@@ -46,6 +46,7 @@ let getUserinfo = async () => {
     userinfo = await _fetch(`${apiUrl}/userinfo`)
         .then(response => response.json());
     console.log("userinfo", userinfo);
+    localStorage.setItem("userinfo", JSON.stringify(userinfo));
 };
 
 // Fetch openapi
@@ -484,9 +485,40 @@ let setForm = async (formId, subject, record = null) => {
     const raw = JSON.stringify(fields, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
 
+    // Check if columns can be updated
+    // Will be disable if can't be updated
+    let canUpdateX = true;
+    if (record) {
+        if (!record["record_admin_firms_id"] && !record["record_admin_persons_id"]) {
+            canUpdateX = false;
+        }
+        if (canUpdateX) {
+            if (record["record_admin_firms_id"]) {
+                canUpdateX = record["record_admin_firms_id"] == userinfo["active_firms_id"];
+            } else {
+                canUpdateX = record["record_admin_persons_id"] == userinfo["active_persons_id"];
+            }
+        }
+    }
+    let canUpdateModel = true;
+    if (record) {
+        if (!record["admin_firms_id"] && !record["admin_persons_id"]) {
+            canUpdateModel = false;
+        }
+        if (canUpdateModel) {
+            if (record["admin_firms_id"]) {
+                canUpdateModel = record["admin_firms_id"] == userinfo["active_firms_id"];
+            } else {
+                canUpdateModel = record["admin_persons_id"] == userinfo["active_persons_id"];
+            }
+        }
+    }
+
+    const modelFields = ["data", "admin_firms_id", "admin_persons_id", "code"];
+    const hiddenFields = ["record_admin_firms_id", "record_admin_persons_id", "archived", "deleted"];
+
     for ([key, field] of Object.entries(fields)) {
 
-        const hiddenFields = ["archived", "deleted"];
         if (hiddenFields.includes(key)) continue;
 
         const div = document.createElement("div");
@@ -534,6 +566,14 @@ let setForm = async (formId, subject, record = null) => {
         input.setAttribute('id', key);
         input.setAttribute('name', key);
         input.setAttribute('type', 'text');
+
+        // Disable restricted columns
+        if (
+            (!canUpdateX && !modelFields.includes(key)) ||
+            (!canUpdateModel && modelFields.includes(key))
+        ) {
+            input.setAttribute('disabled', true);
+        }
 
         // Update
         if (record) {
@@ -700,6 +740,15 @@ let submitForm = async (form_id) => {
             if(form_id == 'delete_form') {
                 var returnPath = window.location.pathname;
                 var successMsg = `[${response.status}] Record has been deleted.`;
+            }
+
+            // Update userinfo
+            if (
+                location.pathname.split("/").length === 4 &&
+                location.pathname.split("/")[2] == "persons" &&
+                location.pathname.split("/")[3] == userinfo.id
+            ) {
+                getUserinfo();
             }
 
             // Go back to read view
@@ -996,6 +1045,8 @@ window.onload = async function () {
 
         localStorage.setItem('accessToken', accessToken);
         document.getElementById('token').innerHTML = accessToken;
+
+        document.querySelector("#exit-btn").setAttribute("href", `https://auth.ud.ax/logout?returnTo=${location.origin}`);
 
         // Fetch wrapper with default options
         _fetch = async (url, options = {}) => {
