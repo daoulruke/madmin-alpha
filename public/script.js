@@ -577,7 +577,7 @@ let setForm = async (formId, subject, record = null) => {
 
         // Update
         if (record) {
-            if (key == 'id' || key == 'record_admin_persons_id') {
+            if (key == 'id' || key == 'admin_person_id') {
                 input.setAttribute('disabled', true);
             }
 
@@ -589,7 +589,7 @@ let setForm = async (formId, subject, record = null) => {
         }
         // Create
         else {
-            if (key == 'id' || key == 'record_admin_persons_id') {
+            if (key == 'id' || key == 'admin_person_id') {
                 continue;
             }
         }
