@@ -47,6 +47,7 @@ let getUserinfo = async () => {
         .then(response => response.json());
     console.log("userinfo", userinfo);
     localStorage.setItem("userinfo", JSON.stringify(userinfo));
+    document.getElementById('userinfo').innerHTML = JSON.stringify(userinfo);
 };
 
 // Fetch openapi
