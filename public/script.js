@@ -51,7 +51,7 @@ let getUserinfo = async () => {
     document.getElementById('userinfo').innerHTML = JSON.stringify(userinfo);
     //document.getElementById('menu-link-active-user').innerHTML = userinfo.admin_persons_id;
     document.getElementById('menu-link-active-user').innerHTML = userinfo.email_address;
-    if(userinfo.record_admin_firms_id != null) { 
+    if(typeof userinfo.record_admin_firms_id != "undefined") { 
       document.getElementById('menu-link-active-firm').innerHTML = userinfo.record_admin_firms_id;
     }
 };
