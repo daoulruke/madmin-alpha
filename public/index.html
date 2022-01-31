@@ -5,14 +5,14 @@
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
 
-        <title>ud.ax</title>
+        <title>UDAX</title>
+
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHwImhVRedexjlcK8aMoX8DTZPVniiH5A&libraries=places"></script>
+        <script src="/script.js"></script>
 
         <link href="data:image/x-icon;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQEAYAAABPYyMiAAAABmJLR0T///////8JWPfcAAAACXBIWXMAAABIAAAASABGyWs+AAAAF0lEQVRIx2NgGAWjYBSMglEwCkbBSAcACBAAAeaR9cIAAAAASUVORK5CYII=" rel="icon" type="image/x-icon" />
         <link rel="stylesheet" href="https://unpkg.com/purecss@2.0.6/build/pure-min.css" integrity="sha384-Uu6IeWbM+gzNVXJcM9XV3SohHtmWE+3VGi496jvgX1jyvDTXfdK+rfZc8C1Aehk5" crossorigin="anonymous">
         <link rel="stylesheet" href="/style.css">
-
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCHwImhVRedexjlcK8aMoX8DTZPVniiH5A&libraries=places"></script>
-        <script src="/script.js"></script>
 
     </head>
 
@@ -24,7 +24,7 @@
 
                 <div class="pure-menu pure-menu-horizontal">
                     <ul class="pure-menu-list">
-                        <li class="pure-menu-item"><b class="pure-menu-link pure-text-white">ud.ax</b></li>
+                        <li class="pure-menu-item"><b class="pure-menu-link pure-text-white">UDAX</b></li>
                         <!--
                         <li class="pure-menu-item"><a href="#" class="pure-menu-link">Persons</a></li>
                         <li class="pure-menu-item"><a href="#" class="pure-menu-link">Firms</a></li>
@@ -32,16 +32,16 @@
                         -->
                     </ul>
                 </div>
-                
+
             </div><div id="header_right" class="text-right">
 
                 <div class="pure-menu pure-menu-horizontal">
                     <ul class="pure-menu-list">
-                        <li class="pure-menu-item"><a href="#" class="pure-menu-link pure-text-white">ActiveAsset</a></li>
-                        <li class="pure-menu-item"><a href="#" class="pure-menu-link pure-text-white">ActiveFirm</a></li>
-                        <li class="pure-menu-item"><a href="#" class="pure-menu-link pure-text-white">ActiveUser</a></li>
-                        <li class="pure-menu-item"><a href="#" class="pure-menu-link pure-text-white">System</a></li>
-                        <li class="pure-menu-item"><a id="exit-btn" href="#" class="pure-menu-link pure-text-white">Exit</a></li>
+                        <li class="pure-menu-item"><a id="menu-link-active-assets" href="#" class="pure-menu-link pure-text-white"></a></li>
+                        <li class="pure-menu-item"><a id="menu-link-active-firm" href="#" class="pure-menu-link pure-text-white"></a></li>
+                        <li class="pure-menu-item"><a id="menu-link-active-user" href="#" class="pure-menu-link pure-text-white"></a></li>
+                        <li class="pure-menu-item"><a id="menu-link-system" href="#" class="pure-menu-link pure-text-white">SYSTEM</a></li>
+                        <li class="pure-menu-item"><a id="menu-link-exit" href="#" class="pure-menu-link pure-text-white">EXIT</a></li>
                     </ul>
                 </div>
 
@@ -58,12 +58,12 @@
             <pre id="msg"></pre>
             <pre id="gmap"></pre>
             <pre id="content"></pre>
-            <pre id="token" class="hidden"></pre>
+
             <pre id="raw" class="hidden"></pre>
+            <pre id="token" class="hidden"></pre>
+            <pre id="userinfo" class="userinfo"></pre>
 
         </div>
-
-
 
     </body>
 
