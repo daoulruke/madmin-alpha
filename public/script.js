@@ -51,7 +51,9 @@ let getUserinfo = async () => {
     document.getElementById('userinfo').innerHTML = JSON.stringify(userinfo);
     //document.getElementById('menu-link-active-user').innerHTML = userinfo.admin_persons_id;
     document.getElementById('menu-link-active-user').innerHTML = userinfo.email_address;
-    document.getElementById('menu-link-active-firm').innerHTML = userinfo.record_admin_firms_id;
+    if(userinfo.record_admin_firms_id != null) { 
+      document.getElementById('menu-link-active-firm').innerHTML = userinfo.record_admin_firms_id;
+    }
 };
 
 // Fetch openapi
