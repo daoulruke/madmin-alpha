@@ -492,7 +492,7 @@ let setForm = async (formId, subject, record = null) => {
     const raw = JSON.stringify(fields, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
 
-    const hiddenFields = ["record_admin_firms_id", "record_admin_persons_id", "archived", "deleted"];
+    const hiddenFields = ["admin", "archived", "deleted"];
 
     for ([key, field] of Object.entries(fields)) {
 
