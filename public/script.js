@@ -492,7 +492,6 @@ let setForm = async (formId, subject, record = null) => {
     const raw = JSON.stringify(fields, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
 
-    const modelFields = ["data", "admin_firms_id", "admin_persons_id", "code"];
     const hiddenFields = ["record_admin_firms_id", "record_admin_persons_id", "archived", "deleted"];
 
     for ([key, field] of Object.entries(fields)) {
@@ -546,7 +545,7 @@ let setForm = async (formId, subject, record = null) => {
         input.setAttribute('type', 'text');
 
         // Disable restricted columns
-        if (!modelFields.includes(key) && record && !!!record.admin) {
+        if (field.admin && record && !!!record.admin) {
             input.setAttribute('disabled', true);
         }
 
