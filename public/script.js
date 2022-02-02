@@ -492,35 +492,6 @@ let setForm = async (formId, subject, record = null) => {
     const raw = JSON.stringify(fields, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
 
-    // Check if columns can be updated
-    // Will be disable if can't be updated
-    let canUpdateX = true;
-    if (record) {
-        if (!record["record_admin_firms_id"] && !record["record_admin_persons_id"]) {
-            canUpdateX = false;
-        }
-        if (canUpdateX) {
-            if (record["record_admin_firms_id"]) {
-                canUpdateX = record["record_admin_firms_id"] == userinfo["active_firms_id"];
-            } else {
-                canUpdateX = record["record_admin_persons_id"] == userinfo["active_persons_id"];
-            }
-        }
-    }
-    let canUpdateModel = true;
-    if (record) {
-        if (!record["admin_firms_id"] && !record["admin_persons_id"]) {
-            canUpdateModel = false;
-        }
-        if (canUpdateModel) {
-            if (record["admin_firms_id"]) {
-                canUpdateModel = record["admin_firms_id"] == userinfo["active_firms_id"];
-            } else {
-                canUpdateModel = record["admin_persons_id"] == userinfo["active_persons_id"];
-            }
-        }
-    }
-
     const modelFields = ["data", "admin_firms_id", "admin_persons_id", "code"];
     const hiddenFields = ["record_admin_firms_id", "record_admin_persons_id", "archived", "deleted"];
 
@@ -575,10 +546,7 @@ let setForm = async (formId, subject, record = null) => {
         input.setAttribute('type', 'text');
 
         // Disable restricted columns
-        if (
-            (!canUpdateX && !modelFields.includes(key)) ||
-            (!canUpdateModel && modelFields.includes(key))
-        ) {
+        if (!modelFields.includes(key) && record && !!!record.admin) {
             input.setAttribute('disabled', true);
         }
 
