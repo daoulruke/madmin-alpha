@@ -60,6 +60,7 @@ let getUserinfo = async () => {
     const activeAccount = userinfo.accounts.find(v => v.active);
     document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
     // Accounts dropdown
+    document.querySelector("#menu-link-accounts-dropdown").innerHTML = "";
     for (const account of (userinfo.accounts || [])) {
         var li = document.createElement("li");
         li.classList.add("pure-menu-item");
@@ -78,6 +79,7 @@ let getUserinfo = async () => {
                 method: "PUT",
                 body: JSON.stringify({ account_id })
             }).then(response => response.json());
+            getUserinfo();
         }
     };
     document.querySelectorAll(".accounts-dropdown-item")
