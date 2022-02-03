@@ -60,7 +60,7 @@ let getUserinfo = async () => {
     const activeAccount = userinfo.accounts.find(v => v.active);
     if (activeAccount) {
         //document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
-        document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.person_id.name}`;
+        document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.account_name}`;
     }
     // Accounts dropdown
     document.querySelector("#menu-link-accounts-dropdown").innerHTML = "";
@@ -71,7 +71,7 @@ let getUserinfo = async () => {
         a.classList.add("pure-menu-link");
         a.classList.add("accounts-dropdown-item");
         a.dataset.account_id = account.id;
-        a.innerHTML = `${account.firm_id.name} | ${account.person_id.name}`;
+        a.innerHTML = `${account.account_name}`;
         li.appendChild(a);
         document.querySelector("#menu-link-accounts-dropdown").appendChild(li);
     }
