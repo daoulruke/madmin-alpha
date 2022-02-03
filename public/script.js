@@ -48,12 +48,41 @@ let getUserinfo = async () => {
         .then(response => response.json());
     console.log("userinfo", userinfo);
     localStorage.setItem("userinfo", JSON.stringify(userinfo));
-    document.getElementById('userinfo').innerHTML = JSON.stringify(userinfo);
-    //document.getElementById('menu-link-active-user').innerHTML = userinfo.admin_persons_id;
-    document.getElementById('menu-link-active-user').innerHTML = userinfo.email_address;
-    if(typeof userinfo.record_admin_firms_id != "undefined") { 
-      document.getElementById('menu-link-active-firm').innerHTML = userinfo.record_admin_firms_id;
+    // document.getElementById('userinfo').innerHTML = JSON.stringify(userinfo);
+    // //document.getElementById('menu-link-active-user').innerHTML = userinfo.admin_persons_id;
+    // document.getElementById('menu-link-active-user').innerHTML = userinfo.email_address;
+    // if(typeof userinfo.record_admin_firms_id != "undefined") { 
+    //   document.getElementById('menu-link-active-firm').innerHTML = userinfo.record_admin_firms_id;
+    // }
+
+    // START - Accounts menu link
+    // Active account
+    const activeAccount = userinfo.accounts.find(v => v.active);
+    document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
+    // Accounts dropdown
+    for (const account of (userinfo.accounts || [])) {
+        var li = document.createElement("li");
+        li.classList.add("pure-menu-item");
+        var a = document.createElement("a");
+        a.classList.add("pure-menu-link");
+        a.classList.add("accounts-dropdown-item");
+        a.dataset.account_id = account.id;
+        a.innerHTML = `${account.firm_id.name} | ${account.person_id.name}`;
+        li.appendChild(a);
+        document.querySelector("#menu-link-accounts-dropdown").appendChild(li);
     }
+    const onAccountClick = async (e) => {
+        const account_id = e.target.dataset.account_id;
+        if (account_id) {
+            await _fetch(`${apiUrl}/userinfo/active`, {
+                method: "PUT",
+                body: JSON.stringify({ account_id })
+            }).then(response => response.json());
+        }
+    };
+    document.querySelectorAll(".accounts-dropdown-item")
+        .forEach(v => v.addEventListener("click", onAccountClick));
+    // END - Accounts menu link
 };
 
 // Fetch openapi
