@@ -58,7 +58,8 @@ let getUserinfo = async () => {
     // START - Accounts menu link
     // Active account
     const activeAccount = userinfo.accounts.find(v => v.active);
-    document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
+    if (activeAccount)
+        document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
     // Accounts dropdown
     document.querySelector("#menu-link-accounts-dropdown").innerHTML = "";
     for (const account of (userinfo.accounts || [])) {
