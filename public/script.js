@@ -51,15 +51,17 @@ let getUserinfo = async () => {
     // document.getElementById('userinfo').innerHTML = JSON.stringify(userinfo);
     // //document.getElementById('menu-link-active-user').innerHTML = userinfo.admin_persons_id;
     // document.getElementById('menu-link-active-user').innerHTML = userinfo.email_address;
-    // if(typeof userinfo.record_admin_firms_id != "undefined") { 
+    // if(typeof userinfo.record_admin_firms_id != "undefined") {
     //   document.getElementById('menu-link-active-firm').innerHTML = userinfo.record_admin_firms_id;
     // }
 
     // START - Accounts menu link
     // Active account
     const activeAccount = userinfo.accounts.find(v => v.active);
-    if (activeAccount)
-        document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
+    if (activeAccount) {
+        //document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
+        document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.person_id.name}`;
+    }
     // Accounts dropdown
     document.querySelector("#menu-link-accounts-dropdown").innerHTML = "";
     for (const account of (userinfo.accounts || [])) {
