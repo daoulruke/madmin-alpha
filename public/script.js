@@ -58,7 +58,7 @@ let getUserinfo = async () => {
 
     // START - Accounts menu link
     // Active account
-    const activeAccount = userinfo.accounts.find(v => v.active);
+    activeAccount = userinfo.accounts.find(v => v.active);
     if (activeAccount) {
         //document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
         document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.account_name}`;
@@ -681,6 +681,7 @@ let setForm = async (formId, subject, record = null) => {
 };
 
 var generateSelect = async (inputName, inputLabel, source, selected, appendTo) => {
+    console.log(selected)
     var div = document.createElement("div");
     div.classList.add('pure-control-group');
     div.classList.add('pure-bg-light');
