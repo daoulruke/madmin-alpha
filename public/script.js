@@ -42,6 +42,7 @@ let updatePath = (url) => {
 
 // Fetch userinfo
 let userinfo = null;
+let activeAccount = null;
 
 let getUserinfo = async () => {
     userinfo = await _fetch(`${apiUrl}/userinfo`)
@@ -57,7 +58,7 @@ let getUserinfo = async () => {
 
     // START - Accounts menu link
     // Active account
-    const activeAccount = userinfo.accounts.find(v => v.active);
+    activeAccount = userinfo.accounts.find(v => v.active);
     if (activeAccount)
         document.querySelector("#menu-link-active-account").innerHTML = `${activeAccount.firm_id.name} | ${activeAccount.person_id.name}`;
     // Accounts dropdown
@@ -510,6 +511,11 @@ let updateRecord = async (url) => {
 
 let setForm = async (formId, subject, record = null) => {
 
+    if (subject === "accounts") {
+        setAccountsForm(record);
+        return;
+    }
+
     const form = document.createElement("form");
     form.setAttribute('id', formId);
     form.classList.add('pure-form');
@@ -672,6 +678,107 @@ let setForm = async (formId, subject, record = null) => {
     }
 };
 
+var generateSelect = async (inputName, inputLabel, source, selected, appendTo) => {
+    var div = document.createElement("div");
+    div.classList.add('pure-control-group');
+    div.classList.add('pure-bg-light');
+
+    var label = document.createElement("label");
+    label.setAttribute('for', inputName);
+    label.innerHTML = inputLabel;
+    div.appendChild(label);
+
+    var input = document.createElement("select");
+    input.setAttribute('id', inputName);
+    input.setAttribute('name', inputName);
+    div.appendChild(input);
+
+    var option = document.createElement("option");
+    option.value = "";
+    option.text = "Please select";
+    input.appendChild(option);
+
+    var records = await _fetch(`${apiUrl}/records/${source}`)
+        .then(response => response.json())
+        .then(response => response.records);
+    records.forEach(v => {
+        var option = document.createElement("option");
+        option.value = v.id;
+        option.text = v.name;
+        // Set current user as default option
+        if (option.value == selected) option.setAttribute("selected", "selected");
+        input.appendChild(option);
+    });
+
+    appendTo.appendChild(div);
+};
+
+var generateDataList = async (inputName, inputLabel, source, appendTo) => {
+    var div = document.createElement("div");
+    div.classList.add('pure-control-group');
+    div.classList.add('pure-bg-light');
+
+    var label = document.createElement("label");
+    label.setAttribute('for', inputName);
+    label.innerHTML = inputLabel;
+    div.appendChild(label);
+
+    var input = document.createElement("input");
+    input.setAttribute('id', inputName);
+    input.setAttribute('name', inputName);
+    input.setAttribute("list", `${inputName}-datalist`);
+    div.appendChild(input);
+
+    var datalist = document.createElement("datalist");
+    datalist.setAttribute("id", `${inputName}-datalist`);
+    var records = await _fetch(`${apiUrl}/records/${source}`)
+        .then(response => response.json())
+        .then(response => response.records);
+    records.forEach(v => {
+        var option = document.createElement("option");
+        option.value = v.name;
+        option.dataset.value = v.id;
+        datalist.appendChild(option);
+    });
+    div.appendChild(datalist);
+
+    appendTo.appendChild(div);
+
+    setTimeout(() => {
+        document.querySelector(`#${inputName}`).addEventListener("input", (e) => {
+            var selected = document.querySelector(`#${inputName}-datalist option[value="${e.target.value}"]`);
+            if (selected) {
+                console.log(e.target.value, selected.dataset.value);
+                e.target.dataset.value = selected.dataset.value;
+            }
+        });
+    }, 1000);
+};
+
+let setAccountsForm = async (account = null) => {
+    const form = document.createElement("form");
+    form.setAttribute('id', account ? 'update_form' : 'create_form');
+    form.classList.add('pure-form');
+    form.classList.add('pure-form-aligned');
+
+    const fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
+
+    // Account Holder
+    await generateSelect("account_holder", "Account Holder", "persons", activeAccount ? activeAccount.person_id.id : null, fieldset);
+    // Account Person
+    await generateDataList("persons_id", "Account Person", "persons", fieldset);
+    // Account Firm
+    await generateDataList("firms_id", "Account Firm", "firms", fieldset);
+
+    var div = document.createElement("div");
+    div.classList.add('pure-control-group');
+    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateTo('${location.pathname}')">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${account ? 'update_form' : 'create_form'}')">${account ? 'UPDATE' : 'CREATE'}</button>`;
+    fieldset.appendChild(div);
+
+    document.getElementById('content').innerHTML = form.outerHTML;
+};
+
 let submitForm = async (form_id) => {
 
     // Prevent the form from submitting.
@@ -688,9 +795,17 @@ let submitForm = async (form_id) => {
         // Log the data.
         // console.log(data);
 
-        // Set empty string to null
         const data = {};
         for ([key, value] of formData.entries()) {
+            data[key] = value;
+        }
+        // Replace to data-value
+        for ([key, value] of Object.entries(data)) {
+            var input = document.querySelector(`#${key}`);
+            if (input && input.dataset.value) data[key] = input.dataset.value;
+        }
+        // Set empty string to null
+        for ([key, value] of Object.entries(data)) {
             if (value === "") {
                 data[key] = null;
             } else {
