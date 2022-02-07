@@ -845,23 +845,24 @@ let submitForm = async (form_id) => {
             const responseJson = await response.json();
             console.log(responseJson);
 
-            if(form_id == 'create_form') {
+            if (form_id == 'create_form') {
                 var returnPath = window.location.pathname + '/' + responseJson;
                 var successMsg = `[${response.status}] Record has been created.`;
-                // For join records
+                // For related records
                 if (location.pathname.split("/").length > 4) {
-                    var returnPath = location.pathname;
+                    // var returnPath = location.pathname;
+                    var returnPath = `/records/${location.pathname.split("/")[4]}/${responseJson}`;
                     navigateTo(returnPath);
-                    return;
+                    // return;
                 }
             }
 
-            if(form_id == 'update_form') {
+            if (form_id == 'update_form') {
                 var returnPath = window.location.pathname;
                 var successMsg = `[${response.status}] Record has been updated.`;
             }
 
-            if(form_id == 'delete_form') {
+            if (form_id == 'delete_form') {
                 var returnPath = window.location.pathname;
                 var successMsg = `[${response.status}] Record has been deleted.`;
             }
