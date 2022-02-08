@@ -108,7 +108,7 @@ let listPaths = () => {
         if (value.get && value.get.operationId.includes("list")) {
             // Remove relationship paths
             const subject = value.get.description.split(" ")[1];
-            if (subject.match(/^([a-z]+)$/)) {
+            if (subject.match(/^([a-z]+)$/) || ["pending_approvals"].includes(subject)) {
                 paths.push(key);
             }
         }
@@ -158,13 +158,18 @@ let getRecords = async (url) => {
         .then(response => response.json())
         .then(response => response.records);
 
+    if (urlSegments[2] === "pending_approvals") {
+        listPendingApprovals(records);
+        return;
+    }
+
     // #content
     const table = document.createElement("table");
     table.classList.add('pure-table');
     table.classList.add('pure-table-bordered');
 
     var thead = document.createElement("thead");
-    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${url}')">CREATE</button></td></tr>`;
+    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button><button class="pure-button pure-bg-dark" onclick="navigateTo('${url}/create')">CREATE</button></td></tr>`;
     table.appendChild(thead);
 
     var tbody = document.createElement("tbody");
@@ -191,6 +196,45 @@ let getRecords = async (url) => {
     updatePath(url);
 };
 
+let listPendingApprovals = (records) => {
+    // #content
+    const table = document.createElement("table");
+    table.classList.add('pure-table');
+    table.classList.add('pure-table-bordered');
+    var thead = document.createElement("thead");
+    thead.innerHTML = `<tr><td></td><td class="text-right" colspan="100"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button></td></tr>`;
+    table.appendChild(thead);
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    for (const record of records) {
+        const tr = document.createElement("tr");
+        for ([key, value] of Object.entries(record)) {
+            const td = document.createElement("td");
+            if (key == "id") {
+                td.innerHTML = `<a href="#" class="populate-pending-approval" data-route="${record.route}" data-data='${record.data}'>${value}</a>`;
+            } else {
+                td.innerHTML = value;
+            }
+            tr.appendChild(td);
+        }
+        tbody.appendChild(tr);
+    }
+    document.getElementById('content').innerHTML = table.outerHTML;
+    const populatePendingApproval = (e) => {
+        localStorage.setItem("form_values", e.target.dataset.data);
+        navigateTo(e.target.dataset.route);
+    };
+    document.querySelectorAll(".populate-pending-approval")
+        .forEach(v => v.addEventListener("click", populatePendingApproval));
+
+    // #raw
+    const raw = JSON.stringify(records, undefined, 4);
+    document.getElementById('raw').innerHTML = raw;
+
+    // #current_path
+    updatePath(location.pathname);
+};
+
 // Fetch and display related records
 let getRelatedRecords = async (subject, subjectId, join) => {
     try {
@@ -213,7 +257,7 @@ let getRelatedRecords = async (subject, subjectId, join) => {
         table.classList.add('pure-table-bordered');
 
         const thead = document.createElement("thead");
-        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigateTo('/records/${subject}/${subjectId}')">BACK</button><button class="pure-button pure-bg-dark" onclick="createRecord('${path}')">CREATE</button></td></tr>`;
+        thead.innerHTML = `<tr><td><input type="checkbox" class="cb-attach-detach-all" /></td><td></td><td class="text-right"><button class="pure-button pure-bg-dark" onclick="navigateTo('/records/${subject}/${subjectId}')">BACK</button><button class="pure-button pure-bg-dark" onclick="navigateTo('${path}/create')">CREATE</button></td></tr>`;
         table.appendChild(thead);
 
         const tbody = document.createElement("tbody");
@@ -379,7 +423,7 @@ let getRecord = async (url) => {
     if (!record.archived && !record.deleted) {
         const update_button = document.createElement("button");
         update_button.setAttribute('id', 'update_button');
-        update_button.setAttribute('onclick', 'updateRecord("'+url+'")');
+        update_button.setAttribute('onclick', `navigateTo('${url}/update')`);
         update_button.innerHTML = 'UPDATE';
         update_button.classList.add("pure-button");
         update_button.classList.add("pure-bg-dark");
@@ -478,7 +522,6 @@ let getRecord = async (url) => {
     updatePath(url);
 };
 
-
 // Fetch and display records
 let createRecord = async (url) => {
     // Reset #msg
@@ -493,6 +536,9 @@ let createRecord = async (url) => {
         subject = urlSegments[4];
     }
     setForm("create_form", subject);
+
+    // #current_path
+    updatePath(url);
 };
 
 // Fetch and display records
@@ -500,18 +546,28 @@ let updateRecord = async (url) => {
     // Reset #msg
     displayMsg();
 
-    const record = await _fetch(`${apiUrl}${url}`)
+    const subject = url.split("/")[2];
+    const subjectId = url.split("/")[3];
+
+    const record = await _fetch(`${apiUrl}/records/${subject}/${subjectId}`)
         .then(response => response.json());
 
     // #content
-    const subject = url.split("/")[2];
     if(subject.substr(subject.length - 1) != 's') {
         //subject = subject + 's';
     }
     setForm("update_form", subject, record);
+
+    // #current_path
+    updatePath(url);
 };
 
 let setForm = async (formId, subject, record = null) => {
+
+    if (localStorage.getItem("form_values")) {
+        record = JSON.parse(localStorage.getItem("form_values"));
+        localStorage.removeItem("form_values");
+    }
 
     if (subject === "accounts") {
         setAccountsForm(record);
@@ -1224,13 +1280,19 @@ window.onload = async function () {
             setTimeout(() => {
                 const path = location.pathname;
                 switch (true) {
-                    case /^\/records\/([a-z]+)$/.test(path):
+                    case /^\/records\/([a-z_]+)$/.test(path):
                         getRecords(path);
                         break;
-                    case /^\/records\/([a-z]+)\/([0-9]+)$/.test(path):
+                    case /^\/records\/([a-z_]+)\/create$/.test(path):
+                        createRecord(path);
+                        break;
+                    case /^\/records\/([a-z_]+)\/([0-9]+)$/.test(path):
                         getRecord(path);
                         break;
-                    case /^\/records\/([a-z]+)\/([0-9]+)\/([a-z]+)$/.test(path):
+                    case /^\/records\/([a-z_]+)\/([0-9]+)\/update$/.test(path):
+                        updateRecord(path);
+                        break;
+                    case /^\/records\/([a-z_]+)\/([0-9]+)\/([a-z_]+)$/.test(path):
                         getRelatedRecords(path.split("/")[2], path.split("/")[3], path.split("/")[4]);
                         break;
                     default:
