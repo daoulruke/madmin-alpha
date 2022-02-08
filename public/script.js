@@ -535,7 +535,7 @@ let createRecord = async (url) => {
     if (urlSegments.length > 4) {
         subject = urlSegments[4];
     }
-    setForm("create_form", subject);
+    setForm("create", subject);
 
     // #current_path
     updatePath(url);
@@ -556,13 +556,13 @@ let updateRecord = async (url) => {
     if(subject.substr(subject.length - 1) != 's') {
         //subject = subject + 's';
     }
-    setForm("update_form", subject, record);
+    setForm("update", subject, record);
 
     // #current_path
     updatePath(url);
 };
 
-let setForm = async (formId, subject, record = null) => {
+let setForm = async (mode, subject, record = null) => {
 
     if (localStorage.getItem("form_values")) {
         record = JSON.parse(localStorage.getItem("form_values"));
@@ -575,7 +575,7 @@ let setForm = async (formId, subject, record = null) => {
     }
 
     const form = document.createElement("form");
-    form.setAttribute('id', formId);
+    form.setAttribute('id', `${mode}_form`);
     form.classList.add('pure-form');
     form.classList.add('pure-form-aligned');
 
@@ -641,26 +641,21 @@ let setForm = async (formId, subject, record = null) => {
         input.setAttribute('type', 'text');
 
         // Disable restricted columns
-        if (field.admin && record && !!!record.admin) {
+        if (mode == 'update' && field.admin && record && !!!record.admin) {
             input.setAttribute('disabled', true);
         }
 
-        // Update
+        // Hide fields on create
+        if (mode == 'create' && ["id"].includes(key)) {
+            continue;
+        }
+
         if (record) {
-            if (key == 'id' || key == 'admin_person_id') {
+            if (key == 'id') {
                 input.setAttribute('disabled', true);
             }
-
             if (record[key]) {
                 input.setAttribute('value', `${record[key]}`);
-            } else {
-                // input.setAttribute('value', null);
-            }
-        }
-        // Create
-        else {
-            if (key == 'id' || key == 'admin_person_id') {
-                continue;
             }
         }
 
@@ -677,7 +672,7 @@ let setForm = async (formId, subject, record = null) => {
     const div = document.createElement("div");
     div.classList.add('pure-control-group');
 
-    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateTo('${location.pathname}')">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${formId}')">${record ? 'UPDATE' : 'CREATE'}</button>`;
+    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateTo('${location.pathname}')">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${mode}_form')">${mode == 'update' ? 'UPDATE' : 'CREATE'}</button>`;
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
@@ -882,15 +877,15 @@ let submitForm = async (form_id) => {
         // request.setRequestHeader('X-Authorization', 'Bearer ' + accessToken);
         // request.send(json);
 
-        if(form_id == 'create_form') {
-            var response = await _fetch(url + window.location.pathname, {
+        if (form_id == 'create_form') {
+            var response = await _fetch(url + window.location.pathname.replace("/create", ""), {
                 method: "POST",
                 body: json
             });
         }
 
-        if(form_id == 'update_form') {
-            var response = await _fetch(url + window.location.pathname, {
+        if (form_id == 'update_form') {
+            var response = await _fetch(url + window.location.pathname.replace("/update", ""), {
                 method: "PUT",
                 body: json
             });
