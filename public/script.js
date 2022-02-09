@@ -211,7 +211,7 @@ let listPendingApprovals = (records) => {
         for ([key, value] of Object.entries(record)) {
             const td = document.createElement("td");
             if (key == "id") {
-                td.innerHTML = `<a href="#" class="populate-pending-approval" data-route="${record.route}" data-data='${record.data}'>${value}</a>`;
+                td.innerHTML = `<a href="#" class="populate-pending-approval" data-route="${record.route}" data-method="${record.method}" data-data='${record.data}'>${value}</a>`;
             } else {
                 td.innerHTML = value;
             }
@@ -221,8 +221,12 @@ let listPendingApprovals = (records) => {
     }
     document.getElementById('content').innerHTML = table.outerHTML;
     const populatePendingApproval = (e) => {
-        localStorage.setItem("form_values", e.target.dataset.data);
-        navigateTo(e.target.dataset.route);
+        const data = e.target.dataset.data;
+        localStorage.setItem("form_values", data);
+        const route = e.target.dataset.route;
+        const method = e.target.dataset.method;
+        const redirect = `${route}/${method == 'POST' ? "create" : "update"}`
+        navigateTo(redirect);
     };
     document.querySelectorAll(".populate-pending-approval")
         .forEach(v => v.addEventListener("click", populatePendingApproval));
@@ -566,10 +570,21 @@ let updateRecord = async (url) => {
 };
 
 let setForm = async (mode, subject, record = null) => {
-
+    // Pre-populate form with default values
     if (localStorage.getItem("form_values")) {
         record = JSON.parse(localStorage.getItem("form_values"));
         localStorage.removeItem("form_values");
+    }
+
+    if (record) {
+        for ([key, value] of Object.entries(record)) {
+            // Convert objects to json string
+            if (typeof value === "object") {
+                record[key] = JSON.stringify(value);
+            }
+            // Remove null
+            if (value == null) delete record[key];
+        }
     }
 
     if (subject === "accounts") {
