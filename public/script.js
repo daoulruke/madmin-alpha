@@ -1309,6 +1309,9 @@ window.onload = async function () {
                     case /^\/records\/([a-z_]+)\/([0-9]+)\/([a-z_]+)$/.test(path):
                         getRelatedRecords(path.split("/")[2], path.split("/")[3], path.split("/")[4]);
                         break;
+                    case /^\/records\/([a-z_]+)\/([0-9]+)\/([a-z_]+)\/create$/.test(path):
+                        createRecord(path);
+                        break;
                     default:
                         listPaths();
                 }
