@@ -356,7 +356,7 @@ let getRecord = async (url) => {
         ... new Set([
             ...Object.values(columnReferences).map(v => v),
         ]),
-        "logs"
+        // "logs"
     ];
 
     let joinQuery = joins.map(v => `join=${v}`).join("&");
@@ -497,14 +497,17 @@ let getRecord = async (url) => {
     var div = document.createElement("div");
     div.innerHTML = "<br /><b>LOGS</b>";
     card.appendChild(div);
-    if (record.logs) {
+    let logs = await _fetch(`${apiUrl}/records/http_requests?filter=route,cs,${location.pathname}&filter=method,neq,GET`)
+        .then(response => response.json())
+        .then(response => response.records);
+    if (logs.length) {
         // Order by ID desc
-        const logs = record.logs.sort((a, b) => b.id - a.id);
+        logs = logs.sort((a, b) => b.id - a.id);
         var table = document.createElement("table");
         var tbody = document.createElement("tbody");
         for (log of logs) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<tr><td>${log.name}</td></tr>`;
+            tr.innerHTML = `<tr><td>[${log.method}] - ${log.route}</td></tr>`;
             tbody.appendChild(tr);
         }
         table.appendChild(tbody);
