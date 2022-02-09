@@ -898,10 +898,10 @@ let submitForm = async (form_id) => {
 
             if (form_id == 'create_form') {
                 var successMsg = `[${response.status}] Record has been created.`;
-                var returnPath = window.location.pathname + '/' + responseJson;
+                var returnPath = `/records/${location.pathname.split("/")[2]}/${responseJson}`;
                 if (responseJson.message) {
                     var successMsg = `[${response.status}] ${responseJson.message}`;
-                    var returnPath = window.location.pathname;
+                    var returnPath = `/records/${location.pathname.split("/")[2]}`;
                 }
                 // For related records
                 if (location.pathname.split("/").length > 4) {
@@ -916,8 +916,9 @@ let submitForm = async (form_id) => {
             }
 
             if (form_id == 'update_form') {
-                var returnPath = window.location.pathname;
                 var successMsg = `[${response.status}] Record has been updated.`;
+                // var returnPath = window.location.pathname;
+                var returnPath = `/records/${location.pathname.split("/")[2]}/${location.pathname.split("/")[3]}`;
                 if (responseJson.message) {
                     var successMsg = `[${response.status}] ${responseJson.message}`;
                 }
