@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+
+    <head>
+
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>TEST</title>
+
+        <script>
+
+            function redirect(destination_url) {
+                window.location.href = destination_url;
+            }
+
+        </script>
+
+        <style>
+
+            * {
+                margin: 0;
+                padding: 0;
+                border: 0;
+                font-family: monospace;
+            }
+
+            html, body {
+                height: 100%;
+                width: 100%;
+            }
+
+            #destination_url {
+                margin: 20px;
+                padding: 20px;
+                border: 2px solid black;
+                font-size: 24px;
+            }
+
+            #redirect_button {
+                display: block;
+                margin: 20px;
+                padding: 20px;
+                border: 2px solid darkorange;
+                background-color: orange;
+                color: white;
+                font-weight: bold;
+                font-size: 24px;
+            }
+
+        </style>
+
+    </head>
+
+    <body>
+
+        <div id="destination_url" contenteditable="true" autofocus>https://</div>
+        <button id="redirect_button" onclick="redirect(document.getElementById('destination_url').innerHTML)">REDIRECT</button>
+
+    </body>
+
+</html>
