@@ -37,6 +37,7 @@
 
             #destination_url {
                 padding: 20px;
+                margin-bottom: 10px;
                 border: 2px solid black;
                 background-color: lightyellow;
                 font-size: 24px;
@@ -44,9 +45,23 @@
 
             #redirect_button {
                 display: block;
+                width: 100%;
                 padding: 20px;
                 background-color: orange;
                 color: white;
+                font-weight: bold;
+                font-size: 24px;
+                margin-bottom: 30px;
+            }
+
+            #test_button {
+                display: block;
+                margin-bottom: 20px;
+                width: 100%;
+                padding: 20px;
+                border: 2px solid black;
+                background-color: lightcyan;
+                color: black;
                 font-weight: bold;
                 font-size: 24px;
             }
@@ -60,6 +75,7 @@
         <div id="main">
             <div id="destination_url" contenteditable="true" autofocus>https://</div>
             <button id="redirect_button" onclick="redirect(document.getElementById('destination_url').innerHTML)">REDIRECT</button>
+            <button id="test_button" onclick="redirect('https://ud.ax/test.html')">TEST</button>
         </div>
 
     </body>
