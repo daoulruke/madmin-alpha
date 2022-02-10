@@ -113,7 +113,7 @@ let subdomainCheck = async () => {
         // Redirect to account's subdomain
         changeUriSubdomain(account.subdomain);
         // Fix - infinite loop if no account is found
-        setTimeout(() => location.reload(), 200);
+        setTimeout(() => location.reload(), 500);
         return;
     }
 };
