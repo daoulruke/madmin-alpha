@@ -23,6 +23,7 @@
                 padding: 0;
                 border: 0;
                 font-family: monospace;
+                box-sizing: border-box;
             }
 
             html, body {
@@ -30,18 +31,20 @@
                 width: 100%;
             }
 
+            #main {
+                padding: 20px;
+            }
+
             #destination_url {
-                margin: 20px;
                 padding: 20px;
                 border: 2px solid black;
+                background-color: lightyellow;
                 font-size: 24px;
             }
 
             #redirect_button {
                 display: block;
-                margin: 20px;
                 padding: 20px;
-                border: 2px solid darkorange;
                 background-color: orange;
                 color: white;
                 font-weight: bold;
@@ -54,8 +57,10 @@
 
     <body>
 
-        <div id="destination_url" contenteditable="true" autofocus>https://</div>
-        <button id="redirect_button" onclick="redirect(document.getElementById('destination_url').innerHTML)">REDIRECT</button>
+        <div id="main">
+            <div id="destination_url" contenteditable="true" autofocus>https://</div>
+            <button id="redirect_button" onclick="redirect(document.getElementById('destination_url').innerHTML)">REDIRECT</button>
+        </div>
 
     </body>
 
