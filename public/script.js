@@ -83,12 +83,48 @@ let getUserinfo = async () => {
                 method: "PUT",
                 body: JSON.stringify({ account_id })
             }).then(response => response.json());
-            getUserinfo();
+            await getUserinfo();
+            changeUriSubdomain(activeAccount.subdomain);
+            await subdomainCheck();
         }
     };
     document.querySelectorAll(".accounts-dropdown-item")
         .forEach(v => v.addEventListener("click", onAccountClick));
     // END - Accounts menu link
+};
+
+let subdomainCheck = async () => {
+    const subdomain = location.host.split(".").length > 2 ? location.host.split(".")[0] : null;
+    // Check if subdomain matches with active account's subdomain
+    if (subdomain && subdomain != activeAccount.subdomain) {
+        // If not matched, search for other user's accounts
+        let account = userinfo.accounts.find(v => v.subdomain == subdomain);
+        // If an account is found, switch into this account
+        if (account) {
+            await _fetch(`${apiUrl}/userinfo/active`, {
+                method: "PUT",
+                body: JSON.stringify({ account_id: account.id })
+            }).then(response => response.json());
+        }
+        // If no account is found, use active account
+        else {
+            account = activeAccount;
+        }
+        // Redirect to account's subdomain
+        changeUriSubdomain(account.subdomain);
+        // Fix - infinite loop if no account is found
+        setTimeout(() => location.reload(), 200);
+        return;
+    }
+};
+let changeUriSubdomain = (subdomain = null) => {
+    hostSegments = location.host.split(".");
+    // Remove subdomain in url
+    if (hostSegments.length > 2) hostSegments.shift();
+    // Add new subdomain in url
+    if (subdomain) hostSegments.unshift(subdomain);
+    console.log(`${location.protocol}//${hostSegments.join(".")}${location.pathname}`);
+    location.replace(`${location.protocol}//${hostSegments.join(".")}${location.pathname}`);
 };
 
 // Fetch openapi
@@ -1292,6 +1328,7 @@ window.onload = async function () {
         window.onpopstate = history.onpushstate = () => {
             // We wait so that location.pathname will be updated to current uri
             setTimeout(() => {
+                subdomainCheck();
                 const path = location.pathname;
                 switch (true) {
                     case /^\/records\/([a-z_]+)$/.test(path):
@@ -1320,42 +1357,7 @@ window.onload = async function () {
         // END - Basic router
 
         await getUserinfo();
-
-        // START - Subdomain check
-        const subdomain = location.host.split(".").length > 2 ? location.host.split(".")[0] : null;
-        // Check if subdomain matches with active account's subdomain
-        if (subdomain && subdomain != activeAccount.subdomain) {
-            // If not matched, search for other user's accounts
-            let account = userinfo.accounts.find(v => v.subdomain == subdomain);
-            // If an account is found, switch into this account
-            if (account) {
-                await _fetch(`${apiUrl}/userinfo/active`, {
-                    method: "PUT",
-                    body: JSON.stringify({ account_id: account.id })
-                }).then(response => response.json());
-            }
-            // If no account is found, use active account
-            else {
-                account = activeAccount;
-            }
-            // Redirect to account's subdomain
-            hostSegments = location.host.split(".");
-            // Remove subdomain in url
-            if (hostSegments.length > 2) {
-                hostSegments.shift();
-            }
-            // Add new subdomain in url
-            if (account.subdomain) {
-                hostSegments.unshift(account.subdomain);
-            }
-            console.log(`${location.protocol}//${hostSegments.join(".")}${location.pathname}`);
-            location.replace(`${location.protocol}//${hostSegments.join(".")}${location.pathname}`);
-            // Fix - infinite loop if no account is found
-            setTimeout(() => location.reload(), 200);
-            return;
-        }
-        // END - Subdomain check
-
+        await subdomainCheck();
         await getOpenapi();
         navigateTo(localStorage.getItem("path") || location.pathname);
         localStorage.removeItem("path");
