@@ -1319,11 +1319,46 @@ window.onload = async function () {
         };
         // END - Basic router
 
+        await getUserinfo();
+
+        // START - Subdomain check
+        const subdomain = location.host.split(".").length > 2 ? location.host.split(".")[0] : null;
+        // Check if subdomain matches with active account's subdomain
+        if (subdomain && subdomain != activeAccount.subdomain) {
+            // If not matched, search for other user's accounts
+            let account = userinfo.accounts.find(v => v.subdomain == subdomain);
+            // If an account is found, switch into this account
+            if (account) {
+                await _fetch(`${apiUrl}/userinfo/active`, {
+                    method: "PUT",
+                    body: JSON.stringify({ account_id: account.id })
+                }).then(response => response.json());
+            }
+            // If no account is found, use active account
+            else {
+                account = activeAccount;
+            }
+            // Redirect to account's subdomain
+            hostSegments = location.host.split(".");
+            // Remove subdomain in url
+            if (hostSegments.length > 2) {
+                hostSegments.shift();
+            }
+            // Add new subdomain in url
+            if (account.subdomain) {
+                hostSegments.unshift(account.subdomain);
+            }
+            console.log(`${location.protocol}//${hostSegments.join(".")}${location.pathname}`);
+            location.replace(`${location.protocol}//${hostSegments.join(".")}${location.pathname}`);
+            // Fix - infinite loop if no account is found
+            setTimeout(() => location.reload(), 200);
+            return;
+        }
+        // END - Subdomain check
+
         await getOpenapi();
         navigateTo(localStorage.getItem("path") || location.pathname);
         localStorage.removeItem("path");
-
-        getUserinfo();
     }
 
 };
