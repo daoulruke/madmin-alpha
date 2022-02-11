@@ -111,7 +111,11 @@ let subdomainCheck = async () => {
         }
         // Redirect to account's subdomain
         changeSubdomain(account.subdomain);
+        // Not matched, needs redirect
+        return false;
     }
+    // Matched OR no subdomain
+    return true;
 };
 let changeSubdomain = (subdomain = null) => {
     hostSegments = location.host.split(".");
@@ -1355,10 +1359,13 @@ window.onload = async function () {
         // END - Basic router
 
         await getUserinfo();
-        await subdomainCheck();
-        await getOpenapi();
-        navigateTo(localStorage.getItem("path") || location.pathname);
-        localStorage.removeItem("path");
+        const isSubdomainMatched = await subdomainCheck();
+        // Continue only when subdomain is matched with active account's subdomain OR no subdomain
+        if (isSubdomainMatched) {
+            await getOpenapi();
+            navigateTo(localStorage.getItem("path") || location.pathname);
+            localStorage.removeItem("path");
+        }
     }
 
 };
