@@ -96,9 +96,9 @@ let getUserinfo = async () => {
 let subdomainCheck = async () => {
     const subdomain = location.host.split(".").length > 2 ? location.host.split(".")[0] : null;
     // Check if subdomain matches with active account's subdomain
-    if (subdomain && subdomain != activeAccount.subdomain) {
+    if (subdomain != activeAccount.subdomain) {
         // If not matched, search for other user's accounts
-        let account = userinfo.accounts.find(v => v.subdomain == subdomain);
+        let account = userinfo.accounts.find(v => subdomain && v.subdomain == subdomain);
         // If an account is found, switch into this account
         if (account) {
             await _fetch(`${apiUrl}/userinfo/active`, {
