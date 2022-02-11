@@ -84,8 +84,7 @@ let getUserinfo = async () => {
                 body: JSON.stringify({ account_id })
             }).then(response => response.json());
             await getUserinfo();
-            changeUriSubdomain(activeAccount.subdomain);
-            await subdomainCheck();
+            changeSubdomain(activeAccount.subdomain);
         }
     };
     document.querySelectorAll(".accounts-dropdown-item")
@@ -111,13 +110,10 @@ let subdomainCheck = async () => {
             account = activeAccount;
         }
         // Redirect to account's subdomain
-        changeUriSubdomain(account.subdomain);
-        // Fix - infinite loop if no account is found
-        setTimeout(() => location.reload(), 500);
-        return;
+        changeSubdomain(account.subdomain);
     }
 };
-let changeUriSubdomain = (subdomain = null) => {
+let changeSubdomain = (subdomain = null) => {
     hostSegments = location.host.split(".");
     // Remove subdomain in url
     if (hostSegments.length > 2) hostSegments.shift();
@@ -125,6 +121,8 @@ let changeUriSubdomain = (subdomain = null) => {
     if (subdomain) hostSegments.unshift(subdomain);
     console.log(`${location.protocol}//${hostSegments.join(".")}${location.pathname}`);
     location.replace(`${location.protocol}//${hostSegments.join(".")}${location.pathname}`);
+    // Fix - infinite loop if no account is found
+    setTimeout(() => location.reload(), 500);
 };
 
 // Fetch openapi
