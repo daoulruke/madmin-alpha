@@ -66,6 +66,7 @@ let getUserinfo = async () => {
     // Accounts dropdown
     document.querySelector("#menu-link-accounts-dropdown").innerHTML = "";
     for (const account of (userinfo.accounts || [])) {
+        if (account.active) continue;
         var li = document.createElement("li");
         li.classList.add("pure-menu-item");
         var a = document.createElement("a");
