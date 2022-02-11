@@ -1269,10 +1269,18 @@ let navigateBack = () => {
 };
 // END - Basic router
 
+let logout = () => {
+    localStorage.removeItem("accessToken");
+    location.href = `https://auth.ud.ax/logout?returnTo=${location.origin}`;
+};
+
 window.onload = async function () {
 
-    var match = RegExp('[#&]access_token=([^&]*)').exec(window.location.hash);
-    var accessToken = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+    var accessToken = localStorage.getItem("accessToken");
+    if (!accessToken) {
+        var match = RegExp('[#&]access_token=([^&]*)').exec(window.location.hash);
+        accessToken = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+    }
 
     if (!localStorage.getItem("path")) {
         localStorage.setItem("path", location.pathname);
@@ -1302,12 +1310,16 @@ window.onload = async function () {
                     },
                     ...options
                 });
-                // const json = response.json();
-                // // Handle error
-                // if (!response.ok) {
-                //     throw new Error(json.message || "");
-                // }
-                // return json;
+
+                // Response interceptor
+                if (!response.ok) {
+                    const responseData = await response.clone().json();
+                    switch (responseData.code) {
+                        case 1012:
+                            logout();
+                            break;
+                    }
+                }
 
                 return response;
 
