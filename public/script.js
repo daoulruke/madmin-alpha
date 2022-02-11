@@ -824,7 +824,7 @@ var generateSelect = async (inputName, inputLabel, source, selected, appendTo) =
     appendTo.appendChild(div);
 };
 
-var generateDataList = async (inputName, inputLabel, source, appendTo) => {
+var generateDataList = async (inputName, inputLabel, source, selected, appendTo) => {
     var div = document.createElement("div");
     div.classList.add('pure-control-group');
     div.classList.add('pure-bg-light');
@@ -855,13 +855,19 @@ var generateDataList = async (inputName, inputLabel, source, appendTo) => {
 
     appendTo.appendChild(div);
 
+    const onSelect = (value, dataValue) => {
+        var selected = document.querySelector(`#${inputName}-datalist option[value="${value}"]`);
+        if (selected) {
+            document.querySelector(`#${inputName}`).value = value;
+            document.querySelector(`#${inputName}`).dataset.value = dataValue;
+        }
+    };
     setTimeout(() => {
+        // Set default
+        const record = records.find(v => v.id == selected);
+        if (record) onSelect(record.name, record.id);
         document.querySelector(`#${inputName}`).addEventListener("input", (e) => {
-            var selected = document.querySelector(`#${inputName}-datalist option[value="${e.target.value}"]`);
-            if (selected) {
-                console.log(e.target.value, selected.dataset.value);
-                e.target.dataset.value = selected.dataset.value;
-            }
+            onSelect(e.target.value, selected.dataset.value);
         });
     }, 1000);
 };
@@ -878,9 +884,9 @@ let setAccountsForm = async (account = null) => {
     // Account Holder
     await generateSelect("account_holder", "Account Holder", "persons", activeAccount ? activeAccount.person_id.id : null, fieldset);
     // Account Person
-    await generateDataList("persons_id", "Account Person", "persons", fieldset);
+    await generateDataList("persons_id", "Account Person", "persons", account ? account.person_id : null, fieldset);
     // Account Firm
-    await generateDataList("firms_id", "Account Firm", "firms", fieldset);
+    await generateDataList("firms_id", "Account Firm", "firms", account ? account.firm_id : null, fieldset);
 
     var div = document.createElement("div");
     div.classList.add('pure-control-group');
@@ -987,19 +993,25 @@ let submitForm = async (form_id) => {
             }
 
             // Update userinfo
-            if (
-                location.pathname.split("/").length === 4 &&
-                location.pathname.split("/")[2] == "persons" &&
-                location.pathname.split("/")[3] == userinfo.id
-            ) {
-                getUserinfo();
-            }
+            // if (
+            //     location.pathname.split("/").length === 4 &&
+            //     location.pathname.split("/")[2] == "persons" &&
+            //     location.pathname.split("/")[3] == userinfo.id
+            // ) {
+            //     getUserinfo();
+            // }
 
             // Go back to read view
             navigateTo(returnPath);
 
-            displayMsg(successMsg);
+            // Reload on every manual account change
+            if (["persons", "firms"].includes(location.pathname.split("/")[2])) {
+                localStorage.setItem("msg", successMsg);
+                setTimeout(() => location.reload(), 500);
+                return;
+            }
 
+            displayMsg(successMsg);
         } else {
 
             // Remove previous error msgs
@@ -1378,6 +1390,9 @@ window.onload = async function () {
             await getOpenapi();
             navigateTo(localStorage.getItem("path") || location.pathname);
             localStorage.removeItem("path");
+
+            if (localStorage.getItem("msg")) displayMsg(localStorage.getItem("msg"));
+            localStorage.removeItem("msg");
         }
     }
 
