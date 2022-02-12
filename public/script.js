@@ -96,7 +96,7 @@ let getUserinfo = async () => {
 let subdomainCheck = async () => {
     const subdomain = location.host.split(".").length > 2 ? location.host.split(".")[0] : null;
     // Check if subdomain matches with active account's subdomain
-    if (subdomain != activeAccount.subdomain) {
+    if (typeof activeAccount.subdomain != "undefined" && subdomain != activeAccount.subdomain) {) {
         // If not matched, search for other user's accounts
         let account = userinfo.accounts.find(v => subdomain && v.subdomain == subdomain);
         // If an account is found, switch into this account
@@ -873,6 +873,7 @@ var generateDataList = async (inputName, inputLabel, source, selected, appendTo)
 };
 
 let setAccountsForm = async (account = null) => {
+
     const form = document.createElement("form");
     form.setAttribute('id', account ? 'update_form' : 'create_form');
     form.classList.add('pure-form');
@@ -883,10 +884,14 @@ let setAccountsForm = async (account = null) => {
 
     // Account Holder
     await generateSelect("account_holder", "Account Holder", "persons", activeAccount ? activeAccount.person_id.id : null, fieldset);
+
     // Account Person
-    await generateDataList("persons_id", "Account Person", "persons", account ? account.person_id : null, fieldset);
+    //await generateDataList("persons_id", "Account Person", "persons", account ? account.person_id : null, fieldset);
+    await generateSelect("persons_id", "Account Person", "persons", account ? account.person_id : null, fieldset);
+
     // Account Firm
-    await generateDataList("firms_id", "Account Firm", "firms", account ? account.firm_id : null, fieldset);
+    //await generateDataList("firms_id", "Account Firm", "firms", account ? account.firm_id : null, fieldset);
+    await generateSelect("firms_id", "Account Firm", "firms", account ? account.firm_id : null, fieldset);
 
     var div = document.createElement("div");
     div.classList.add('pure-control-group');
@@ -894,6 +899,7 @@ let setAccountsForm = async (account = null) => {
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
+
 };
 
 let submitForm = async (form_id) => {
