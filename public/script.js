@@ -1316,7 +1316,8 @@ window.onload = async function () {
         localStorage.setItem('accessToken', accessToken);
         document.getElementById('token').innerHTML = accessToken;
 
-        document.querySelector("#menu-link-exit").setAttribute("href", `https://auth.ud.ax/logout?returnTo=${location.origin}`);
+        // document.querySelector("#menu-link-exit").setAttribute("href", `https://auth.ud.ax/logout?returnTo=${location.origin}`);
+        document.querySelector("#menu-link-exit").addEventListener("click", logout);
 
         // Fetch wrapper with default options
         _fetch = async (url, options = {}) => {
