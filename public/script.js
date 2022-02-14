@@ -1395,7 +1395,7 @@ window.onload = async function () {
         // Continue only when subdomain is matched with active account's subdomain OR no subdomain
         if (isSubdomainMatched) {
             await getOpenapi();
-            navigateTo(localStorage.getItem("path") || location.pathname);
+            navigateTo(location.pathname);
             localStorage.removeItem("path");
 
             if (localStorage.getItem("msg")) displayMsg(localStorage.getItem("msg"));
