@@ -1346,16 +1346,6 @@ window.onload = async function () {
             }
         };
 
-        await _fetch(`${apiUrl}/records/tenants`)
-            .then(response => response.json());
-        await _fetch(`${apiUrl}/records/tenants/344`)
-            .then(response => response.json());
-        await _fetch(`${apiUrl}/records/tenants/343`)
-            .then(response => response.json());
-        await _fetch(`${apiUrl}/records/tenants/344/persons`)
-            .then(response => response.json());
-        return;
-
         // START - Basic router
         // Fire event when pushState is called since onpopstate doesn't trigger on pushState
         (function(history) {
