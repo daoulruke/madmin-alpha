@@ -1294,11 +1294,11 @@ let logout = () => {
 
 window.onload = async function () {
 
-    var accessToken = localStorage.getItem("accessToken");
-    if (!accessToken) {
+    // var accessToken = localStorage.getItem("accessToken");
+    // if (!accessToken) {
         var match = RegExp('[#&]access_token=([^&]*)').exec(window.location.hash);
-        accessToken = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
-    }
+        var accessToken = match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+    // }
 
     if (!localStorage.getItem("path")) {
         localStorage.setItem("path", location.pathname);
@@ -1391,11 +1391,13 @@ window.onload = async function () {
         // END - Basic router
 
         await getUserinfo();
+        document.cookie = `foo=${location.origin}`
+        console.log(document.cookie);
         const isSubdomainMatched = await subdomainCheck();
         // Continue only when subdomain is matched with active account's subdomain OR no subdomain
         if (isSubdomainMatched) {
             await getOpenapi();
-            navigateTo(location.pathname);
+            navigateTo(localStorage.getItem("path") || location.pathname);
             localStorage.removeItem("path");
 
             if (localStorage.getItem("msg")) displayMsg(localStorage.getItem("msg"));
