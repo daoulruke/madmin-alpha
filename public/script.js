@@ -1391,8 +1391,6 @@ window.onload = async function () {
         // END - Basic router
 
         await getUserinfo();
-        document.cookie = `foo=${location.origin}`
-        console.log(document.cookie);
         const isSubdomainMatched = await subdomainCheck();
         // Continue only when subdomain is matched with active account's subdomain OR no subdomain
         if (isSubdomainMatched) {
