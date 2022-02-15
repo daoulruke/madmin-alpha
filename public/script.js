@@ -927,6 +927,14 @@ let submitForm = async (form_id) => {
             var input = document.querySelector(`#${key}`);
             if (input && input.dataset.value) data[key] = input.dataset.value;
         }
+        // Parse json string
+        for ([key, value] of Object.entries(data)) {
+            try {
+                data[key] = JSON.parse(value);
+            } catch (err) {
+                data[key] = value;
+            }
+        }
         // Set empty string to null
         for ([key, value] of Object.entries(data)) {
             if (value === "") {
