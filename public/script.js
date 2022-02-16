@@ -614,6 +614,99 @@ let updateRecord = async (url) => {
     updatePath(url);
 };
 
+let generateJsonEditor = (inputName, json = {}, appendTo = null) => {
+    const onPropertyInput = () => {
+        const json = {};
+        const properties = document.querySelectorAll(".json-property");
+        properties.forEach(property => {
+            const keyInput = property.querySelector(".json-property-input-key");
+            const valueInput = property.querySelector(".json-property-input-value");
+            const key = keyInput ? keyInput.value : "";
+            const value = valueInput ? valueInput.value : "";
+            if (key) json[key] = value || "";
+        });
+        document.querySelector(`input[name='${inputName}']`).setAttribute("value", JSON.stringify(json));
+    };
+    const removeProperty = (e) => {
+        e.target.parentElement.remove();
+        // Update JSON
+        onPropertyInput();
+    };
+    const addProperty = (key, value, appendTo) => {
+        var div = document.createElement("div");
+        div.setAttribute("class", "json-property");
+        appendTo.appendChild(div);
+        // Property key input
+        var input = document.createElement("input");
+        input.setAttribute("value", key);
+        input.setAttribute("class", "json-property-input-key");
+        input.addEventListener("input", onPropertyInput);
+        div.appendChild(input);
+        // Property value input
+        var input = document.createElement("input");
+        input.setAttribute("value", value);
+        input.setAttribute("class", "json-property-input-value");
+        input.addEventListener("input", onPropertyInput);
+        div.appendChild(input);
+        // Remove property button
+        var button = document.createElement("button");
+        button.setAttribute("type", "button");
+        button.setAttribute("class", "pure-button pure-bg-link remove-json-property-btn");
+        button.innerHTML = "REMOVE";
+        button.addEventListener("click", removeProperty);
+        div.appendChild(button);
+    };
+
+    var parentDiv = document.createElement("div");
+    parentDiv.setAttribute("id", "json-editor");
+    parentDiv.style.display = "inline-block";
+    if (appendTo) appendTo.appendChild(parentDiv);
+
+    // Main input
+    var input = document.createElement("input");
+    input.setAttribute("id", inputName);
+    input.setAttribute("name", inputName);
+    input.setAttribute("type", "hidden");
+    parentDiv.appendChild(input);
+
+    // Property inputs
+    var propertiesDiv = document.createElement("div");
+    propertiesDiv.setAttribute("id", "json-properties");
+    parentDiv.appendChild(propertiesDiv);
+    const properties = Object.entries(json || {});
+    if (properties.length == 0) {
+        // Default inputs
+        addProperty("", "", propertiesDiv);
+    }
+    for ([key, value] of properties) {
+        addProperty(key, value, propertiesDiv);
+    }
+
+    // Add property button
+    var button = document.createElement("button");
+    button.setAttribute("type", "button");
+    button.setAttribute("class", "pure-button pure-bg-link");
+    button.setAttribute("id", "add-json-property-btn");
+    button.innerHTML = "ADD";
+    parentDiv.appendChild(button);
+
+    setTimeout(() => {
+        // Set initial JSON
+        onPropertyInput();
+        // Set initial event listeners
+        document.querySelectorAll(".json-property-input-key")
+            .forEach(input => input.addEventListener("input", onPropertyInput));
+        document.querySelectorAll(".json-property-input-value")
+            .forEach(input => input.addEventListener("input", onPropertyInput));
+        document.querySelectorAll(".remove-json-property-btn")
+            .forEach(input => input.addEventListener("click", removeProperty));
+        document.querySelector("#add-json-property-btn")
+            .addEventListener("click", () => addProperty("", "", document.querySelector("#json-properties")));
+    }, 1000);
+
+    return parentDiv;
+};
+
 let setForm = async (mode, subject, record = null) => {
     // Pre-populate form with default values
     if (localStorage.getItem("form_values")) {
@@ -624,9 +717,9 @@ let setForm = async (mode, subject, record = null) => {
     if (record) {
         for ([key, value] of Object.entries(record)) {
             // Convert objects to json string
-            if (typeof value === "object") {
-                record[key] = JSON.stringify(value);
-            }
+            // if (typeof value === "object") {
+            //     record[key] = JSON.stringify(value);
+            // }
             // Remove null
             if (value == null) delete record[key];
         }
@@ -721,6 +814,8 @@ let setForm = async (mode, subject, record = null) => {
                 input.setAttribute('value', `${record[key]}`);
             }
         }
+
+        if (key === "data") input = generateJsonEditor(key, record[key] || {});
 
         div.appendChild(input);
 

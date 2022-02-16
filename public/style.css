@@ -177,3 +177,14 @@ ul {
 header {
 
 }
+
+#json-editor #json-properties {
+    display: flex;
+    flex-direction: column;
+    row-gap: 5px;
+}
+
+#json-editor .json-property {
+    display: flex;
+    column-gap: 5px;
+}
