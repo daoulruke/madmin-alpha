@@ -153,6 +153,10 @@ ul {
     color: grey;
 }
 
+.pure-control-group {
+    display: flex;
+}
+
 .pure-form-aligned .pure-control-group label {
     text-align: left;
     padding: 6px;
@@ -182,7 +186,7 @@ header {
     display: flex;
     flex-direction: column;
     row-gap: 5px;
-    padding: 10px 0 5px 0;
+    padding-bottom: 5px;
 }
 
 #json-editor .json-property {
