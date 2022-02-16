@@ -627,10 +627,20 @@ let generateJsonEditor = (inputName, json = {}, appendTo = null) => {
         });
         document.querySelector(`input[name='${inputName}']`).setAttribute("value", JSON.stringify(json));
     };
+    const hasRemoveJsonPropertyButtons = () => {
+        if (document.querySelectorAll(".json-property").length < 2) {
+            document.querySelectorAll(".remove-json-property-btn")
+                .forEach(el => el.style.display = "none");
+        } else {
+            document.querySelectorAll(".remove-json-property-btn")
+                .forEach(el => el.style.display = "block");
+        }
+    };
     const removeProperty = (e) => {
         e.target.parentElement.remove();
         // Update JSON
         onPropertyInput();
+        hasRemoveJsonPropertyButtons();
     };
     const addProperty = (key, value, appendTo) => {
         var div = document.createElement("div");
@@ -655,6 +665,8 @@ let generateJsonEditor = (inputName, json = {}, appendTo = null) => {
         button.innerHTML = "REMOVE";
         button.addEventListener("click", removeProperty);
         div.appendChild(button);
+
+        hasRemoveJsonPropertyButtons();
     };
 
     var parentDiv = document.createElement("div");
@@ -693,6 +705,7 @@ let generateJsonEditor = (inputName, json = {}, appendTo = null) => {
     setTimeout(() => {
         // Set initial JSON
         onPropertyInput();
+        hasRemoveJsonPropertyButtons();
         // Set initial event listeners
         document.querySelectorAll(".json-property-input-key")
             .forEach(input => input.addEventListener("input", onPropertyInput));
