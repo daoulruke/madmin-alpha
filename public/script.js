@@ -442,7 +442,13 @@ let getRecord = async (url) => {
 
         } else {
 
-            span.innerHTML = value;
+            switch (key) {
+                case "data":
+                    span.innerHTML = JSON.stringify(value);
+                    break;
+                default:
+                    span.innerHTML = value;
+            }
 
         }
 
