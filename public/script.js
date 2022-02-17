@@ -444,7 +444,16 @@ let getRecord = async (url) => {
 
             switch (key) {
                 case "data":
-                    span.innerHTML = JSON.stringify(value);
+                    var table = document.createElement("table");
+                    table.setAttribute("class", "pure-table pure-table-horizontal");
+                    var tbody = document.createElement("tbody");
+                    table.appendChild(tbody);
+                    for ([k, v] of Object.entries(value || {})) {
+                        var tr = document.createElement("tr");
+                        tr.innerHTML = `<th>${k}</th><td>${v}</td>`;
+                        tbody.appendChild(tr);
+                    }
+                    span.innerHTML = table.outerHTML;
                     break;
                 default:
                     span.innerHTML = value;
@@ -829,11 +838,7 @@ let setForm = async (mode, subject, record = null) => {
         }
 
         if (key === "data") {
-            if(mode != 'create' && record[key]) {
-                input = generateJsonEditor(key, record[key]);
-            } else {
-                input = generateJsonEditor(key);
-            }
+            input = generateJsonEditor(key, record ? record[key] : null);
         }
 
         div.appendChild(input);
