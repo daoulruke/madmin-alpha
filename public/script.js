@@ -828,7 +828,13 @@ let setForm = async (mode, subject, record = null) => {
             }
         }
 
-        if (key === "data") input = generateJsonEditor(key, record[key] || {});
+        if (key === "data") {
+            if(mode != 'create' && record[key]) {
+                input = generateJsonEditor(key, record[key]);
+            } else {
+                input = generateJsonEditor(key);
+            }
+        }
 
         div.appendChild(input);
 
