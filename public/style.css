@@ -29,6 +29,14 @@ html, body {
     display: none;
 }
 
+.pure-table th {
+    background-color: #e0e0e0;
+    color: #000;
+    text-align: left;
+    vertical-align: middle;
+    font-weight: normal;
+}
+
 .pure-button {
     color: white;
     border-radius: 0;
