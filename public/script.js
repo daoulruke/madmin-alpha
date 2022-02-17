@@ -382,66 +382,49 @@ let getRecord = async (url) => {
     let subject = url.split("/")[2];
     let subjectId = url.split("/")[3];
 
-    if(subject.substr(subject.length - 1) != 's') {
-        //subject = subject + 's';
-    }
-
     let columnReferences = {};
-
     if (openapi.components.schemas[`read-${subject}`]) {
         Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
             if (v["x-references"]) columnReferences[k] = v["x-references"];
         });
     }
 
-    // Join includes column references, logs, ...
+    // Join includes column references
     let joins = [
-        ... new Set([
+        ...new Set([
             ...Object.values(columnReferences).map(v => v),
-        ]),
-        // "logs"
+        ])
     ];
-
     let joinQuery = joins.map(v => `join=${v}`).join("&");
     const record = await _fetch(`${apiUrl}${url}?${joinQuery}`)
         .then(response => response.json());
 
     // START - #content
-    const card = document.createElement("div");
+    var card = document.createElement("div");
     card.classList.add('pure-form');
     card.classList.add('pure-form-aligned');
 
     for ([key, value] of Object.entries(record)) {
-
         // Hide hasMany relationships
         if (joins.includes(key)) continue;
 
-        const div = document.createElement("div");
+        var div = document.createElement("div");
         div.classList.add('pure-control-group');
+        card.appendChild(div);
 
-        const label = document.createElement("label");
+        var label = document.createElement("label");
         label.setAttribute('for', key);
         label.classList.add('pure-bg-light');
-
         var label_text = key.split('_');
         label_text = label_text.join(' ');
         label.innerHTML = label_text.toUpperCase();
-
         div.appendChild(label);
 
-        const span = document.createElement("span");
-
+        var span = document.createElement("span");
         // Display reference name
         if (columnReferences[key] && value) {
-
-            if(columnReferences[key].substr(columnReferences[key].length - 1) != 's') {
-                //columnReferences[key] = columnReferences[key] + 's';
-            }
-
             span.innerHTML = `<a href="#" onclick="navigateTo('${`/records/${columnReferences[key]}/${value.id}`}')">${value.name}</a>`;
-
         } else {
-
             switch (key) {
                 case "data":
                     var table = document.createElement("table");
@@ -458,16 +441,13 @@ let getRecord = async (url) => {
                 default:
                     span.innerHTML = value;
             }
-
         }
-
         div.appendChild(span);
-        card.appendChild(div);
-
     }
 
     const actions = document.createElement("div");
     actions.setAttribute('id', 'actions');
+    card.appendChild(actions);
 
     const back_button = document.createElement("button");
     back_button.setAttribute('id', 'back_button');
@@ -526,8 +506,6 @@ let getRecord = async (url) => {
         actions.appendChild(delete_button);
     }
 
-    card.appendChild(actions);
-
     // Related links
     var div = document.createElement("div");
     div.innerHTML = "<br /><b>RELATED DATA</b>";
@@ -551,26 +529,93 @@ let getRecord = async (url) => {
         }
     }
 
-    // Logs
+    // Http requests
     var div = document.createElement("div");
     div.innerHTML = "<br /><b>LOGS</b>";
     card.appendChild(div);
-    let logs = await _fetch(`${apiUrl}/records/http_requests?filter=route,cs,${location.pathname}&filter=method,neq,GET`)
+    let requests = await _fetch(`${apiUrl}/records/http_requests?filter=route,cs,${location.pathname}&filter=method,neq,GET`)
         .then(response => response.json())
         .then(response => response.records);
-    if (logs.length) {
+    if (requests.length) {
         // Order by ID desc
-        logs = logs.sort((a, b) => b.id - a.id);
+        requests = requests.sort((a, b) => b.id - a.id);
         var table = document.createElement("table");
         var tbody = document.createElement("tbody");
-        for (log of logs) {
+        for (requst of requests) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<tr><td>[${log.method}] - ${log.route}</td></tr>`;
+            tr.innerHTML = `<tr><td>[${requst.method}] - ${requst.route}</td></tr>`;
             tbody.appendChild(tr);
         }
         table.appendChild(tbody);
         card.appendChild(table);
     }
+
+    // START - Comments
+    var div = document.createElement("div");
+    div.setAttribute("id", "comments");
+    div.innerHTML = "<br /><b>COMMENTS</b>"
+    card.appendChild(div);
+    // Comment form
+    var form = document.createElement("form");
+    form.setAttribute("class", "pure-form pure-form-stacked");
+    div.appendChild(form);
+    var fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
+    // Comment textarea
+    var textarea = document.createElement("textarea");
+    textarea.setAttribute("id", "comment-textarea");
+    textarea.setAttribute("placeholder", "Add new comment");
+    textarea.setAttribute("rows", "5");
+    textarea.style.width = "415px";
+    fieldset.appendChild(textarea);
+    // Add comment button
+    var button = document.createElement("button");
+    button.setAttribute("id", "add-comment-btn");
+    button.setAttribute("type", "button");
+    button.setAttribute("class", "pure-button pure-button-primary");
+    button.innerHTML = "SAVE";
+    form.appendChild(button);
+    // Comment list
+    var divList = document.createElement("div");
+    divList.setAttribute("id", "comments-list");
+    divList.style["margin-top"] = "10px";
+    div.appendChild(divList);
+    let listComments = async () => {
+        const commentsList = document.querySelector("#comments-list");
+        let comments = await _fetch(`${apiUrl}/${subject}/${subjectId}/logs`)
+            .then(response => response.json())
+            .then(response => response.records);
+        comments = comments.sort((a, b) => b.id - a.id);
+        commentsList.innerHTML = "";
+        var table = document.createElement("table");
+        var tbody = document.createElement("tbody");
+        for (comment of comments) {
+            var tr = document.createElement("tr");
+            tr.innerHTML = `<tr><td>${comment.message}</td></tr>`;
+            tbody.appendChild(tr);
+        }
+        table.appendChild(tbody);
+        commentsList.appendChild(table);
+    };
+    setTimeout(() => {
+        listComments();
+        document.querySelector("#add-comment-btn").addEventListener("click", async () => {
+            const comment = document.querySelector("#comment-textarea").value;
+            data = {
+                type: "comment",
+                message: comment
+            };
+            await _fetch(`${apiUrl}/${subject}/${subjectId}/logs`, {
+                method: "POST",
+                body: JSON.stringify(data)
+            }).then(response => response.json());
+            // Reset textarea
+            document.querySelector("#comment-textarea").value = "";
+            // Update comments
+            listComments();
+        });
+    }, 1000);
+    // END - Comments
 
     document.getElementById('content').innerHTML = card.outerHTML;
     // END - #content
