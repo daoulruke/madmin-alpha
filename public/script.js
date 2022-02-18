@@ -190,49 +190,129 @@ let listPaths = () => {
 };
 
 // Fetch and display records
-let getRecords = async (url) => {
-    const urlSegments = url.split("/");
+let getRecords = async (subject) => {
+    const displayColumns = {
+        name: "name"
+    };
+    const filterOperators = {
+        cs: "contains",
+        sw: "starts with",
+        ew: "ends with",
+        eq: "eqauls",
+        lt: "is less than",
+        le: "is less than or equal to",
+        ge: "is more than",
+        gt: "is more than or equal to",
+        in: "is found",
+        is: "is empty"
+    };
+    const listRecords = async (params = []) => {
+        let fetchUrl = `${apiUrl}/records/${subject}`;
+        if (params.length) {
+            fetchUrl = `${fetchUrl}?${params.join("&")}`;
+        }
+        const records = await _fetch(fetchUrl)
+            .then(response => response.json())
+            .then(response => response.records);
 
-    const records = await _fetch(`${apiUrl}${url}`)
-        .then(response => response.json())
-        .then(response => response.records);
+        // #raw
+        const raw = JSON.stringify(records, undefined, 4);
+        document.querySelector("#raw").innerHTML = raw;
 
-    if (urlSegments[2] === "pending_approvals") {
-        listPendingApprovals(records);
-        return;
-    }
+        if (subject === "pending_approvals") {
+            listPendingApprovals(records);
+            return;
+        }
+
+        const tbody = document.querySelector("#records-list table tbody");
+        tbody.innerHTML = "";
+        for (const record of records) {
+            var tr = document.createElement("tr");
+            tr.innerHTML = `<td><a href="#" onclick="navigateTo('/records/${subject}/${record.id}')">${record.id}</a></td><td>${record.name}</td>`;
+            tbody.appendChild(tr);
+        }
+    };
 
     // #content
-    const table = document.createElement("table");
-    table.classList.add('pure-table');
-    table.classList.add('pure-table-bordered');
+    var div = document.createElement("div");
+    div.setAttribute("id", "records-list");
+    document.querySelector("#content").innerHTML = "";
+    document.querySelector("#content").appendChild(div);
 
+    // Filters
+    var form = document.createElement("form");
+    form.setAttribute("id", "form-filters");
+    form.setAttribute("class", "pure-form");
+    div.appendChild(form);
+    var fieldset = document.createElement("fieldset");
+    form.appendChild(fieldset);
+    // Select columns
+    var select = document.createElement("select");
+    select.setAttribute("name", "column");
+    fieldset.appendChild(select);
+    var option = document.createElement("option");
+    option.setAttribute("value", "");
+    select.appendChild(option);
+    for ([key, value] of Object.entries(displayColumns)) {
+        var option = document.createElement("option");
+        option.setAttribute("value", key);
+        option.innerHTML = value;
+        select.appendChild(option);
+    }
+    // Select operators
+    var select = document.createElement("select");
+    select.setAttribute("name", "operator");
+    fieldset.appendChild(select);
+    var option = document.createElement("option");
+    option.setAttribute("value", "");
+    select.appendChild(option);
+    for ([key, value] of Object.entries(filterOperators)) {
+        var option = document.createElement("option");
+        option.setAttribute("value", key);
+        option.innerHTML = value;
+        select.appendChild(option);
+    }
+    // Input value
+    var input = document.createElement("input");
+    input.setAttribute("name", "value");
+    fieldset.appendChild(input);
+    // Filter button
+    var button = document.createElement("button");
+    button.setAttribute("type", "button");
+    button.setAttribute("class", "pure-button");
+    button.innerHTML = "FILTER";
+    button.addEventListener("click", () => {
+        const column = document.querySelector("#form-filters select[name='column']").value;
+        const operator = document.querySelector("#form-filters select[name='operator']").value;
+        const value = document.querySelector("#form-filters input[name='value']").value;
+        console.log({
+            column,
+            operator,
+            value
+        });
+        if (column && operator) {
+            listRecords([`filters=${column},${operator},${value}`]);
+        }
+        if (!column && !operator && !value) {
+            listRecords();
+        }
+    });
+    fieldset.appendChild(button);
+
+    // Table
+    var table = document.createElement("table");
+    table.setAttribute("class", "pure-table pure-table-bordered");
+    div.appendChild(table);
     var thead = document.createElement("thead");
-    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button><button class="pure-button pure-bg-dark" onclick="navigateTo('${url}/create')">CREATE</button></td></tr>`;
+    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button><button class="pure-button pure-bg-dark" onclick="navigateTo('/records/${subject}/create')">CREATE</button></td></tr>`;
     table.appendChild(thead);
-
     var tbody = document.createElement("tbody");
     table.appendChild(tbody);
 
-    for (const record of records) {
-        const tr = document.createElement("tr");
-        let recordUrl = `${url}/${record.id}`;
-        // For join records
-        if (urlSegments.length > 4) {
-            recordUrl = `/records/${urlSegments[4]}/${record.id}`;
-        }
-        tr.innerHTML = `<td><a href="#" onclick="navigateTo('${recordUrl}')">${record.id}</a></td><td>${record.name}</td>`;
-        tbody.appendChild(tr);
-    }
-
-    document.getElementById('content').innerHTML = table.outerHTML;
-
-    // #raw
-    const raw = JSON.stringify(records, undefined, 4);
-    document.getElementById('raw').innerHTML = raw;
+    listRecords();
 
     // #current_path
-    updatePath(url);
+    updatePath(`/records/${subject}`);
 };
 
 let listPendingApprovals = (records) => {
@@ -1544,7 +1624,7 @@ window.onload = async function () {
                 const path = location.pathname;
                 switch (true) {
                     case /^\/records\/([a-z_]+)$/.test(path):
-                        getRecords(path);
+                        getRecords(path.split("/")[2]);
                         break;
                     case /^\/records\/([a-z_]+)\/create$/.test(path):
                         createRecord(path);
