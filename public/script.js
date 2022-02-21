@@ -332,7 +332,7 @@ let listPendingApprovals = (records) => {
         for ([key, value] of Object.entries(record)) {
             const td = document.createElement("td");
             if (key == "id") {
-                td.innerHTML = `<a href="#" class="populate-pending-approval" data-route="${record.route}" data-method="${record.method}" data-data='${record.data}'>${value}</a>`;
+                td.innerHTML = `<a href="#" class="populate-pending-approval" data-route="${record.route}" data-method="${record.method}" data-data='${JSON.stringify(record.data || {})}'>${value}</a>`;
             } else {
                 td.innerHTML = value;
             }
@@ -746,7 +746,7 @@ let getRecord = async (url) => {
         var tbody = document.createElement("tbody");
         for (comment of comments) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<tr><td>${comment.message}</td></tr>`;
+            tr.innerHTML = `<tr><td>${comment.content}</td></tr>`;
             tbody.appendChild(tr);
         }
         table.appendChild(tbody);
@@ -758,7 +758,7 @@ let getRecord = async (url) => {
             const comment = document.querySelector("#comment-textarea").value;
             data = {
                 type: "comment",
-                message: comment
+                content: comment
             };
             await _fetch(`${apiUrl}/${subject}/${subjectId}/logs`, {
                 method: "POST",
