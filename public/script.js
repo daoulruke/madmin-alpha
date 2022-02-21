@@ -319,9 +319,11 @@ let getRecords = async (subject) => {
 
 let listPendingApprovals = (records) => {
     // #content
+    document.querySelector("#content").innerHTML = "";
     const table = document.createElement("table");
     table.classList.add('pure-table');
     table.classList.add('pure-table-bordered');
+    document.querySelector("#content").appendChild(table);
     var thead = document.createElement("thead");
     thead.innerHTML = `<tr><td></td><td class="text-right" colspan="100"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button></td></tr>`;
     table.appendChild(thead);
@@ -329,18 +331,66 @@ let listPendingApprovals = (records) => {
     table.appendChild(tbody);
     for (const record of records) {
         const tr = document.createElement("tr");
+        tbody.appendChild(tr);
         for ([key, value] of Object.entries(record)) {
-            const td = document.createElement("td");
-            if (key == "id") {
-                td.innerHTML = `<a href="#" class="populate-pending-approval" data-route="${record.route}" data-method="${record.method}" data-data='${JSON.stringify(record.data || {})}'>${value}</a>`;
-            } else {
-                td.innerHTML = value;
+            var td = document.createElement("td");
+            switch (key) {
+                case "id":
+                    td.innerHTML = `<a href="#" class="populate-pending-approval" data-route="${record.route}" data-method="${record.method}" data-data='${JSON.stringify(record.data || {})}'>${value}</a>`;
+                    break;
+                case "data":
+                    td.innerHTML = JSON.stringify(value);
+                    break;
+                default:
+                    td.innerHTML = value;
             }
             tr.appendChild(td);
         }
-        tbody.appendChild(tr);
+        var td = document.createElement("td");
+        tr.appendChild(td);
+        if (record.approved) {
+            td.innerHTML = "APPROVED";
+        } else {
+            var button = document.createElement("button");
+            button.setAttribute("class", "pure-button pure-bg-dark");
+            button.dataset.id = record.id;
+            button.innerHTML = "APPROVE";
+            td.appendChild(button);
+            button.addEventListener("click", async (e) => {
+                const subjectId = e.target.dataset.id;
+                const response = await _fetch(`${apiUrl}/pending_approvals/${subjectId}/approve`, { method: "PUT" });
+                if (response.ok) {
+                    const responseSuccess = await response.json();
+                    console.log("success", responseSuccess);
+                    e.target.parentElement.innerHTML = "APPROVED";
+                } else {
+                    const responseError = await response.json();
+                    console.log("success", responseError);
+                }
+            });
+        }
+        if (record.declined) {
+            td.innerHTML = "DECLINED";
+        } else {
+            var button = document.createElement("button");
+            button.setAttribute("class", "pure-button pure-bg-dark");
+            button.innerHTML = "DECLINE";
+            button.dataset.id = record.id;
+            td.appendChild(button);
+            button.addEventListener("click", async (e) => {
+                const subjectId = e.target.dataset.id;
+                const response = await _fetch(`${apiUrl}/pending_approvals/${subjectId}/decline`, { method: "PUT" });
+                if (response.ok) {
+                    const responseSuccess = await response.json();
+                    console.log("success", responseSuccess);
+                    e.target.parentElement.innerHTML = "DECLINED";
+                } else {
+                    const responseError = await response.json();
+                    console.log("success", responseError);
+                }
+            });
+        }
     }
-    document.getElementById('content').innerHTML = table.outerHTML;
     const populatePendingApproval = (e) => {
         const data = e.target.dataset.data;
         localStorage.setItem("form_values", data);
