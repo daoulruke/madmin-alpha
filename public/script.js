@@ -1449,8 +1449,8 @@ let deleteRecord = async () => {
         // Set url for submission and collect data.
         const url = apiUrl;
 
-        var response = await _fetch(url + window.location.pathname, {
-            method: "DELETE"
+        var response = await _fetch(url + window.location.pathname + "/delete", {
+            method: "PUT"
         });
 
         if (response.ok) {
