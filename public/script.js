@@ -796,7 +796,7 @@ let getRecord = async (url) => {
         var tbody = document.createElement("tbody");
         for (comment of comments) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<tr><td>${comment.content}</td></tr>`;
+            tr.innerHTML = `<tr><td style="white-space:pre-line">${comment.content}</td></tr>`;
             tbody.appendChild(tr);
         }
         table.appendChild(tbody);
