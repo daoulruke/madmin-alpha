@@ -1671,7 +1671,8 @@ let navigateBack = () => {
 // END - Basic router
 
 let logout = () => {
-    localStorage.removeItem("accessToken");
+    // localStorage.removeItem("accessToken");
+    localStorage.clear();
     location.href = `https://auth.ud.ax/logout?returnTo=${location.origin}`;
 };
 
