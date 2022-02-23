@@ -97,7 +97,8 @@ let subdomainCheck = async () => {
     const subdomain = location.host.split(".").length > 2 ? location.host.split(".")[0] : null;
     // Check if subdomain matches with active account's subdomain
     console.log({
-        "active_account": activeAccount,
+        "active_account": JSON.stringify(activeAccount),
+        "active_subdomain": activeAccount.subdomain,
         subdomain 
     });
     if (activeAccount && subdomain != activeAccount.subdomain) {
