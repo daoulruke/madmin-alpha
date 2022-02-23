@@ -101,7 +101,7 @@ let subdomainCheck = async () => {
         "active_subdomain": activeAccount.subdomain,
         subdomain 
     });
-    if (activeAccount && subdomain != activeAccount.subdomain) {
+    if (activeAccount && (subdomain != activeAccount.subdomain)) {
         console.log(
             "subdomain not matched with activeAccount.domain",
             subdomain,
