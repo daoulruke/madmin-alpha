@@ -1757,6 +1757,7 @@ window.onload = async function () {
         window.onpopstate = history.onpushstate = () => {
             // We wait so that location.pathname will be updated to current uri
             setTimeout(() => {
+                console.log("subdomain check on route change");
                 subdomainCheck();
                 const path = location.pathname;
                 switch (true) {
@@ -1786,6 +1787,7 @@ window.onload = async function () {
         // END - Basic router
 
         await getUserinfo();
+        console.log("subdomain check on load");
         const isSubdomainMatched = await subdomainCheck();
         // Continue only when subdomain is matched with active account's subdomain OR no subdomain
         if (isSubdomainMatched) {
