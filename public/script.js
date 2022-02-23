@@ -358,7 +358,7 @@ let listPendingApprovals = (records) => {
             td.appendChild(button);
             button.addEventListener("click", async (e) => {
                 const subjectId = e.target.dataset.id;
-                const response = await _fetch(`${apiUrl}/pending_approvals/${subjectId}/approve`, { method: "PUT" });
+                const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/approve`, { method: "PUT" });
                 if (response.ok) {
                     const responseSuccess = await response.json();
                     console.log("success", responseSuccess);
@@ -379,7 +379,7 @@ let listPendingApprovals = (records) => {
             td.appendChild(button);
             button.addEventListener("click", async (e) => {
                 const subjectId = e.target.dataset.id;
-                const response = await _fetch(`${apiUrl}/pending_approvals/${subjectId}/decline`, { method: "PUT" });
+                const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/decline`, { method: "PUT" });
                 if (response.ok) {
                     const responseSuccess = await response.json();
                     console.log("success", responseSuccess);
