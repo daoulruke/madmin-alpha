@@ -102,6 +102,11 @@ let subdomainCheck = async () => {
         subdomain 
     });
     if (activeAccount && subdomain != activeAccount.subdomain) {
+        console.log(
+            "subdomain not matched with activeAccount.domain",
+            subdomain,
+            activeAccount.subdomain
+        );
         // If not matched, search for other user's accounts
         let account = userinfo.accounts.find(v => subdomain && v.subdomain == subdomain);
         // If an account is found, switch into this account
