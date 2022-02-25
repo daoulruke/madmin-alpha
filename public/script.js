@@ -738,17 +738,24 @@ let getRecord = async (url) => {
     var div = document.createElement("div");
     div.innerHTML = "<br /><b>LOGS</b>";
     card.appendChild(div);
-    let requests = await _fetch(`${apiUrl}/records/http_requests?filter=route,cs,${location.pathname}&filter=method,neq,GET`)
+    let requests = await _fetch(`${apiUrl}/${subject}/${subjectId}/http_requests?filter=method,neq,GET&join=logs,persons`)
         .then(response => response.json())
         .then(response => response.records);
     if (requests.length) {
-        // Order by ID desc
-        requests = requests.sort((a, b) => b.id - a.id);
         var table = document.createElement("table");
         var tbody = document.createElement("tbody");
-        for (requst of requests) {
+        let requestLogs = requests.reduce((acc, request) => {
+            const logs = (request.logs || []).map(log => {
+                log.content = `[${request.method}] ${request.route}`;
+                return log;
+            });
+            return [...acc, ...logs];
+        }, []);
+        // Order by ID desc
+        requestLogs = requestLogs.sort((a, b) => b.id - a.id);
+        for (requestLog of requestLogs) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<tr><td>[${requst.method}] - ${requst.route}</td></tr>`;
+            tr.innerHTML = `<tr><td>${requestLog.created_at}${requestLog.admin_persons_id ? ` ${requestLog.admin_persons_id.name}` : ""} [${requestLog.type}] ${requestLog.content}</td></tr>`;
             tbody.appendChild(tr);
         }
         table.appendChild(tbody);
@@ -787,7 +794,7 @@ let getRecord = async (url) => {
     div.appendChild(divList);
     let listComments = async () => {
         const commentsList = document.querySelector("#comments-list");
-        let comments = await _fetch(`${apiUrl}/${subject}/${subjectId}/logs`)
+        let comments = await _fetch(`${apiUrl}/${subject}/${subjectId}/logs?join=persons`)
             .then(response => response.json())
             .then(response => response.records);
         comments = comments.sort((a, b) => b.id - a.id);
@@ -796,7 +803,7 @@ let getRecord = async (url) => {
         var tbody = document.createElement("tbody");
         for (comment of comments) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<tr><td style="white-space:pre-line">${comment.content}</td></tr>`;
+            tr.innerHTML = `<tr><td>${comment.created_at} ${comment.admin_persons_id ? `${comment.admin_persons_id.name} ` : ""}${comment.content}</td></tr>`;
             tbody.appendChild(tr);
         }
         table.appendChild(tbody);
