@@ -4,6 +4,8 @@ var clientId = 'gfi2y7zSyKYcvSDBELaKTfOC0MkLgDk8'; // client id as defined in ph
 var audience = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 var apiUrl = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 
+var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+
 // Fetch wrapper
 let _fetch = null;
 
@@ -755,7 +757,11 @@ let getRecord = async (url) => {
         requestLogs = requestLogs.sort((a, b) => b.id - a.id);
         for (requestLog of requestLogs) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<tr><td>${requestLog.created_at}${requestLog.admin_persons_id ? ` ${requestLog.admin_persons_id.name}` : ""} [${requestLog.type}] ${requestLog.content}</td></tr>`;
+            let createdAt = new Date(requestLog.created_at);
+            createdAt = `${createdAt.getDate()}-${months[createdAt.getMonth()]}-${createdAt.getFullYear()} ${`${createdAt.getHours()}`.padStart(2, "0")}:${`${createdAt.getMinutes()}`.padStart(2, "0")}`;
+            let createdBy = requestLog.admin_persons_id ? requestLog.admin_persons_id.name : "";
+            let content = `[${requestLog.type}] ${requestLog.content}`;
+            tr.innerHTML = `<tr><td>${createdAt}${createdBy ? ` ${createdBy}` : ""} ${content}</td></tr>`;
             tbody.appendChild(tr);
         }
         table.appendChild(tbody);
