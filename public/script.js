@@ -5,6 +5,10 @@ var audience = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 var apiUrl = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 
 var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
+var formatDate = function(date) {
+    date = new Date(date);
+    return `${`${date.getDate()}`.padStart(2, "0")}-${months[date.getMonth()]}-${date.getFullYear()} ${`${date.getHours()}`.padStart(2, "0")}:${`${date.getMinutes()}`.padStart(2, "0")}`;
+};
 
 // Fetch wrapper
 let _fetch = null;
@@ -777,8 +781,7 @@ let getRecord = async (url) => {
         requestLogs = requestLogs.sort((a, b) => b.id - a.id);
         for (requestLog of requestLogs) {
             var tr = document.createElement("tr");
-            let createdAt = new Date(requestLog.created_at);
-            createdAt = `${`${createdAt.getDate()}`.padStart(2, "0")}-${months[createdAt.getMonth()]}-${createdAt.getFullYear()} ${`${createdAt.getHours()}`.padStart(2, "0")}:${`${createdAt.getMinutes()}`.padStart(2, "0")}`;
+            let createdAt = formatDate(requestLog.created_at);
             let createdBy = requestLog.admin_persons_id ? requestLog.admin_persons_id.name : "";
             let content = `[${requestLog.type}] ${requestLog.content}`;
             tr.innerHTML = `<tr><td>${createdAt}${createdBy ? ` ${createdBy}` : ""} ${content}</td></tr>`;
@@ -829,7 +832,9 @@ let getRecord = async (url) => {
         var tbody = document.createElement("tbody");
         for (comment of comments) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<tr><td>${comment.created_at} ${comment.admin_persons_id ? `${comment.admin_persons_id.name} ` : ""}${comment.content}</td></tr>`;
+            let createdAt = formatDate(comment.created_at);
+            let createdBy = comment.admin_persons_id ? comment.admin_persons_id.name : "";
+            tr.innerHTML = `<tr><td>${createdAt}${createdBy ? ` ${createdBy}` : ""} ${comment.content}</td></tr>`;
             tbody.appendChild(tr);
         }
         table.appendChild(tbody);
