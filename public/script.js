@@ -352,6 +352,10 @@ let listPendingApprovals = (records) => {
         tr.appendChild(td);
         if (record.approved) {
             td.innerHTML = "APPROVED";
+        } else if (record.declined) {
+            td.innerHTML = "DECLINED";
+        } else if (record.withdrawn) {
+            td.innerHTML = "WITHDRAWN";
         } else {
             var button = document.createElement("button");
             button.setAttribute("class", "pure-button pure-bg-dark");
@@ -370,10 +374,6 @@ let listPendingApprovals = (records) => {
                     console.log("success", responseError);
                 }
             });
-        }
-        if (record.declined) {
-            td.innerHTML = "DECLINED";
-        } else {
             var button = document.createElement("button");
             button.setAttribute("class", "pure-button pure-bg-dark");
             button.innerHTML = "DECLINE";
@@ -386,6 +386,23 @@ let listPendingApprovals = (records) => {
                     const responseSuccess = await response.json();
                     console.log("success", responseSuccess);
                     e.target.parentElement.innerHTML = "DECLINED";
+                } else {
+                    const responseError = await response.json();
+                    console.log("success", responseError);
+                }
+            });
+            var button = document.createElement("button");
+            button.setAttribute("class", "pure-button pure-bg-dark");
+            button.innerHTML = "WITHDRAW";
+            button.dataset.id = record.id;
+            td.appendChild(button);
+            button.addEventListener("click", async (e) => {
+                const subjectId = e.target.dataset.id;
+                const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/withdraw`, { method: "PUT" });
+                if (response.ok) {
+                    const responseSuccess = await response.json();
+                    console.log("success", responseSuccess);
+                    e.target.parentElement.innerHTML = "WITHDRAWN";
                 } else {
                     const responseError = await response.json();
                     console.log("success", responseError);
@@ -758,7 +775,7 @@ let getRecord = async (url) => {
         for (requestLog of requestLogs) {
             var tr = document.createElement("tr");
             let createdAt = new Date(requestLog.created_at);
-            createdAt = `${createdAt.getDate()}-${months[createdAt.getMonth()]}-${createdAt.getFullYear()} ${`${createdAt.getHours()}`.padStart(2, "0")}:${`${createdAt.getMinutes()}`.padStart(2, "0")}`;
+            createdAt = `${`${createdAt.getDate()}`.padStart(2, "0")}-${months[createdAt.getMonth()]}-${createdAt.getFullYear()} ${`${createdAt.getHours()}`.padStart(2, "0")}:${`${createdAt.getMinutes()}`.padStart(2, "0")}`;
             let createdBy = requestLog.admin_persons_id ? requestLog.admin_persons_id.name : "";
             let content = `[${requestLog.type}] ${requestLog.content}`;
             tr.innerHTML = `<tr><td>${createdAt}${createdBy ? ` ${createdBy}` : ""} ${content}</td></tr>`;
