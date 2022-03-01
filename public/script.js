@@ -391,23 +391,26 @@ let listPendingApprovals = (records) => {
                     console.log("success", responseError);
                 }
             });
-            var button = document.createElement("button");
-            button.setAttribute("class", "pure-button pure-bg-dark");
-            button.innerHTML = "WITHDRAW";
-            button.dataset.id = record.id;
-            td.appendChild(button);
-            button.addEventListener("click", async (e) => {
-                const subjectId = e.target.dataset.id;
-                const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/withdraw`, { method: "PUT" });
-                if (response.ok) {
-                    const responseSuccess = await response.json();
-                    console.log("success", responseSuccess);
-                    e.target.parentElement.innerHTML = "WITHDRAWN";
-                } else {
-                    const responseError = await response.json();
-                    console.log("success", responseError);
-                }
-            });
+            // Only the user who requested can withdraw 
+            if (activeAccount.person_id.id == record.requested_by_persons_id) {
+                var button = document.createElement("button");
+                button.setAttribute("class", "pure-button pure-bg-dark");
+                button.innerHTML = "WITHDRAW";
+                button.dataset.id = record.id;
+                td.appendChild(button);
+                button.addEventListener("click", async (e) => {
+                    const subjectId = e.target.dataset.id;
+                    const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/withdraw`, { method: "PUT" });
+                    if (response.ok) {
+                        const responseSuccess = await response.json();
+                        console.log("success", responseSuccess);
+                        e.target.parentElement.innerHTML = "WITHDRAWN";
+                    } else {
+                        const responseError = await response.json();
+                        console.log("success", responseError);
+                    }
+                });
+            }
         }
     }
     const populatePendingApproval = (e) => {
