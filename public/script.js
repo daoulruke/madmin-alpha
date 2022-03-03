@@ -10,6 +10,10 @@ var formatDate = function(date) {
     return `${`${date.getDate()}`.padStart(2, "0")}-${months[date.getMonth()]}-${date.getFullYear()} ${`${date.getHours()}`.padStart(2, "0")}:${`${date.getMinutes()}`.padStart(2, "0")}`;
 };
 
+var userHasAttribute = function(attributeCode) {
+    return !!(userinfo.attributes || []).find(attribute => ["can_do_all", attributeCode].includes(attribute.code));
+}
+
 // Fetch wrapper
 let _fetch = null;
 
@@ -232,8 +236,16 @@ let getRecords = async (subject) => {
         tbody.innerHTML = "";
         for (const record of records) {
             var tr = document.createElement("tr");
-            tr.innerHTML = `<td><a href="#" onclick="navigateTo('/records/${subject}/${record.id}')">${record.id}</a></td><td>${record.name}</td>`;
             tbody.appendChild(tr);
+            if (userHasAttribute("can_read_all")) {
+                var td = document.createElement("td");
+                td.innerHTML = `<a href="#" onclick="navigateTo('/records/${subject}/${record.id}')">${record.id}</a>`;
+                tr.appendChild(td);
+            }
+            var td = document.createElement("td");
+            td.setAttribute("colspan", "100%");
+            td.innerHTML = record.name;
+            tr.appendChild(td);
         }
     };
 
@@ -312,8 +324,22 @@ let getRecords = async (subject) => {
     table.setAttribute("class", "pure-table pure-table-bordered");
     div.appendChild(table);
     var thead = document.createElement("thead");
-    thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button><button class="pure-button pure-bg-dark" onclick="navigateTo('/records/${subject}/create')">CREATE</button></td></tr>`;
+    // thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button><button class="pure-button pure-bg-dark" onclick="navigateTo('/records/${subject}/create')">CREATE</button></td></tr>`;
     table.appendChild(thead);
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td></td>";
+    thead.appendChild(tr);
+    var td = document.createElement("td");
+    td.setAttribute("class", "text-right");
+    td.innerHTML = `<button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button>`;
+    tr.appendChild(td);
+    if (userHasAttribute("can_create_all")) {
+        var button = document.createElement("button");
+        button.setAttribute("class", "pure-button pure-bg-dark");
+        button.setAttribute("onclick", `navigateTo('/records/${subject}/create')`);
+        button.innerHTML = "CREATE";
+        td.appendChild(button);
+    }
     var tbody = document.createElement("tbody");
     table.appendChild(tbody);
 
@@ -347,6 +373,9 @@ let listPendingApprovals = (records) => {
                 case "data":
                     td.innerHTML = JSON.stringify(value);
                     break;
+                case 'requested_at':
+                    td.innerHTML = formatDate(value);
+                    break;
                 default:
                     td.innerHTML = value;
             }
@@ -361,40 +390,42 @@ let listPendingApprovals = (records) => {
         } else if (record.withdrawn) {
             td.innerHTML = "WITHDRAWN";
         } else {
-            var button = document.createElement("button");
-            button.setAttribute("class", "pure-button pure-bg-dark");
-            button.dataset.id = record.id;
-            button.innerHTML = "APPROVE";
-            td.appendChild(button);
-            button.addEventListener("click", async (e) => {
-                const subjectId = e.target.dataset.id;
-                const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/approve`, { method: "PUT" });
-                if (response.ok) {
-                    const responseSuccess = await response.json();
-                    console.log("success", responseSuccess);
-                    e.target.parentElement.innerHTML = "APPROVED";
-                } else {
-                    const responseError = await response.json();
-                    console.log("success", responseError);
-                }
-            });
-            var button = document.createElement("button");
-            button.setAttribute("class", "pure-button pure-bg-dark");
-            button.innerHTML = "DECLINE";
-            button.dataset.id = record.id;
-            td.appendChild(button);
-            button.addEventListener("click", async (e) => {
-                const subjectId = e.target.dataset.id;
-                const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/decline`, { method: "PUT" });
-                if (response.ok) {
-                    const responseSuccess = await response.json();
-                    console.log("success", responseSuccess);
-                    e.target.parentElement.innerHTML = "DECLINED";
-                } else {
-                    const responseError = await response.json();
-                    console.log("success", responseError);
-                }
-            });
+            if (userHasAttribute("can_review_all")) {
+                var button = document.createElement("button");
+                button.setAttribute("class", "pure-button pure-bg-dark");
+                button.dataset.id = record.id;
+                button.innerHTML = "APPROVE";
+                td.appendChild(button);
+                button.addEventListener("click", async (e) => {
+                    const subjectId = e.target.dataset.id;
+                    const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/approve`, { method: "PUT" });
+                    if (response.ok) {
+                        const responseSuccess = await response.json();
+                        console.log("success", responseSuccess);
+                        e.target.parentElement.innerHTML = "APPROVED";
+                    } else {
+                        const responseError = await response.json();
+                        console.log("success", responseError);
+                    }
+                });
+                var button = document.createElement("button");
+                button.setAttribute("class", "pure-button pure-bg-dark");
+                button.innerHTML = "DECLINE";
+                button.dataset.id = record.id;
+                td.appendChild(button);
+                button.addEventListener("click", async (e) => {
+                    const subjectId = e.target.dataset.id;
+                    const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/decline`, { method: "PUT" });
+                    if (response.ok) {
+                        const responseSuccess = await response.json();
+                        console.log("success", responseSuccess);
+                        e.target.parentElement.innerHTML = "DECLINED";
+                    } else {
+                        const responseError = await response.json();
+                        console.log("success", responseError);
+                    }
+                });
+            }
             // Only the user who requested can withdraw 
             if (activeAccount.person_id.id == record.requested_by_persons_id) {
                 var button = document.createElement("button");
@@ -689,7 +720,7 @@ let getRecord = async (url) => {
     back_button.setAttribute("onclick", `navigateTo('/records/${subject}')`);
     actions.appendChild(back_button);
 
-    if (!record.archived && !record.deleted) {
+    if (userHasAttribute("can_update_all") && (!record.archived && !record.deleted)) {
         const update_button = document.createElement("button");
         update_button.setAttribute('id', 'update_button');
         update_button.setAttribute('onclick', `navigateTo('${url}/update')`);
@@ -700,7 +731,7 @@ let getRecord = async (url) => {
     }
 
     if (!record.deleted) {
-        if (record.archived) {
+        if (userHasAttribute("can_restore_all") && record.archived) {
             const restoreRecord = document.createElement("button");
             restoreRecord.setAttribute('id', 'restoreRecord');
             restoreRecord.setAttribute('onclick', 'restoreRecord()');
@@ -708,7 +739,8 @@ let getRecord = async (url) => {
             restoreRecord.classList.add("pure-button");
             restoreRecord.classList.add("pure-bg-yellow");
             actions.appendChild(restoreRecord);
-        } else {
+        }
+        if (userHasAttribute("can_archive_all") && !record.archived) {
             const archiveRecord = document.createElement("button");
             archiveRecord.setAttribute('id', 'archiveRecord');
             archiveRecord.setAttribute('onclick', 'archiveRecord()');
@@ -719,7 +751,7 @@ let getRecord = async (url) => {
         }
     }
 
-    if (record.deleted) {
+    if (userHasAttribute("can_recover_all") && record.deleted) {
         const recover_button = document.createElement("button");
         recover_button.setAttribute('id', 'recover_button');
         recover_button.setAttribute('onclick', 'recoverRecord()');
@@ -727,7 +759,8 @@ let getRecord = async (url) => {
         recover_button.classList.add("pure-button");
         recover_button.classList.add("pure-bg-black");
         actions.appendChild(recover_button);
-    } else {
+    }
+    if (userHasAttribute("can_delete_all") && !record.deleted) {
         const delete_button = document.createElement("button");
         delete_button.setAttribute('id', 'delete_button');
         delete_button.setAttribute('onclick', 'deleteRecord()');
