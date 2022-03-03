@@ -1233,21 +1233,24 @@ let setForm = async (mode, subject, record = null) => {
         document.querySelector("#gmap").appendChild(gmapInput);
     }
 };
+// inputName, inputLabel, source, sourceParams, selected, appendTo
+var generateSelect = async (options) => {
+    // Defaults
+    options.inputName = options.inputName || "";
+    options.inputLabel = options.inputLabel || "";
 
-var generateSelect = async (inputName, inputLabel, source, selected, appendTo) => {
-    console.log(selected)
     var div = document.createElement("div");
     div.classList.add('pure-control-group');
     div.classList.add('pure-bg-light');
 
     var label = document.createElement("label");
-    label.setAttribute('for', inputName);
-    label.innerHTML = inputLabel;
+    label.setAttribute('for', options.inputName);
+    label.innerHTML = options.inputLabel;
     div.appendChild(label);
 
     var input = document.createElement("select");
-    input.setAttribute('id', inputName);
-    input.setAttribute('name', inputName);
+    input.setAttribute('id', options.inputName);
+    input.setAttribute('name', options.inputName);
     div.appendChild(input);
 
     var option = document.createElement("option");
@@ -1255,19 +1258,23 @@ var generateSelect = async (inputName, inputLabel, source, selected, appendTo) =
     option.text = "Please select";
     input.appendChild(option);
 
-    var records = await _fetch(`${apiUrl}/records/${source}`)
-        .then(response => response.json())
-        .then(response => response.records);
-    records.forEach(v => {
-        var option = document.createElement("option");
-        option.value = v.id;
-        option.text = v.name;
-        // Set current user as default option
-        if (option.value == selected) option.setAttribute("selected", "selected");
-        input.appendChild(option);
-    });
+    if (options.source) {
+        var records = await _fetch(`${apiUrl}/records/${options.source}${options.sourceParams ? `?${options.sourceParams}` : ""}`)
+            .then(response => response.json())
+            .then(response => response.records);
+        records.forEach(v => {
+            var option = document.createElement("option");
+            option.value = v.id;
+            option.text = v.name;
+            // Set current user as default option
+            if (options.selected &&  options.selected == option.value) option.setAttribute("selected", "selected");
+            input.appendChild(option);
+        });
+    }
 
-    appendTo.appendChild(div);
+    if (options.appendTo) {
+        options.appendTo.appendChild(div);
+    }
 };
 
 var generateDataList = async (inputName, inputLabel, source, selected, appendTo) => {
@@ -1329,15 +1336,45 @@ let setAccountsForm = async (account = null) => {
     form.appendChild(fieldset);
 
     // Account Holder
-    await generateSelect("account_holder", "Account Holder", "persons", activeAccount ? activeAccount.person_id.id : null, fieldset);
+    await generateSelect({
+        inputName: "account_holder",
+        inputLabel: "Account Holder",
+        source: "persons",
+        selected: activeAccount ? activeAccount.person_id.id : null,
+        appendTo: fieldset
+    });
 
     // Account Person
-    //await generateDataList("persons_id", "Account Person", "persons", account ? account.person_id : null, fieldset);
-    await generateSelect("persons_id", "Account Person", "persons", account ? account.person_id : null, fieldset);
+    await generateSelect({
+        inputName: "persons_id",
+        inputLabel: "Account Person",
+        source: "persons",
+        selected: account ? account.person_id : null,
+        appendTo: fieldset
+    });
 
     // Account Firm
-    //await generateDataList("firms_id", "Account Firm", "firms", account ? account.firm_id : null, fieldset);
-    await generateSelect("firms_id", "Account Firm", "firms", account ? account.firm_id : null, fieldset);
+    let sourceParams = "";
+    let excludeAccounts = userinfo.accounts
+        .filter(v => {
+            // Exclude all firms that has been part of an account
+            let exclude = !!v.firm_id;
+            // Check if user is an admin, exclude if not
+            if (activeAccount.person_id.id == v.person_id.id) {
+                exclude = !v.admin;
+            }
+            return exclude;
+        })
+        .map(v => v.firm_id.id);
+    if (excludeAccounts.length) sourceParams = `filter=id,nin,${excludeAccounts.join(",")}`;
+    await generateSelect({
+        inputName: "firms_id",
+        inputLabel: "Account Firm",
+        source: "firms",
+        sourceParams,
+        selected: account ? account.firm_id : null,
+        appendTo: fieldset
+    });
 
     var div = document.createElement("div");
     div.classList.add('pure-control-group');
