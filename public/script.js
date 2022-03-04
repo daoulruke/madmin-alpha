@@ -665,6 +665,55 @@ let getRecord = async (url) => {
     var card = document.createElement("div");
     card.classList.add('pure-form');
     card.classList.add('pure-form-aligned');
+    document.querySelector("#content").innerHTML = "";
+    document.querySelector("#content").appendChild(card);
+
+    // File upload
+    if (subject == "firms" && subjectId) {
+        var div = document.createElement("div");
+        div.style.marginBottom = "20px";
+        div.innerHTML = "<b>FILES</b><br />";
+        card.appendChild(div);
+
+        var containerDiv = document.createElement("div");
+        containerDiv.setAttribute("id", "file-upload");
+        div.appendChild(containerDiv);
+        var div = document.createElement("div");
+        div.setAttribute("id", "file-upload-files");
+        containerDiv.appendChild(div);
+        var input = document.createElement("input");
+        input.setAttribute("type", "file");
+        input.addEventListener("change", async (e) => {
+            console.log(e.target.files)
+            if (e.target.files.length) {
+                const data = new FormData();
+                data.append("file", e.target.files[0]);
+                data.append("model_type", subject);
+                data.append("model_id", subjectId);
+                await _fetch(`${apiUrl}/file/upload`, {
+                    method: "POST",
+                    body: data
+                }).then(response => response.json());
+                fetchFiles();
+            }
+        });
+        containerDiv.appendChild(input);
+        const fetchFiles = async () => {
+            const files = await _fetch(`${apiUrl}/${subject}/${subjectId}/files`)
+                .then(response => response.json())
+                .then(response => response.records);
+            document.querySelector("#file-upload-files").innerHTML = "";
+            for (file of files) {
+                // <img src="img_girl.jpg" alt="Girl in a jacket" width="150" height="150">
+                var img = document.createElement("img");
+                img.setAttribute("width", 150);
+                img.setAttribute("height", 150);
+                img.setAttribute("src", `${apiUrl}/file/${file.id}`);
+                document.querySelector("#file-upload-files").appendChild(img);
+            }
+        };
+        fetchFiles();
+    }
 
     for ([key, value] of Object.entries(record)) {
         // Hide hasMany relationships
@@ -893,7 +942,7 @@ let getRecord = async (url) => {
     }, 1000);
     // END - Comments
 
-    document.getElementById('content').innerHTML = card.outerHTML;
+    // document.getElementById('content').innerHTML = card.outerHTML;
     // END - #content
 
     // #raw
