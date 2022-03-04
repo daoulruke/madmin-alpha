@@ -1360,7 +1360,7 @@ let setAccountsForm = async (account = null) => {
             // Exclude all firms that has been part of an account
             let exclude = !!v.firm_id;
             // Check if user is an admin, exclude if not
-            if (activeAccount.person_id.id == v.person_id.id) {
+            if (exclude && activeAccount.person_id.id == v.person_id.id) {
                 exclude = !v.admin;
             }
             return exclude;
