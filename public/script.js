@@ -1355,18 +1355,15 @@ let setAccountsForm = async (account = null) => {
 
     // Account Firm
     let sourceParams = "";
-    let excludeAccounts = userinfo.accounts
-        .filter(v => {
-            // Exclude all firms that has been part of an account
-            let exclude = !!v.firm_id;
-            // Check if user is an admin, exclude if not
-            if (exclude && activeAccount.person_id.id == v.person_id.id) {
-                exclude = !v.admin;
-            }
-            return exclude;
-        })
+    // Exclude all firms that has been part of an account and
+    // Include firms that user is admin of
+    let adminFirms = userinfo.accounts
+        .filter(v => v.firm_id && activeAccount.person_id.id == v.person_id.id)
         .map(v => v.firm_id.id);
-    if (excludeAccounts.length) sourceParams = `filter=id,nin,${excludeAccounts.join(",")}`;
+    let excludeFirms = userinfo.accounts
+        .filter(v => v.firm_id && !adminFirms.includes(v.firm_id.id))
+        .map(v => v.firm_id.id);
+    if (excludeFirms.length) sourceParams = `filter=id,nin,${excludeFirms.join(",")}`;
     await generateSelect({
         inputName: "firms_id",
         inputLabel: "Account Firm",
