@@ -704,11 +704,12 @@ let getRecord = async (url) => {
                 .then(response => response.records);
             document.querySelector("#file-upload-files").innerHTML = "";
             for (file of files) {
-                // <img src="img_girl.jpg" alt="Girl in a jacket" width="150" height="150">
                 var img = document.createElement("img");
+                const responseBlob = await _fetch(`${apiUrl}/file/${file.id}`)
+                    .then(response => response.blob());
+                img.setAttribute("src", URL.createObjectURL(responseBlob));
                 img.setAttribute("width", 150);
                 img.setAttribute("height", 150);
-                img.setAttribute("src", `${apiUrl}/file/${file.id}`);
                 document.querySelector("#file-upload-files").appendChild(img);
             }
         };
