@@ -5,9 +5,14 @@ var audience = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 var apiUrl = 'https://api.ud.ax'; // api audience as defined in php-api-auth
 
 var months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"];
-var formatDate = function(date) {
+var formatDate = function(date, format = null) {
     date = new Date(date);
-    return `${`${date.getDate()}`.padStart(2, "0")}-${months[date.getMonth()]}-${date.getFullYear()} ${`${date.getHours()}`.padStart(2, "0")}:${`${date.getMinutes()}`.padStart(2, "0")}`;
+    if (format == "input") {
+        date = `${date.getFullYear()}-${`${date.getMonth() + 1}`.padStart(2, "0")}-${`${date.getDate()}`.padStart(2, "0")}`;
+    } else {
+        date = `${`${date.getDate()}`.padStart(2, "0")}-${months[date.getMonth()]}-${date.getFullYear()} ${`${date.getHours()}`.padStart(2, "0")}:${`${date.getMinutes()}`.padStart(2, "0")}`;
+    }
+    return date;
 };
 
 var userHasAttribute = function(attributeCode) {
@@ -1156,7 +1161,18 @@ let setForm = async (mode, subject, record = null) => {
 
         div.appendChild(label);
 
-        var input = document.createElement("input");
+        var input = null;
+        switch (field.format) {
+            case "date":
+            case "date-time":
+                input = document.createElement("input");
+                input.setAttribute("type", "date");
+                break;
+            default:
+                input = document.createElement("input");
+                input.setAttribute("type", "text");
+                break;
+        }
 
         // Change to select
         if (field["x-references"]) {
@@ -1187,7 +1203,6 @@ let setForm = async (mode, subject, record = null) => {
 
         input.setAttribute('id', key);
         input.setAttribute('name', key);
-        input.setAttribute('type', 'text');
 
         // Disable restricted columns
         if (mode == 'update' && field.admin && record && !!!record.admin) {
@@ -1204,7 +1219,17 @@ let setForm = async (mode, subject, record = null) => {
                 input.setAttribute('disabled', true);
             }
             if (record[key]) {
-                input.setAttribute('value', `${record[key]}`);
+                var value = "";
+                switch (field.format) {
+                    case "date":
+                    case "date-time":
+                        value = formatDate(record[key], "input");
+                        break;
+                    default:
+                        value = record[key];
+                        break;
+                }
+                input.setAttribute("value", value);
             }
         }
 
