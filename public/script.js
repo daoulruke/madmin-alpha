@@ -706,7 +706,7 @@ let getRecord = async (url) => {
         const fetchFiles = async () => {
             const files = await _fetch(`${apiUrl}/${subject}/${subjectId}/files`)
                 .then(response => response.json())
-                .then(response => response.records);
+                .then(response => response.records || []);
             document.querySelector("#file-upload-files").innerHTML = "";
             for (file of files) {
                 var img = document.createElement("img");
@@ -854,7 +854,7 @@ let getRecord = async (url) => {
     card.appendChild(div);
     let requests = await _fetch(`${apiUrl}/${subject}/${subjectId}/http_requests?filter=method,neq,GET&join=logs,persons`)
         .then(response => response.json())
-        .then(response => response.records);
+        .then(response => response.records || []);
     if (requests.length) {
         var table = document.createElement("table");
         var tbody = document.createElement("tbody");
@@ -913,7 +913,7 @@ let getRecord = async (url) => {
         const commentsList = document.querySelector("#comments-list");
         let comments = await _fetch(`${apiUrl}/${subject}/${subjectId}/logs?join=persons`)
             .then(response => response.json())
-            .then(response => response.records);
+            .then(response => response.records || []);
         comments = comments.sort((a, b) => b.id - a.id);
         commentsList.innerHTML = "";
         var table = document.createElement("table");
