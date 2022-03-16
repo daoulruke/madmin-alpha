@@ -432,7 +432,7 @@ let listPendingApprovals = (records) => {
                 });
             }
             // Only the user who requested can withdraw 
-            if (activeAccount.person_id.id == record.requested_by_persons_id) {
+            if (activeAccount.person_id == record.requested_by_persons_id) {
                 var button = document.createElement("button");
                 button.setAttribute("class", "pure-button pure-bg-dark");
                 button.innerHTML = "WITHDRAW";
@@ -1415,7 +1415,7 @@ let setAccountsForm = async (account = null) => {
         inputName: "account_holder",
         inputLabel: "Account Holder",
         source: "persons",
-        selected: activeAccount ? activeAccount.person_id.id : null,
+        selected: activeAccount ? activeAccount.person_id : null,
         appendTo: fieldset
     });
 
@@ -1433,11 +1433,11 @@ let setAccountsForm = async (account = null) => {
     // Exclude all firms that has been part of an account and
     // Include firms that user is admin of
     let adminFirms = userinfo.accounts
-        .filter(v => v.firm_id && activeAccount.person_id.id == v.person_id.id)
-        .map(v => v.firm_id.id);
+        .filter(v => v.firm_id && activeAccount.person_id == v.person_id)
+        .map(v => v.firm_id);
     let excludeFirms = userinfo.accounts
-        .filter(v => v.firm_id && !adminFirms.includes(v.firm_id.id))
-        .map(v => v.firm_id.id);
+        .filter(v => v.firm_id && !adminFirms.includes(v.firm_id))
+        .map(v => v.firm_id);
     if (excludeFirms.length) sourceParams = `filter=id,nin,${excludeFirms.join(",")}`;
     await generateSelect({
         inputName: "firms_id",
