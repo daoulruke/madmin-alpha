@@ -209,7 +209,7 @@ const filterOperators = {
     cs: "contains",
     sw: "starts with",
     ew: "ends with",
-    eq: "eqauls",
+    eq: "equals",
     lt: "is less than",
     le: "is less than or equal to",
     ge: "is more than",
@@ -222,7 +222,7 @@ const filterOperators = {
 let getRecords = async (subject) => {
     const listRecords = async (params = []) => {
         if (subject === "http_requests") {
-            listPendingApprovals(params);
+            listHttpRequests(params);
             return;
         }
 
@@ -262,6 +262,15 @@ let getRecords = async (subject) => {
     document.querySelector("#content").appendChild(div);
 
     // Filters
+    let filters = {};
+    // Default filters
+    if (subject === "http_requests") {
+        filters = {
+            column: "status",
+            operator: "eq",
+            value: "pending"
+        };
+    }
     var divFilters = document.createElement("div");
     divFilters.setAttribute("id", "filters");
     div.appendChild(divFilters);
@@ -286,6 +295,9 @@ let getRecords = async (subject) => {
         var option = document.createElement("option");
         option.setAttribute("value", column);
         option.innerHTML = column;
+        if (column == filters.column) {
+            option.setAttribute("selected", "selected");
+        }
         select.appendChild(option);
     }
     // Select operators
@@ -299,14 +311,19 @@ let getRecords = async (subject) => {
         var option = document.createElement("option");
         option.setAttribute("value", key);
         option.innerHTML = value;
+        if (key == filters.operator) {
+            option.setAttribute("selected", "selected");
+        }
         select.appendChild(option);
     }
     // Input value
     var input = document.createElement("input");
     input.setAttribute("name", "value");
+    input.setAttribute("value", filters.value || "");
     fieldset.appendChild(input);
     // Filter button
     var button = document.createElement("button");
+    button.setAttribute("id", "filter-btn");
     button.setAttribute("type", "button");
     button.setAttribute("class", "pure-button");
     button.innerHTML = "FILTER";
@@ -355,13 +372,14 @@ let getRecords = async (subject) => {
     var tbody = document.createElement("tbody");
     table.appendChild(tbody);
 
-    listRecords();
+    // Fetch records
+    document.querySelector("#filter-btn").click();
 
     // #current_path
     updatePath(`/records/${subject}`);
 };
 
-let listPendingApprovals = async (params) => {
+let listHttpRequests = async (params) => {
     let fetchUrl = `${apiUrl}/records/http_requests?order=id,desc&join=persons`;
     if (params.length) {
         fetchUrl = `${fetchUrl}&${params.join("&")}`;
@@ -386,7 +404,7 @@ let listPendingApprovals = async (params) => {
         const tr = document.createElement("tr");
         tbody.appendChild(tr);
         for ([key, value] of Object.entries(record)) {
-            if (!(["route", "method", "data", "requested_by_persons_id", "requested_at"].includes(key))) continue;
+            if (!(["route", "method", "data", "status", "requested_by_persons_id", "requested_at"].includes(key))) continue;
             var td = document.createElement("td");
             switch (key) {
                 case "id":
@@ -408,14 +426,8 @@ let listPendingApprovals = async (params) => {
         }
         var td = document.createElement("td");
         tr.appendChild(td);
-        if (record.approved) {
-            td.innerHTML = "APPROVED";
-        } else if (record.declined) {
-            td.innerHTML = "DECLINED";
-        } else if (record.withdrawn) {
-            td.innerHTML = "WITHDRAWN";
-        } else {
-            if (["POST", "PUT"].includes(record.method)) {
+        if (["POST", "PUT"].includes(record.method)) {
+            if (record.status == "PENDING") {
                 if (userHasAttribute("can_review_all")) {
                     var button = document.createElement("button");
                     button.setAttribute("class", "pure-button pure-bg-dark");
@@ -472,17 +484,17 @@ let listPendingApprovals = async (params) => {
                         }
                     });
                 }
-                // Only the user who requested can update 
-                if (activeAccount.person_id == record.requested_by_persons_id) {
-                    var button = document.createElement("button");
-                    button.setAttribute("class", "pure-button pure-bg-dark populate-pending-approval");
-                    button.setAttribute("data-route", record.route);
-                    button.setAttribute("data-method", record.method);
-                    button.setAttribute("data-data", JSON.stringify(record.data || {}));
-                    button.innerHTML = "UPDATE";
-                    button.dataset.id = record.id;
-                    td.appendChild(button);
-                }
+            }
+            // Only the user who requested can update 
+            if (activeAccount.person_id == record.requested_by_persons_id) {
+                var button = document.createElement("button");
+                button.setAttribute("class", "pure-button pure-bg-dark populate-pending-approval");
+                button.setAttribute("data-route", record.route);
+                button.setAttribute("data-method", record.method);
+                button.setAttribute("data-data", JSON.stringify(record.data || {}));
+                button.innerHTML = "UPDATE";
+                button.dataset.id = record.id;
+                td.appendChild(button);
             }
         }
     }
