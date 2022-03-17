@@ -464,7 +464,7 @@ let listHttpRequests = async (params) => {
                         }
                     });
                 }
-                // Only the user who requested can withdraw 
+                // Only the user who requested can withdraw
                 if (activeAccount.person_id == record.requested_by_persons_id) {
                     var button = document.createElement("button");
                     button.setAttribute("class", "pure-button pure-bg-dark");
@@ -1295,7 +1295,7 @@ let setForm = async (mode, subject, record = null) => {
     const div = document.createElement("div");
     div.classList.add('pure-control-group');
 
-    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateTo('${location.pathname}')">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${mode}_form')">${mode == 'update' ? 'UPDATE' : 'CREATE'}</button>`;
+    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateTo('${location.pathname}')">CANCEL</a><button id="create" class="pure-button pure-bg-green" onclick="submitForm('${mode}_form')">${mode == 'update' ? 'UPDATE' : 'CREATE'}</button>`;
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
@@ -1495,7 +1495,7 @@ let setAccountsForm = async (account = null) => {
 
     var div = document.createElement("div");
     div.classList.add('pure-control-group');
-    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateTo('${location.pathname}')">CANCEL</a><button class="pure-button pure-bg-green" onclick="submitForm('${account ? 'update_form' : 'create_form'}')">${account ? 'UPDATE' : 'CREATE'}</button>`;
+    div.innerHTML = `<a class="pure-button pure-bg-link" href="#" onclick="navigateTo('${location.pathname}')">CANCEL</a><button id="create" class="pure-button pure-bg-green" onclick="submitForm('${account ? 'update_form' : 'create_form'}')">${account ? 'UPDATE' : 'CREATE'}</button>`;
     fieldset.appendChild(div);
 
     document.getElementById('content').innerHTML = form.outerHTML;
