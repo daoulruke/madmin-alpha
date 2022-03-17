@@ -161,10 +161,11 @@ let listPaths = () => {
         // Collect list paths
         if (value.get && value.get.operationId.includes("list")) {
             // Remove relationship paths
-            const subject = value.get.description.split(" ")[1];
-            if (subject.match(/^([a-z]+)$/) || ["pending_approvals"].includes(subject)) {
-                paths.push(key);
-            }
+            // const subject = value.get.description.split(" ")[1];
+            // if (subject.match(/^([a-z]+)$/) || ["pending_approvals"].includes(subject)) {
+            //     paths.push(key);
+            // }
+            paths.push(key);
         }
     }
 
@@ -220,7 +221,7 @@ const filterOperators = {
 // Fetch and display records
 let getRecords = async (subject) => {
     const listRecords = async (params = []) => {
-        if (subject === "pending_approvals") {
+        if (subject === "http_requests") {
             listPendingApprovals(params);
             return;
         }
@@ -361,7 +362,7 @@ let getRecords = async (subject) => {
 };
 
 let listPendingApprovals = async (params) => {
-    let fetchUrl = `${apiUrl}/records/pending_approvals?order=id,desc`;
+    let fetchUrl = `${apiUrl}/records/http_requests?order=id,desc&join=persons`;
     if (params.length) {
         fetchUrl = `${fetchUrl}&${params.join("&")}`;
     }
@@ -385,6 +386,7 @@ let listPendingApprovals = async (params) => {
         const tr = document.createElement("tr");
         tbody.appendChild(tr);
         for ([key, value] of Object.entries(record)) {
+            if (!(["route", "method", "data", "requested_by_persons_id", "requested_at"].includes(key))) continue;
             var td = document.createElement("td");
             switch (key) {
                 case "id":
@@ -395,6 +397,9 @@ let listPendingApprovals = async (params) => {
                     break;
                 case 'requested_at':
                     td.innerHTML = formatDate(value);
+                    break;
+                case 'requested_by_persons_id':
+                    td.innerHTML = value ? value.name : value;
                     break;
                 default:
                     td.innerHTML = value;
@@ -410,72 +415,74 @@ let listPendingApprovals = async (params) => {
         } else if (record.withdrawn) {
             td.innerHTML = "WITHDRAWN";
         } else {
-            if (userHasAttribute("can_review_all")) {
-                var button = document.createElement("button");
-                button.setAttribute("class", "pure-button pure-bg-dark");
-                button.dataset.id = record.id;
-                button.innerHTML = "APPROVE";
-                td.appendChild(button);
-                button.addEventListener("click", async (e) => {
-                    const subjectId = e.target.dataset.id;
-                    const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/approve`, { method: "PUT" });
-                    if (response.ok) {
-                        const responseSuccess = await response.json();
-                        console.log("success", responseSuccess);
-                        e.target.parentElement.innerHTML = "APPROVED";
-                    } else {
-                        const responseError = await response.json();
-                        console.log("success", responseError);
-                    }
-                });
-                var button = document.createElement("button");
-                button.setAttribute("class", "pure-button pure-bg-dark");
-                button.innerHTML = "DECLINE";
-                button.dataset.id = record.id;
-                td.appendChild(button);
-                button.addEventListener("click", async (e) => {
-                    const subjectId = e.target.dataset.id;
-                    const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/decline`, { method: "PUT" });
-                    if (response.ok) {
-                        const responseSuccess = await response.json();
-                        console.log("success", responseSuccess);
-                        e.target.parentElement.innerHTML = "DECLINED";
-                    } else {
-                        const responseError = await response.json();
-                        console.log("success", responseError);
-                    }
-                });
-            }
-            // Only the user who requested can withdraw 
-            if (activeAccount.person_id == record.requested_by_persons_id) {
-                var button = document.createElement("button");
-                button.setAttribute("class", "pure-button pure-bg-dark");
-                button.innerHTML = "WITHDRAW";
-                button.dataset.id = record.id;
-                td.appendChild(button);
-                button.addEventListener("click", async (e) => {
-                    const subjectId = e.target.dataset.id;
-                    const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/withdraw`, { method: "PUT" });
-                    if (response.ok) {
-                        const responseSuccess = await response.json();
-                        console.log("success", responseSuccess);
-                        e.target.parentElement.innerHTML = "WITHDRAWN";
-                    } else {
-                        const responseError = await response.json();
-                        console.log("success", responseError);
-                    }
-                });
-            }
-            // Only the user who requested can update 
-            if (activeAccount.person_id == record.requested_by_persons_id) {
-                var button = document.createElement("button");
-                button.setAttribute("class", "pure-button pure-bg-dark populate-pending-approval");
-                button.setAttribute("data-route", record.route);
-                button.setAttribute("data-method", record.method);
-                button.setAttribute("data-data", JSON.stringify(record.data || {}));
-                button.innerHTML = "UPDATE";
-                button.dataset.id = record.id;
-                td.appendChild(button);
+            if (["POST", "PUT"].includes(record.method)) {
+                if (userHasAttribute("can_review_all")) {
+                    var button = document.createElement("button");
+                    button.setAttribute("class", "pure-button pure-bg-dark");
+                    button.dataset.id = record.id;
+                    button.innerHTML = "APPROVE";
+                    td.appendChild(button);
+                    button.addEventListener("click", async (e) => {
+                        const subjectId = e.target.dataset.id;
+                        const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/approve`, { method: "PUT" });
+                        if (response.ok) {
+                            const responseSuccess = await response.json();
+                            console.log("success", responseSuccess);
+                            e.target.parentElement.innerHTML = "APPROVED";
+                        } else {
+                            const responseError = await response.json();
+                            console.log("success", responseError);
+                        }
+                    });
+                    var button = document.createElement("button");
+                    button.setAttribute("class", "pure-button pure-bg-dark");
+                    button.innerHTML = "DECLINE";
+                    button.dataset.id = record.id;
+                    td.appendChild(button);
+                    button.addEventListener("click", async (e) => {
+                        const subjectId = e.target.dataset.id;
+                        const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/decline`, { method: "PUT" });
+                        if (response.ok) {
+                            const responseSuccess = await response.json();
+                            console.log("success", responseSuccess);
+                            e.target.parentElement.innerHTML = "DECLINED";
+                        } else {
+                            const responseError = await response.json();
+                            console.log("success", responseError);
+                        }
+                    });
+                }
+                // Only the user who requested can withdraw 
+                if (activeAccount.person_id == record.requested_by_persons_id) {
+                    var button = document.createElement("button");
+                    button.setAttribute("class", "pure-button pure-bg-dark");
+                    button.innerHTML = "WITHDRAW";
+                    button.dataset.id = record.id;
+                    td.appendChild(button);
+                    button.addEventListener("click", async (e) => {
+                        const subjectId = e.target.dataset.id;
+                        const response = await _fetch(`${apiUrl}/http_requests/${subjectId}/withdraw`, { method: "PUT" });
+                        if (response.ok) {
+                            const responseSuccess = await response.json();
+                            console.log("success", responseSuccess);
+                            e.target.parentElement.innerHTML = "WITHDRAWN";
+                        } else {
+                            const responseError = await response.json();
+                            console.log("success", responseError);
+                        }
+                    });
+                }
+                // Only the user who requested can update 
+                if (activeAccount.person_id == record.requested_by_persons_id) {
+                    var button = document.createElement("button");
+                    button.setAttribute("class", "pure-button pure-bg-dark populate-pending-approval");
+                    button.setAttribute("data-route", record.route);
+                    button.setAttribute("data-method", record.method);
+                    button.setAttribute("data-data", JSON.stringify(record.data || {}));
+                    button.innerHTML = "UPDATE";
+                    button.dataset.id = record.id;
+                    td.appendChild(button);
+                }
             }
         }
     }
