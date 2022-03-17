@@ -361,9 +361,9 @@ let getRecords = async (subject) => {
 };
 
 let listPendingApprovals = async (params) => {
-    let fetchUrl = `${apiUrl}/records/pending_approvals`;
+    let fetchUrl = `${apiUrl}/records/pending_approvals?order=id,desc`;
     if (params.length) {
-        fetchUrl = `${fetchUrl}?${params.join("&")}`;
+        fetchUrl = `${fetchUrl}&${params.join("&")}`;
     }
 
     const records = await _fetch(fetchUrl)
