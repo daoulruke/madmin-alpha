@@ -485,8 +485,8 @@ let listHttpRequests = async (params) => {
                     });
                 }
             }
-            // Only the user who requested can update 
-            if (activeAccount.person_id == record.requested_by_persons_id) {
+            // Only the user who requested can update
+            if (record.requested_by_persons_id && record.requested_by_persons_id.id == activeAccount.person_id) {
                 var button = document.createElement("button");
                 button.setAttribute("class", "pure-button pure-bg-dark populate-pending-approval");
                 button.setAttribute("data-route", record.route);
