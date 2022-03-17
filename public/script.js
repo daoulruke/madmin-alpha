@@ -466,6 +466,17 @@ let listPendingApprovals = async (params) => {
                     }
                 });
             }
+            // Only the user who requested can update 
+            if (activeAccount.person_id == record.requested_by_persons_id) {
+                var button = document.createElement("button");
+                button.setAttribute("class", "pure-button pure-bg-dark populate-pending-approval");
+                button.setAttribute("data-route", record.route);
+                button.setAttribute("data-method", record.method);
+                button.setAttribute("data-data", JSON.stringify(record.data || {}));
+                button.innerHTML = "UPDATE";
+                button.dataset.id = record.id;
+                td.appendChild(button);
+            }
         }
     }
     const populatePendingApproval = (e) => {
