@@ -220,6 +220,11 @@ const filterOperators = {
 // Fetch and display records
 let getRecords = async (subject) => {
     const listRecords = async (params = []) => {
+        if (subject === "pending_approvals") {
+            listPendingApprovals(params);
+            return;
+        }
+
         let fetchUrl = `${apiUrl}/records/${subject}`;
         if (params.length) {
             fetchUrl = `${fetchUrl}?${params.join("&")}`;
@@ -232,12 +237,7 @@ let getRecords = async (subject) => {
         const raw = JSON.stringify(records, undefined, 4);
         document.querySelector("#raw").innerHTML = raw;
 
-        if (subject === "pending_approvals") {
-            listPendingApprovals(records);
-            return;
-        }
-
-        const tbody = document.querySelector("#records-list table tbody");
+        const tbody = document.querySelector("#records-list #table table tbody");
         tbody.innerHTML = "";
         for (const record of records) {
             var tr = document.createElement("tr");
@@ -261,10 +261,13 @@ let getRecords = async (subject) => {
     document.querySelector("#content").appendChild(div);
 
     // Filters
+    var divFilters = document.createElement("div");
+    divFilters.setAttribute("id", "filters");
+    div.appendChild(divFilters);
     var form = document.createElement("form");
     form.setAttribute("id", "form-filters");
     form.setAttribute("class", "pure-form");
-    div.appendChild(form);
+    divFilters.appendChild(form);
     var fieldset = document.createElement("fieldset");
     form.appendChild(fieldset);
     // Select columns
@@ -325,9 +328,12 @@ let getRecords = async (subject) => {
     fieldset.appendChild(button);
 
     // Table
+    var divTable = document.createElement("div");
+    divTable.setAttribute("id", "table");
+    div.appendChild(divTable);
     var table = document.createElement("table");
     table.setAttribute("class", "pure-table pure-table-bordered");
-    div.appendChild(table);
+    divTable.appendChild(table);
     var thead = document.createElement("thead");
     // thead.innerHTML = `<tr><td></td><td class="text-right"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button><button class="pure-button pure-bg-dark" onclick="navigateTo('/records/${subject}/create')">CREATE</button></td></tr>`;
     table.appendChild(thead);
@@ -354,13 +360,22 @@ let getRecords = async (subject) => {
     updatePath(`/records/${subject}`);
 };
 
-let listPendingApprovals = (records) => {
+let listPendingApprovals = async (params) => {
+    let fetchUrl = `${apiUrl}/records/pending_approvals?order=id,desc`;
+    if (params.length) {
+        fetchUrl = `${fetchUrl}&${params.join("&")}`;
+    }
+
+    const records = await _fetch(fetchUrl)
+        .then(response => response.json())
+        .then(response => response.records);
+
     // #content
-    document.querySelector("#content").innerHTML = "";
+    document.querySelector("#content #records-list #table").innerHTML = "";
     const table = document.createElement("table");
     table.classList.add('pure-table');
     table.classList.add('pure-table-bordered');
-    document.querySelector("#content").appendChild(table);
+    document.querySelector("#content #records-list #table").appendChild(table);
     var thead = document.createElement("thead");
     thead.innerHTML = `<tr><td></td><td class="text-right" colspan="100"><button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button></td></tr>`;
     table.appendChild(thead);
