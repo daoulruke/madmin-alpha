@@ -165,7 +165,9 @@ let listPaths = () => {
             // if (subject.match(/^([a-z]+)$/) || ["pending_approvals"].includes(subject)) {
             //     paths.push(key);
             // }
-            paths.push(key);
+            if (!subject.match(/^model_([a-z_]+)$/)) {
+                paths.push(key);
+            }
         }
     }
 
