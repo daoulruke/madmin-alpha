@@ -161,7 +161,7 @@ let listPaths = () => {
         // Collect list paths
         if (value.get && value.get.operationId.includes("list")) {
             // Remove relationship paths
-            // const subject = value.get.description.split(" ")[1];
+            const subject = value.get.description.split(" ")[1];
             // if (subject.match(/^([a-z]+)$/) || ["pending_approvals"].includes(subject)) {
             //     paths.push(key);
             // }
