@@ -465,7 +465,7 @@ let listHttpRequests = async (params) => {
                     });
                 }
                 // Only the user who requested can withdraw 
-                if (activeAccount.person_id == record.requested_by_persons_id) {
+                if (activeAccount.persons_id == record.requested_by_persons_id) {
                     var button = document.createElement("button");
                     button.setAttribute("class", "pure-button pure-bg-dark");
                     button.innerHTML = "WITHDRAW";
@@ -486,7 +486,7 @@ let listHttpRequests = async (params) => {
                 }
             }
             // Only the user who requested can update
-            if (record.requested_by_persons_id && record.requested_by_persons_id.id == activeAccount.person_id) {
+            if (record.requested_by_persons_id && record.requested_by_persons_id.id == activeAccount.persons_id) {
                 var button = document.createElement("button");
                 button.setAttribute("class", "pure-button pure-bg-dark populate-pending-approval");
                 button.setAttribute("data-route", record.route);
@@ -1460,7 +1460,7 @@ let setAccountsForm = async (account = null) => {
         inputName: "account_holder",
         inputLabel: "Account Holder",
         source: "persons",
-        selected: activeAccount ? activeAccount.person_id : null,
+        selected: activeAccount ? activeAccount.persons_id : null,
         appendTo: fieldset
     });
 
@@ -1469,7 +1469,7 @@ let setAccountsForm = async (account = null) => {
         inputName: "persons_id",
         inputLabel: "Account Person",
         source: "persons",
-        selected: account ? account.person_id : null,
+        selected: account ? account.persons_id : null,
         appendTo: fieldset
     });
 
@@ -1478,18 +1478,18 @@ let setAccountsForm = async (account = null) => {
     // Exclude all firms that has been part of an account and
     // Include firms that user is admin of
     let adminFirms = userinfo.accounts
-        .filter(v => v.firm_id && activeAccount.person_id == v.person_id)
-        .map(v => v.firm_id);
+        .filter(v => v.firms_id && activeAccount.persons_id == v.persons_id)
+        .map(v => v.firms_id);
     let excludeFirms = userinfo.accounts
-        .filter(v => v.firm_id && !adminFirms.includes(v.firm_id))
-        .map(v => v.firm_id);
+        .filter(v => v.firms_id && !adminFirms.includes(v.firms_id))
+        .map(v => v.firms_id);
     if (excludeFirms.length) sourceParams = `filter=id,nin,${excludeFirms.join(",")}`;
     await generateSelect({
         inputName: "firms_id",
         inputLabel: "Account Firm",
         source: "firms",
         sourceParams,
-        selected: account ? account.firm_id : null,
+        selected: account ? account.firms_id : null,
         appendTo: fieldset
     });
 
