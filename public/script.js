@@ -158,6 +158,7 @@ let listPaths = () => {
     // #content
     const paths = [];
     for ([key, value] of Object.entries(openapi.paths)) {
+        if (!key.match(/^\/records/)) continue;
         // Collect list paths
         if (value && value.get && value.get.operationId.includes("list")) {
             // Remove relationship paths
