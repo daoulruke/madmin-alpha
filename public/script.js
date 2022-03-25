@@ -158,17 +158,19 @@ let listPaths = () => {
     // #content
     const paths = [];
     for ([key, value] of Object.entries(openapi.paths)) {
-        if (!key.match(/^\/records/)) continue;
+        if (!key.match(/^\/records\/[a-z_]+$/)) continue;
         // Collect list paths
         if (value && value.get && value.get.operationId.includes("list")) {
-            // Remove relationship paths
             const subject = value.get.description.split(" ")[1];
-            // if (subject.match(/^([a-z]+)$/) || ["pending_approvals"].includes(subject)) {
-            //     paths.push(key);
-            // }
-            if (!subject.match(/^model_([a-z_]+)$/)) {
-                paths.push(key);
-            }
+
+            // Remove relationship paths e.g. model_persons, persons_firms
+            if (subject.match(/^model_([a-z_]+)$/)) continue;
+            if (
+                openapi.tags.find(v => v.name == subject.split("_")[0]) &&
+                openapi.tags.find(v => v.name == subject.split("_")[1])
+            ) continue; 
+
+            paths.push(key);
         }
     }
 
@@ -872,6 +874,29 @@ let getRecord = async (url) => {
         delete_button.classList.add("pure-bg-red");
         actions.appendChild(delete_button);
     }
+
+    // Attributes
+    var div = document.createElement("div");
+    div.innerHTML = "<br /><b>ATTRIBUTES</b>";
+    card.appendChild(div);
+
+    var table = document.createElement("table");
+    table.setAttribute("class", "pure-table pure-table-horizontal");
+    div.appendChild(table);
+    var tbody = document.createElement("tbody");
+    table.appendChild(tbody);
+    Promise.all([
+        _fetch(`${apiUrl}/attributes`).then(response => response.json()),
+        _fetch(`${apiUrl}/${subject}/${subjectId}/attributes`).then(response => response.json())
+    ]).then(responses => {
+        const attributes = responses[0].records;
+        const subjectAttributes = responses[1].records;
+        for (attribute of attributes) {
+            var tr = document.createElement("tr");
+            tr.innerHTML = `<th>${attribute.name}</th><td>${subjectAttributes.find(v => v.name == attribute.name) ? 1 : 0}</td>`;
+            tbody.appendChild(tr);
+        }
+    });
 
     // Related links
     var div = document.createElement("div");
