@@ -248,13 +248,28 @@ let getRecords = async (subject) => {
         for (const record of records) {
             var tr = document.createElement("tr");
             tbody.appendChild(tr);
+            // ID link
             if (userHasAttribute("can_read_all")) {
                 var td = document.createElement("td");
                 td.innerHTML = `<a href="#" onclick="navigateTo('/records/${subject}/${record.id}')">${record.id}</a>`;
                 tr.appendChild(td);
             }
+            // Avatar
+            if (record.avatar) {
+                var td = document.createElement("td");
+                td.setAttribute("width", 100);
+                tr.appendChild(td);
+                var img = document.createElement("img");
+                img.setAttribute("src", record.avatar);
+                img.setAttribute("height", 100);
+                td.appendChild(img);
+            }
+            // Name
             var td = document.createElement("td");
             td.setAttribute("colspan", "100%");
+            if (record.avatar) {
+                td.style["border-left"] = "none";
+            }
             td.innerHTML = record.name;
             tr.appendChild(td);
         }
@@ -365,6 +380,7 @@ let getRecords = async (subject) => {
     thead.appendChild(tr);
     var td = document.createElement("td");
     td.setAttribute("class", "text-right");
+    td.setAttribute("colspan", "100%");
     td.innerHTML = `<button class="pure-button pure-bg-link" onclick="navigateTo('/')">BACK</button>`;
     tr.appendChild(td);
     if (userHasAttribute("can_create_all")) {
@@ -699,6 +715,9 @@ let getRecord = async (url) => {
     let subject = url.split("/")[2];
     let subjectId = url.split("/")[3];
 
+    // #current_path
+    updatePath(url);
+
     let columnReferences = {};
     if (openapi.components.schemas[`read-${subject}`]) {
         Object.entries(openapi.components.schemas[`read-${subject}`].properties).forEach(([k, v]) => {
@@ -804,6 +823,12 @@ let getRecord = async (url) => {
                         tbody.appendChild(tr);
                     }
                     span.innerHTML = table.outerHTML;
+                    break;
+                case "avatar":
+                    var img = document.createElement("img");
+                    span.appendChild(img);
+                    img.setAttribute("src", value);
+                    img.setAttribute("height", 200);
                     break;
                 default:
                     span.innerHTML = value;
@@ -1027,9 +1052,6 @@ let getRecord = async (url) => {
     // #raw
     const raw = JSON.stringify(record, undefined, 4);
     document.getElementById('raw').innerHTML = raw;
-
-    // #current_path
-    updatePath(url);
 };
 
 // Fetch and display records
